@@ -228,7 +228,7 @@
 										name="studentEmail"
 										id="studentEmail"
 										placeholder="Student Email"
-										class="w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-md focus:outline-none"
+										class="mt-3 w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-md focus:outline-none"
 									/>
 									<input
 										bind:value={studentRFID}
@@ -236,7 +236,7 @@
 										name="rfidStudent"
 										id="rfidStudent"
 										placeholder="Student RFID"
-										class="w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-md focus:outline-none"
+										class="mt-3 w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-md focus:outline-none"
 									/>
 									<input
 										bind:value={studentID}
@@ -244,7 +244,7 @@
 										name="studentid"
 										id="studentid"
 										placeholder="Student ID"
-										class="w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-md focus:outline-none"
+										class="mt-3 w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-md focus:outline-none"
 									/>
 								</div>
 
@@ -256,17 +256,16 @@
 										<select
 											bind:value={studentClass}
 											id="classSelect1"
-											class="pl-2 py-2 w-full rounded-md border border-gray-300 focus:bg-white text-md"
+											class="pl-2 py-2 w-full rounded-md border placeholder-gray-300 border-gray-300 text-md"
 										>
 											{#each data as item1}
 												<option value={item1.className}>{item1.className}</option>
 											{/each}
 										</select>
 										<button
-                    on:click={createStudent}
-											class=" w-full px-3 py-4 text-white rounded-md bg-[#2ea44f] focus:outline-none"
-											>Add</button
-										>
+                    						on:click={createStudent}
+											class="mt-3 w-full px-3 py-4 text-white rounded-md bg-[#2ea44f] focus:outline-none"
+											>Add</button>
 									</div>
 						</div>
 					</div>
@@ -300,7 +299,7 @@
 									name="teachEmail"
 									id="teachEmail"
 									placeholder="Email"
-									class="w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-md focus:outline-none"
+									class="mt-3 w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-md focus:outline-none"
 								/>
 								<input
 									bind:value={teachPassword}
