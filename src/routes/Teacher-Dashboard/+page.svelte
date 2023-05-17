@@ -7,6 +7,7 @@
 	import { onMount } from 'svelte';
 
 	let data = [];
+	let dateDate = [];
 
 	let studentArray = [];
 
@@ -14,16 +15,28 @@
 		const collectionRef = collection(firestore, 'attendance');
 		const querySnapshot = await getDocs(collectionRef);
 
-		const data = querySnapshot.docs.map((doc) => ({
-			id: doc.id,
-			...doc.data()
-		}));
+		const data = querySnapshot.docs.flatMap((doc) => {
+			const docData = doc.data();
 
-		const rfidTags = data.map((item) => item.rfidtag);
+			const arrayFields = Object.keys(docData).filter((key) => Array.isArray(docData[key]));
+			console.log(docData);
+			const rfidTags = arrayFields.flatMap((fieldName) => {
+				const array = docData[fieldName] || [];
+				if (array.length > 0) {
+					return array[0];
+				}
+				return [];
+			});
+
+			return rfidTags.map((rfidTag) => [doc.id, rfidTag]);
+		});
+
+		const rfidTags = data.filter((item) => item[1] !== undefined).map((item) => item[1]);
+		console.log(rfidTags);
+
 		const usersCollectionRef = collection(firestore, 'users');
 		const queryRef = query(usersCollectionRef, where('studentRFID', 'in', rfidTags));
 		const docSnap = await getDocs(queryRef);
-
 		docSnap.forEach((doc) => {
 			studentArray.push(doc.data());
 			studentArray = studentArray;
@@ -109,7 +122,9 @@
 							<tr>
 								<td>{student.Name}</td>
 								<td>{student.studentRFID}</td>
-								<td>{student.email}</td>
+								<!-- {#each docData as data }
+								<td>{data[1]}</td>
+								{/each} -->
 								<td>
 									<div class="badge w-20 ml-5 bg-green-500 border-transparent">Present</div>
 								</td>
