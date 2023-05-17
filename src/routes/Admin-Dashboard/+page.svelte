@@ -1,6 +1,16 @@
 <script>
 	import { auth } from '$lib/firebase';
-	import { doc, setDoc, query, where, getDocs, collection, addDoc } from 'firebase/firestore';
+	import {
+		doc,
+		setDoc,
+		query,
+		where,
+		getDocs,
+		collection,
+		addDoc,
+		updateDoc,
+		arrayUnion
+	} from 'firebase/firestore';
 	import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 	import { goto } from '$app/navigation';
 	import { firebase, firestore, functions } from '$lib/firebase';
@@ -35,8 +45,12 @@
 				userRole: 'student',
 				Name: studentName,
 				studentID: studentID,
-				studentRFID: studentRFID,
-				studentClass: studentClass
+				studentRFID: studentRFID
+			});
+
+			const docRef2 = doc(firestore, 'classes', studentClass);
+			await updateDoc(docRef2, {
+				students: arrayUnion(userID)
 			});
 
 			console.log('Document created in Firestore with ID:', userID);
@@ -65,8 +79,12 @@
 					UID: userID,
 					email: teachEmail,
 					userRole: 'teacher',
-					Name: teachFullName,
-					teachingClass: tSelectClass
+					Name: teachFullName
+				});
+
+				const docRef2 = doc(firestore, 'classes', tSelectClass);
+				await updateDoc(docRef2, {
+					teachers: arrayUnion(userID)
 				});
 
 				console.log('Document created in Firestore with ID:', userID);
@@ -90,6 +108,7 @@
 			const classData = {
 				className: className,
 				grade: gradeLevel,
+				teachers: [],
 				students: []
 			};
 
@@ -210,63 +229,64 @@
 					<div class="max-w-md mx-auto">
 						<div class="text-center" />
 						<div class="m-7">
-								<div class="mb-6">
-									<label for="student" class="block mb-2 text-md font-medium text-gray"
-										>Register Student</label
-									>
-									<input
-										bind:value={studentName}
-										type="name"
-										name="fullname"
-										id="studentfullname"
-										placeholder="Full Name"
-										class="w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-md focus:outline-none"
-									/>
-									<input
-										bind:value={studentEmail}
-										type="email"
-										name="studentEmail"
-										id="studentEmail"
-										placeholder="Student Email"
-										class="mt-3 w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-md focus:outline-none"
-									/>
-									<input
-										bind:value={studentRFID}
-										type="text"
-										name="rfidStudent"
-										id="rfidStudent"
-										placeholder="Student RFID"
-										class="mt-3 w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-md focus:outline-none"
-									/>
-									<input
-										bind:value={studentID}
-										type="text"
-										name="studentid"
-										id="studentid"
-										placeholder="Student ID"
-										class="mt-3 w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-md focus:outline-none"
-									/>
-								</div>
+							<div class="mb-6">
+								<label for="student" class="block mb-2 text-md font-medium text-gray"
+									>Register Student</label
+								>
+								<input
+									bind:value={studentName}
+									type="name"
+									name="fullname"
+									id="studentfullname"
+									placeholder="Full Name"
+									class="w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-md focus:outline-none"
+								/>
+								<input
+									bind:value={studentEmail}
+									type="email"
+									name="studentEmail"
+									id="studentEmail"
+									placeholder="Student Email"
+									class="mt-3 w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-md focus:outline-none"
+								/>
+								<input
+									bind:value={studentRFID}
+									type="text"
+									name="rfidStudent"
+									id="rfidStudent"
+									placeholder="Student RFID"
+									class="mt-3 w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-md focus:outline-none"
+								/>
+								<input
+									bind:value={studentID}
+									type="text"
+									name="studentid"
+									id="studentid"
+									placeholder="Student ID"
+									class="mt-3 w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-md focus:outline-none"
+								/>
+							</div>
 
-									<div class="mb-6">
-										<label for="class" class="block mb-2 text-md font-medium text-gray"
-											>Select Class</label
-										>
+							<div class="mb-6">
+								<label for="class" class="block mb-2 text-md font-medium text-gray"
+									>Select Class</label
+								>
 
-										<select
-											bind:value={studentClass}
-											id="classSelect1"
-											class="pl-2 py-2 w-full rounded-md border placeholder-gray-300 border-gray-300 text-md"
-										>
-											{#each data as item1}
-												<option value={item1.className}>{item1.className}</option>
-											{/each}
-										</select>
-										<button
-                    						on:click={createStudent}
-											class="mt-3 w-full px-3 py-4 text-white rounded-md bg-[#2ea44f] focus:outline-none"
-											>Add</button>
-									</div>
+								<select
+									bind:value={studentClass}
+									id="classSelect1"
+									class="pl-2 py-2 w-full rounded-md border placeholder-gray-300 border-gray-300 text-md"
+								>
+									{#each data as item1}
+										<option value={item1.className}>{item1.className}</option>
+									{/each}
+								</select>
+								<button
+									on:click={createStudent}
+									class="mt-3 w-full px-3 py-4 text-white rounded-md bg-[#2ea44f] focus:outline-none"
+									>Add</button
+								>
+							</div>
 						</div>
 					</div>
 					<!--END-->
