@@ -1,51 +1,39 @@
 <script>
-	import { auth } from '$lib/firebase';
+	import { auth, database } from '$lib/firebase';
 	import { doc, setDoc, query, where, getDocs, collection } from 'firebase/firestore';
 	import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 	import { goto } from '$app/navigation';
 	import { firebase, firestore, functions } from '$lib/firebase';
+	import { getDatabase, ref, onValue } from 'firebase/database';
 	import { onMount } from 'svelte';
+	import { format } from 'date-fns';
 
-	let data = [];
-	let dateDate = [];
-
+	let dateArray = [];
 	let studentArray = [];
 
 	async function displayClasses() {
-		const collectionRef = collection(firestore, 'attendance');
-		const querySnapshot = await getDocs(collectionRef);
+		const rtdbRef = ref(database, 'rfid');
+		const usersCollection = collection(firestore, 'users');
 
-		const data = querySnapshot.docs.flatMap((doc) => {
-			const docData = doc.data();
+		onValue(rtdbRef, async (snapshot) => {
+			const rfidTagsData = snapshot.val();
+			const rfidTagValues = Object.values(rfidTagsData).flat();
 
-			const arrayFields = Object.keys(docData).filter((key) => Array.isArray(docData[key]));
-			console.log(docData);
-			const rfidTags = arrayFields.flatMap((fieldName) => {
-				const array = docData[fieldName] || [];
-				if (array.length > 0) {
-					return array[0];
-				}
-				return [];
+			console.log(rfidTagValues);
+
+			const queryRef = query(usersCollection, where('studentRFID', 'in', rfidTagValues));
+			const docSnap = await getDocs(queryRef);
+
+			const updatedStudentArray = [];
+			docSnap.forEach((doc) => {
+				updatedStudentArray.push(doc.data());
 			});
 
-			return rfidTags.map((rfidTag) => [doc.id, rfidTag]);
-		});
-
-		const rfidTags = data.filter((item) => item[1] !== undefined).map((item) => item[1]);
-		console.log(rfidTags);
-
-		const usersCollectionRef = collection(firestore, 'users');
-		const queryRef = query(usersCollectionRef, where('studentRFID', 'in', rfidTags));
-		const docSnap = await getDocs(queryRef);
-		docSnap.forEach((doc) => {
-			studentArray.push(doc.data());
-			studentArray = studentArray;
+			studentArray = updatedStudentArray;
+			console.log(studentArray);
 		});
 	}
-
-	onMount(async () => {
-		await displayClasses();
-	});
+	displayClasses();
 </script>
 
 <!-- Header Logo Center -->
@@ -111,8 +99,8 @@
 
 						<tr>
 							<th class="w-40">Student</th>
-							<th class="w-32">RFID</th>
-							<th class="w-32">Time</th>
+							<th class="w-32">Student ID</th>
+							<!-- <th class="w-32">Time</th> -->
 							<th class="pl-7 w-32">Status</th>
 						</tr>
 					</thead>
@@ -121,10 +109,7 @@
 						{#each studentArray as student}
 							<tr>
 								<td>{student.Name}</td>
-								<td>{student.studentRFID}</td>
-								<!-- {#each docData as data }
-								<td>{data[1]}</td>
-								{/each} -->
+								<td>{student.studentID}</td>
 								<td>
 									<div class="badge w-20 ml-5 bg-green-500 border-transparent">Present</div>
 								</td>

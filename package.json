@@ -26,6 +26,7 @@
 	"type": "module",
 	"dependencies": {
 		"daisyui": "^2.51.6",
+		"date-fns": "^2.30.0",
 		"firebase": "^9.22.0"
 	}
 }
