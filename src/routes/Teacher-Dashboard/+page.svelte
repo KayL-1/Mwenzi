@@ -43,7 +43,7 @@
 		<p
 			class="flex items-center order-first mb-4 font-medium text-gray-900 lg:order-none lg:w-1/5 title-font lg:items-center lg:justify-center md:mb-0"
 		>
-			<img src="Mwenzi.png" class="w-30 h-20" alt="..." />
+			<img src="Mwenzi.png" class="w-30 h-24" alt="..." />
 		</p>
 		<div class="inline-flex items-center h-full lg:w-2/5 lg:justify-end lg:ml-0">
 			<button class="dropdown dropdown-end">
@@ -78,83 +78,186 @@
 	</div>
 </header>
 
-<div class="mt-20 pt-4 lg:w-1/3 mx-auto">
-	<div
-		class="h-full bg-gray-100 bg-opacity-75 px-8 pt-16 pb-24 rounded-lg overflow-hidden text-center relative"
-	>
-		<h1 class="font-medium text-xl mb-5 text-gray-700">ADD CLASS</h1>
+<div class="mx-20 my-10 px-44">
+	<div class="flex flex-row justify-center">
+		<div class="basis-1/2 container mt-20 pt-4 lg:w-3/6">
+			<div class="h-full bg-gray-100 bg-opacity-75 pb-16 rounded-lg overflow-hidden">
+				<div class="flex flex-row mt-2">
+					<img src="addclass.png" class="h-10 mt-4 pl-8" alt="..." />
+					<h1 class="pl-1 pt-5 pb-2 font-medium text-2xl mb-5 text-gray-700">ADD CLASS</h1>
+				</div>
 
-		<!-- ADDED CLASS-->
-		<label
-			for="my-modal-3"
-			class="btn btn-xl bg-[#2ea44f] border-transparent hover:bg-[#23853f] hover:border-transparent"
-			>RAMBUTAN</label
-		>
-		<input type="checkbox" id="my-modal-3" class="modal-toggle" />
-		<div class="modal">
-			<div class="modal-box w-full">
-				<table class="table-fixed text-left flex-grow">
-					<thead class="sticky top-0">
-						<label for="my-modal-3" class="btn btn-xs btn-circle absolute right-1">✕</label>
+				<!-- ADDED CLASS-->
+				<div class="flex flex-row pl-8">
+					<label
+						for="my-modal-3"
+						class="btn h-28 w-48 bg-[#2ea44f] border-transparent hover:bg-[#23853f] hover:border-transparent text-xl"
+						>RAMBUTAN</label
+					>
 
-						<tr>
-							<th class="w-40">Student</th>
-							<th class="w-32">Student ID</th>
-							<!-- <th class="w-32">Time</th> -->
-							<th class="pl-7 w-32">Status</th>
-						</tr>
-					</thead>
+					<input type="checkbox" id="my-modal-3" class="modal-toggle" />
+					<div class="modal">
+						<div class="modal-box w-full">
+							<table class="table-fixed text-left flex-grow">
+								<thead class="sticky top-0">
+									<label for="my-modal-3" class="btn btn-xs btn-circle absolute right-1">✕</label>
 
-					<tbody>
-						{#each studentArray as student}
+									<tr>
+										<th class="w-40">Student</th>
+										<th class="w-32">Student ID</th>
+										<!-- <th class="w-32">Time</th> -->
+										<th class="pl-7 w-32">Status</th>
+									</tr>
+								</thead>
+
+								<tbody>
+									{#each studentArray as student}
+										<tr>
+											<td>{student.Name}</td>
+											<td>{student.studentID}</td>
+											<td>
+												<div class="badge w-20 ml-5 bg-green-500 border-transparent">Present</div>
+											</td>
+										</tr>
+									{/each}
+								</tbody>
+							</table>
+						</div>
+					</div>
+
+					<!-- ADD/SELECT CLASS-->
+					<label
+						for="my-modal-4"
+						class="mx-5 btn h-28 w-48 bg-gray-100 border-gray-300 border-2 hover:bg-gray-200 hover:border-transparent text-gray-400 pl-5 text-xl"
+						>ADD CLASS
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="16"
+							height="16"
+							fill="currentColor"
+							class="bi bi-plus"
+							viewBox="0 0 16 16"
+						>
+							<path
+								d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"
+							/>
+						</svg>
+					</label>
+				</div>
+				<input type="checkbox" id="my-modal-4" class="modal-toggle" />
+				<div class="modal">
+					<div class="modal-box relative">
+						<label for="my-modal-4" class="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
+						<h1 class="font-medium text-l mb-5 text-gray-700">SELECT CLASS</h1>
+						<select
+							id="classSelect1"
+							class="pl-2 py-2 w-full rounded-md border placeholder-gray-300 border-gray-300 text-md"
+						/>
+						<button
+							class="mt-3 w-full px-3 py-4 text-white rounded-md bg-[#2ea44f] focus:outline-none"
+							>Add</button
+						>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="basis-1/2 ml-2 container mt-20 pt-4 lg:w-3/6">
+			<div class="h-full bg-gray-100 bg-opacity-75 pb-16 rounded-lg overflow-hidden text-center">
+				<div class="flex flex-row mt-2">
+					<img src="leaderboard.png" class="h-10 mt-4 pl-8" alt="..." />
+					<h1 class="pl-1 pt-5 pb-2 font-medium text-2xl text-gray-700">LEADERBOARDS</h1>
+					<!--button class="btn">Sections</button-->
+				</div>
+
+				<div class="flex justify-center ">
+					<table class="w-7/12">
+						<!-- head -->
+						<thead class="bg-transparent">
 							<tr>
-								<td>{student.Name}</td>
-								<td>{student.studentID}</td>
-								<td>
-									<div class="badge w-20 ml-5 bg-green-500 border-transparent">Present</div>
-								</td>
+								<th />
+								<th />
+								<th>Points</th>
 							</tr>
-						{/each}
-					</tbody>
-				</table>
+						</thead>
+						<tbody>
+							<!-- row 1 -->
+							<tr>
+								<th />
+								<td class="font-medium text-2xl text-gray-700 text-left"
+									>Ace Dela Cuesta</td
+								>
+								<td class="font-medium text-2xl">20</td>
+							</tr>
+							<!-- row 2 -->
+							<tr>
+								<th />
+								<td class="font-medium text-2xl text-gray-700 text-left"
+									>Kyle Dela Pena</td
+								>
+								<td class="font-medium text-2xl">20</td>
+							</tr>
+							<!-- row 3 -->
+							<tr>
+								<th />
+								<td class="font-medium text-2xl text-gray-700 text-left"
+									>Luis Santiago</td
+								>
+								<td class="font-medium text-2xl">20</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
 			</div>
 		</div>
+	</div>
 
-		<!-- ADD/SELECT CLASS-->
-		<label
-			for="my-modal-4"
-			class="btn btn-xl bg-gray-100 border-gray-300 border-2 hover:bg-gray-200 hover:border-transparent text-gray-400 pl-5"
-			>ADD CLASS
-			<svg
-				xmlns="http://www.w3.org/2000/svg"
-				width="16"
-				height="16"
-				fill="currentColor"
-				class="bi bi-plus"
-				viewBox="0 0 16 16"
+	<div class="flex flex-row justify-center">
+		<div class="basis-1/2 container mt-7 lg:w-1/4">
+			<div
+				class="h-full bg-gray-100 bg-opacity-75 pb-16 rounded-lg overflow-hidden text-center"
 			>
-				<path
-					d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"
-				/>
-			</svg>
-		</label>
-		<input type="checkbox" id="my-modal-4" class="modal-toggle" />
-		<div class="modal">
-			<div class="modal-box relative">
-				<label for="my-modal-4" class="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
-				<h1 class="font-medium text-l mb-5 text-gray-700">SELECT CLASS</h1>
-				<select
-					id="classSelect1"
-					class="pl-2 py-2 w-full rounded-md border placeholder-gray-300 border-gray-300 text-md"
-				/>
-				<button class="mt-3 w-full px-3 py-4 text-white rounded-md bg-[#2ea44f] focus:outline-none"
-					>Add</button
-				>
+			<div class="flex flex-row mt-2">
+				<img src="randomizer.png" class="h-10 mt-4 pl-8" alt="..." />
+				<h1 class="pl-1 pt-5 pb-2 font-medium text-2xl mb-5 text-gray-700">RANDOMIZER</h1>
+			</div>
+			<div>
+				<button class="btn h-24 w-48 bg-[#2ea44f] border-transparent hover:bg-[#23853f] hover:border-transparent text-xl">SELECT</button>
+			</div>
 			</div>
 		</div>
 
-		<!--ATTENDANCE LIST-->
-		<!--div class='flex mt-20 min-h-screen bg-slate-white'>
+		<div class="basis-1/2 container mt-7 lg:w-1/4">
+			<div
+				class="ml-2 h-full bg-gray-100 bg-opacity-75 pb-16 rounded-lg overflow-hidden text-center"
+			>
+			<div class="flex flex-row mt-2">
+				<img src="group.png" class="h-10 mt-4 pl-8" alt="..." />
+				<h1 class="pl-1 pt-5 pb-2 font-medium text-2xl mb-5 text-gray-700">CREATE GROUP</h1>
+			</div>
+			<div>
+				<button class="btn h-24 w-48 bg-[#2ea44f] border-transparent hover:bg-[#23853f] hover:border-transparent text-xl">CREATE</button>
+			</div>
+			</div>
+		</div>
+
+		<div class="basis-1/3 container mt-7 lg:w-96">
+			<div
+				class="ml-2 h-full bg-gray-100 bg-opacity-75 pb-16 rounded-lg overflow-hidden text-center"
+			>
+			<div class="flex flex-row mt-2">
+				<img src="timer.png" class="h-10 mt-4 pl-8" alt="..." />
+				<h1 class="pl-1 pt-5 pb-2 font-medium text-2xl mb-5 text-gray-700">TIMER</h1>
+			</div>
+			<div>
+				<button class="btn h-24 w-48 bg-[#2ea44f] border-transparent hover:bg-[#23853f] hover:border-transparent text-xl">START</button>
+			</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!--ATTENDANCE LIST-->
+<!--div class='flex mt-20 min-h-screen bg-slate-white'>
         <div class="container mx-auto">
             <div class="max-w-md mx-auto">
                 <div class="text-center">
@@ -174,7 +277,5 @@
                 </div>
             </div>
         </div>
-    </div-->
-		<!--ATTENDANCE LIST-->
-	</div>
-</div>
+    	</div-->
+<!--ATTENDANCE LIST-->

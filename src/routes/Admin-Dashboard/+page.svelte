@@ -142,7 +142,7 @@
 		<p
 			class="flex items-center order-first mb-4 font-medium text-gray-900 lg:order-none lg:w-1/5 title-font lg:items-center lg:justify-center md:mb-0"
 		>
-			<img src="Mwenzi.png" class="w-30 h-20" alt="..." />
+			<img src="Mwenzi.png" class="w-30 h-24" alt="..." />
 		</p>
 		<div class="inline-flex items-center h-full lg:w-2/5 lg:justify-end lg:ml-0">
 			<button class="dropdown dropdown-end">
