@@ -70,7 +70,7 @@
 						<a href="/.." class="ml-12 py-2 flex align-center font-medium">Settings</a>
 					</li>
 					<li class="rounded-md hover:bg-gray-200">
-						<a href="/.." class="ml-12 py-2 flex text-center font-medium">Log out</a>
+						<a href="/routes" class="ml-12 py-2 flex text-center font-medium">Log out</a>
 					</li>
 				</ul>
 			</button>
@@ -167,10 +167,18 @@
 				<div class="flex flex-row mt-2">
 					<img src="leaderboard.png" class="h-10 mt-4 pl-8" alt="..." />
 					<h1 class="pl-1 pt-5 pb-2 font-medium text-2xl text-gray-700">LEADERBOARDS</h1>
+
+					<div class="w-full flex flex-row-reverse mr-4 mt-1">
+					<select class="h-8 w-1/2 rounded-md border placeholder-gray-300 text-md text-center mt-3 bg-gray-100">
+						<option>Rambutan - Mapeh</option>
+						<option>Marge</option>
+					  </select>
+					</div>
 					<!--button class="btn">Sections</button-->
 				</div>
+				
 
-				<div class="flex justify-center ">
+				<div class="flex justify-center">
 					<table class="w-7/12">
 						<!-- head -->
 						<thead class="bg-transparent">
@@ -184,25 +192,19 @@
 							<!-- row 1 -->
 							<tr>
 								<th />
-								<td class="font-medium text-2xl text-gray-700 text-left"
-									>Ace Dela Cuesta</td
-								>
+								<td class="font-medium text-2xl text-gray-700 text-left">Ace Dela Cuesta</td>
 								<td class="font-medium text-2xl">20</td>
 							</tr>
 							<!-- row 2 -->
 							<tr>
 								<th />
-								<td class="font-medium text-2xl text-gray-700 text-left"
-									>Kyle Dela Pena</td
-								>
+								<td class="font-medium text-2xl text-gray-700 text-left">Kyle Dela Pena</td>
 								<td class="font-medium text-2xl">20</td>
 							</tr>
 							<!-- row 3 -->
 							<tr>
 								<th />
-								<td class="font-medium text-2xl text-gray-700 text-left"
-									>Luis Santiago</td
-								>
+								<td class="font-medium text-2xl text-gray-700 text-left">Luis Santiago</td>
 								<td class="font-medium text-2xl">20</td>
 							</tr>
 						</tbody>
@@ -210,20 +212,23 @@
 				</div>
 			</div>
 		</div>
+
+		
 	</div>
 
 	<div class="flex flex-row justify-center">
 		<div class="basis-1/2 container mt-7 lg:w-1/4">
-			<div
-				class="h-full bg-gray-100 bg-opacity-75 pb-16 rounded-lg overflow-hidden text-center"
-			>
-			<div class="flex flex-row mt-2">
-				<img src="randomizer.png" class="h-10 mt-4 pl-8" alt="..." />
-				<h1 class="pl-1 pt-5 pb-2 font-medium text-2xl mb-5 text-gray-700">RANDOMIZER</h1>
-			</div>
-			<div>
-				<button class="btn h-24 w-48 bg-[#2ea44f] border-transparent hover:bg-[#23853f] hover:border-transparent text-xl">SELECT</button>
-			</div>
+			<div class="h-full bg-gray-100 bg-opacity-75 pb-16 rounded-lg overflow-hidden text-center">
+				<div class="flex flex-row mt-2">
+					<img src="randomizer.png" class="h-10 mt-4 pl-8" alt="..." />
+					<h1 class="pl-1 pt-5 pb-2 font-medium text-2xl mb-5 text-gray-700">RANDOMIZER</h1>
+				</div>
+				<div>
+					<button
+						class="btn h-24 w-48 bg-[#2ea44f] border-transparent hover:bg-[#23853f] hover:border-transparent text-xl"
+						>SELECT</button
+					>
+				</div>
 			</div>
 		</div>
 
@@ -231,13 +236,16 @@
 			<div
 				class="ml-2 h-full bg-gray-100 bg-opacity-75 pb-16 rounded-lg overflow-hidden text-center"
 			>
-			<div class="flex flex-row mt-2">
-				<img src="group.png" class="h-10 mt-4 pl-8" alt="..." />
-				<h1 class="pl-1 pt-5 pb-2 font-medium text-2xl mb-5 text-gray-700">CREATE GROUP</h1>
-			</div>
-			<div>
-				<button class="btn h-24 w-48 bg-[#2ea44f] border-transparent hover:bg-[#23853f] hover:border-transparent text-xl">CREATE</button>
-			</div>
+				<div class="flex flex-row mt-2">
+					<img src="group.png" class="h-10 mt-4 pl-8" alt="..." />
+					<h1 class="pl-1 pt-5 pb-2 font-medium text-2xl mb-5 text-gray-700">CREATE GROUP</h1>
+				</div>
+				<div>
+					<button
+						class="btn h-24 w-48 bg-[#2ea44f] border-transparent hover:bg-[#23853f] hover:border-transparent text-xl"
+						>CREATE</button
+					>
+				</div>
 			</div>
 		</div>
 
@@ -245,13 +253,16 @@
 			<div
 				class="ml-2 h-full bg-gray-100 bg-opacity-75 pb-16 rounded-lg overflow-hidden text-center"
 			>
-			<div class="flex flex-row mt-2">
-				<img src="timer.png" class="h-10 mt-4 pl-8" alt="..." />
-				<h1 class="pl-1 pt-5 pb-2 font-medium text-2xl mb-5 text-gray-700">TIMER</h1>
-			</div>
-			<div>
-				<button class="btn h-24 w-48 bg-[#2ea44f] border-transparent hover:bg-[#23853f] hover:border-transparent text-xl">START</button>
-			</div>
+				<div class="flex flex-row mt-2">
+					<img src="timer.png" class="h-10 mt-4 pl-8" alt="..." />
+					<h1 class="pl-1 pt-5 pb-2 font-medium text-2xl mb-5 text-gray-700">TIMER</h1>
+				</div>
+				<div>
+					<button
+						class="btn h-24 w-48 bg-[#2ea44f] border-transparent hover:bg-[#23853f] hover:border-transparent text-xl"
+						>START</button
+					>
+				</div>
 			</div>
 		</div>
 	</div>
