@@ -11,29 +11,29 @@
 	let dateArray = [];
 	let studentArray = [];
 
-	async function displayClasses() {
-		const rtdbRef = ref(database, 'rfid');
-		const usersCollection = collection(firestore, 'users');
+	// async function displayClasses() {
+	// 	const rtdbRef = ref(database, 'rfid');
+	// 	const usersCollection = collection(firestore, 'users');
 
-		onValue(rtdbRef, async (snapshot) => {
-			const rfidTagsData = snapshot.val();
-			const rfidTagValues = Object.values(rfidTagsData).flat();
+	// 	onValue(rtdbRef, async (snapshot) => {
+	// 		const rfidTagsData = snapshot.val();
+	// 		const rfidTagValues = Object.values(rfidTagsData).flat();
 
-			console.log(rfidTagValues);
+	// 		console.log(rfidTagValues);
 
-			const queryRef = query(usersCollection, where('studentRFID', 'in', rfidTagValues));
-			const docSnap = await getDocs(queryRef);
+	// 		const queryRef = query(usersCollection, where('studentRFID', 'in', rfidTagValues));
+	// 		const docSnap = await getDocs(queryRef);
 
-			const updatedStudentArray = [];
-			docSnap.forEach((doc) => {
-				updatedStudentArray.push(doc.data());
-			});
+	// 		const updatedStudentArray = [];
+	// 		docSnap.forEach((doc) => {
+	// 			updatedStudentArray.push(doc.data());
+	// 		});
 
-			studentArray = updatedStudentArray;
-			console.log(studentArray);
-		});
-	}
-	displayClasses();
+	// 		studentArray = updatedStudentArray;
+	// 		console.log(studentArray);
+	// 	});
+	// }
+	// displayClasses();
 </script>
 
 <!-- Header Logo Center -->

@@ -1,5 +1,5 @@
 <script>
-	import { auth } from '$lib/firebase';
+	import { auth, database } from '$lib/firebase';
 	import {
 		doc,
 		setDoc,
@@ -14,6 +14,7 @@
 	import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 	import { goto } from '$app/navigation';
 	import { firebase, firestore, functions } from '$lib/firebase';
+	import { getDatabase, ref, onValue, get, set } from 'firebase/database';
 
 	let className = '';
 	let gradeLevel = '';
@@ -31,35 +32,8 @@
 	let studentEmail = '';
 	let studentClass = '';
 
-	async function createStudent() {
-		try {
-			const userCredential = await createUserWithEmailAndPassword(auth, studentEmail, studentID);
-			const user = userCredential.user;
-			const userID = user.uid;
-			console.log('createAccount');
-			console.log(userID);
-
-			const docRef = await setDoc(doc(firestore, 'users', userID), {
-				UID: userID,
-				email: studentEmail,
-				userRole: 'student',
-				Name: studentName,
-				studentID: studentID,
-				studentRFID: studentRFID
-			});
-
-			const docRef2 = doc(firestore, 'classes', studentClass);
-			await updateDoc(docRef2, {
-				students: arrayUnion(userID)
-			});
-
-			console.log('Document created in Firestore with ID:', userID);
-		} catch (error) {
-			const errorCode = error.code;
-			const errorMessage = error.message;
-			console.error('Error creating user and document:', errorCode, errorMessage);
-		}
-	}
+	let myVariable = '';
+	let rfidMode = '';
 
 	// CREATE TEACHERS ACC
 	async function createTeacher() {
@@ -132,7 +106,124 @@
 		console.log(data);
 	}
 
+	async function displayData() {
+		var rfidRef = ref(database, 'rfidRegisterValue/RFID');
+		var rfidModex = ref(database, 'rfidMode/register');
+
+		try {
+			const snapshot = await get(rfidRef);
+			const rfidValue = snapshot.val();
+			myVariable = rfidValue;
+			console.log('RFID value:', myVariable);
+		} catch (error) {
+			console.log('Error retrieving RFID value:', error);
+		}
+
+		try {
+			const snapshot = await get(rfidModex);
+			const mode = snapshot.val();
+			rfidMode = mode;
+			console.log('RFID mode:', rfidMode);
+		} catch (error) {
+			console.log('Error retrieving RFID mode:', error);
+		}
+	}
+
+	// Listen for changes in the data
+	function listenForChanges() {
+		var rfidRef = ref(database, 'rfidRegisterValue/RFID');
+		var rfidModex = ref(database, 'rfidMode/register');
+
+		onValue(rfidRef, (snapshot) => {
+			const rfidValue = snapshot.val();
+			myVariable = rfidValue;
+			console.log('RFID value changed:', myVariable);
+		});
+
+		onValue(rfidModex, (snapshot) => {
+			const mode = snapshot.val();
+			rfidMode = mode;
+			console.log('RFID mode changed:', rfidMode);
+		});
+	}
+
+	async function createStudent() {
+		if (rfidMode == 'On') {
+			try {
+				const userCredential = await createUserWithEmailAndPassword(auth, studentEmail, studentID);
+				const user = userCredential.user;
+				const userID = user.uid;
+				console.log('createAccount');
+				console.log(userID);
+
+				const docRef = await setDoc(doc(firestore, 'users', userID), {
+					UID: userID,
+					email: studentEmail,
+					userRole: 'student',
+					Name: studentName,
+					studentID: studentID,
+					studentRFID: myVariable
+				});
+
+				const docRef2 = doc(firestore, 'classes', studentClass);
+				await updateDoc(docRef2, {
+					students: arrayUnion(userID)
+				});
+
+				writeUserData1();
+
+				console.log('Document created in Firestore with ID:', userID);
+			} catch (error) {
+				const errorCode = error.code;
+				const errorMessage = error.message;
+				console.error('Error creating user and document:', errorCode, errorMessage);
+			}
+		} else {
+			try {
+				const userCredential = await createUserWithEmailAndPassword(auth, studentEmail, studentID);
+				const user = userCredential.user;
+				const userID = user.uid;
+				console.log('createAccount');
+				console.log(userID);
+
+				const docRef = await setDoc(doc(firestore, 'users', userID), {
+					UID: userID,
+					email: studentEmail,
+					userRole: 'student',
+					Name: studentName,
+					studentID: studentID,
+					studentRFID: studentRFID
+				});
+
+				const docRef2 = doc(firestore, 'classes', studentClass);
+				await updateDoc(docRef2, {
+					students: arrayUnion(userID)
+				});
+
+				writeUserData2();
+
+				console.log('Document created in Firestore with ID:', userID);
+			} catch (error) {
+				const errorCode = error.code;
+				const errorMessage = error.message;
+				console.error('Error creating user and document:', errorCode, errorMessage);
+			}
+		}
+	}
+
+	function writeUserData1() {
+		set(ref(database, 'rfid/' + myVariable), myVariable);
+		console.error("Using Arduino RFID");
+	}
+
+	function writeUserData2() {
+		set(ref(database, 'rfid/' + studentRFID), studentRFID);
+		console.error("Using Normal Way");
+	}
+
 	displayClasses();
+	listenForChanges();
+	displayData();
 </script>
 
 <!-- Header Logo Center -->
@@ -254,7 +345,7 @@
 									type="text"
 									name="rfidStudent"
 									id="rfidStudent"
-									placeholder="Student RFID"
+									placeholder={rfidMode === 'On' ? myVariable : 'Student RFID'}
 									class="mt-3 w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-md focus:outline-none"
 								/>
 								<input
