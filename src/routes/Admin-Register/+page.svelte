@@ -275,248 +275,264 @@
 	displayData();
 </script>
 
-<!-- Header Logo Center -->
-<header class="w-full text-gray-700 bg-white border-t border-gray-100 shadow-sm body-font">
-	<div class="container flex flex-col flex-wrap items-center pt-2 mx-auto md:flex-row">
-		<button>
-			<a href="/Admin-Dashboard" id="Teacher">
-				<img src="back.png" class="w-8 h-8 ml-5" alt="..." />
-			</a>
-		</button>
-		<nav class="flex flex-wrap items-center text-base lg:w-50 md:ml-auto" />
-		<p
-			class="flex items-center order-first mb-4 font-medium text-gray-900 lg:order-none lg:w-1/5 title-font lg:items-center lg:justify-center md:mb-0"
-		>
-			<img src="Mwenzi.png" class="w-30 h-24" alt="..." />
-		</p>
+<body class="bg-gray-100 w-screen h-screen">
+	<!-- Header Logo Center -->
 
-		<div class="inline-flex items-center h-full lg:w-2/5 lg:justify-start lg:ml-0" />
-	</div>
-</header>
+	<header class="w-full text-gray-100 bg-gray-50 border-t border-gray-100 shadow-sm body-font">
+		<div class="container flex flex-col flex-wrap items-center pt-2 mx-auto md:flex-row">
+			<button>
+				<a href="/Admin-Dashboard" id="Teacher">
+					<img src="back.png" class="w-8 h-8 ml-5" alt="..." />
+				</a>
+			</button>
+			<nav class="flex flex-wrap items-center text-base lg:w-50 md:ml-auto" />
+			<p
+				class="flex items-center order-first mb-4 font-medium text-gray-900 lg:order-none lg:w-1/5 title-font lg:items-center lg:justify-center md:mb-0"
+			>
+				<img src="Mwenzi.png" class="w-30 h-20 pb-2" alt="..." />
+			</p>
 
-<section class="text-gray-600 body-font">
-	<div class="container px-5 py-24 mx-auto">
-		<div class="flex flex-wrap -m-4">
-			<div class="p-4 lg:w-1/3">
-				<div
-					class="h-full bg-gray-100 bg-opacity-75 px-8 pt-16 pb-24 rounded-lg overflow-hidden text-center relative"
-				>
-					<!--ADD CLASS-->
-					<div class="container mx-auto">
+			<div class="inline-flex items-center h-full lg:w-2/5 lg:justify-start lg:ml-0" />
+		</div>
+	</header>
+
+	<section class="text-gray-600 body-font">
+		<div class="container px-5 py-24 mx-auto">
+			<div class="flex flex-wrap -m-4">
+				<div class="p-4 lg:w-1/3">
+					<div
+						class="h-full bg-white rounded-2xl shadow-2xl bg-opacity-75 px-8 pt-16 pb-24 overflow-hidden text-center relative"
+					>
+						<!--ADD CLASS-->
+						<div class="container mx-auto">
+							<div class="max-w-md mx-auto">
+								<div class="text-center" />
+								<div class="m-7">
+									<div class="mb-6">
+										<label for="class" class="block mb-6 text-lg font-medium text-gray"
+											>Add Class</label
+										>
+										<input
+											bind:value={gradeLevel}
+											type="name"
+											name="gradelevel"
+											id="grade"
+											placeholder="Grade Level"
+											class="w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-2xl focus:outline-none"
+										/>
+										<input
+											bind:value={className}
+											type="name"
+											name="classname"
+											id="classname"
+											placeholder="Class Name"
+											class="mt-3 w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-2xl focus:outline-none"
+										/>
+									</div>
+									<button
+										on:click={createClass}
+										class="font-medium w-full px-3 py-4 text-white rounded-2xl bg-[#2ea44f] focus:outline-none"
+										>Add</button
+									>
+								</div>
+							</div>
+						</div>
+						<!--END-->
+					</div>
+				</div>
+				<div class="p-4 lg:w-1/3">
+					<div
+						class="h-full bg-white rounded-2xl shadow-2xl bg-opacity-75 px-8 pt-16 pb-24 overflow-hidden text-center relative"
+					>
+						<!--REGISTER STUDENT-->
 						<div class="max-w-md mx-auto">
 							<div class="text-center" />
 							<div class="m-7">
 								<div class="mb-6">
-									<label for="class" class="block mb-6 text-lg font-medium text-gray"
-										>Add Class</label
+									<label for="student" class="block mb-6 text-lg font-medium text-gray"
+										>Register Student</label
 									>
 									<input
-										bind:value={gradeLevel}
+										bind:value={studentName}
 										type="name"
-										name="gradelevel"
-										id="grade"
-										placeholder="Grade Level"
-										class="w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-md focus:outline-none"
+										name="fullname"
+										id="studentfullname"
+										placeholder="Full Name"
+										class="w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-2xl focus:outline-none"
 									/>
 									<input
-										bind:value={className}
-										type="name"
-										name="classname"
-										id="classname"
-										placeholder="Class Name"
-										class="mt-3 w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-md focus:outline-none"
+										bind:value={studentEmail}
+										type="email"
+										name="studentEmail"
+										id="studentEmail"
+										placeholder="Student Email"
+										class="mt-3 w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-2xl focus:outline-none"
 									/>
-								</div>
-								<button
-									on:click={createClass}
-									class=" w-full px-3 py-4 text-white rounded-md bg-[#2ea44f] focus:outline-none"
-									>Add</button
-								>
-							</div>
-						</div>
-					</div>
-					<!--END-->
-				</div>
-			</div>
-			<div class="p-4 lg:w-1/3">
-				<div
-					class="h-full bg-gray-100 bg-opacity-75 px-8 pt-16 pb-24 rounded-lg overflow-hidden text-center relative"
-				>
-					<!--REGISTER STUDENT-->
-					<div class="max-w-md mx-auto">
-						<div class="text-center" />
-						<div class="m-7">
-							<div class="mb-6">
-								<label for="student" class="block mb-6 text-lg font-medium text-gray"
-									>Register Student</label
-								>
-								<input
-									bind:value={studentName}
-									type="name"
-									name="fullname"
-									id="studentfullname"
-									placeholder="Full Name"
-									class="w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-md focus:outline-none"
-								/>
-								<input
-									bind:value={studentEmail}
-									type="email"
-									name="studentEmail"
-									id="studentEmail"
-									placeholder="Student Email"
-									class="mt-3 w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-md focus:outline-none"
-								/>
-								<div class="mt-3 flex items-center">
+									<div class="mt-3 flex items-center">
+										{#if rfidMode == 'On'}
+											<input
+												bind:this={modeSwitch}
+												on:change={toggleSwitch}
+												type="checkbox"
+												id="toggleMode"
+												name="toggleMode"
+												class="toggle checked:bg-[#2ea44f] ml-3"
+												checked
+											/>
+										{:else}
+											<input
+												bind:this={modeSwitch}
+												on:change={toggleSwitch}
+												type="checkbox"
+												id="toggleMode"
+												name="toggleMode"
+												class="toggle checked:bg-[#2ea44f] ml-3"
+											/>
+										{/if}
+
+										
+										{#if rfidMode == 'On'}
+											<input
+												bind:value={studentRFID}
+												type="text"
+												name="rfidStudent"
+												id="rfidStudent"
+												placeholder={myVariable}
+												class="ml-3 w-full px-3 py-2 placeholder-gray-700 border border-gray-300 rounded-2xl focus:outline-none"
+												disabled
+											/>
+										{:else}
+											<input
+												type="text"
+												name="rfidStudent"
+												id="rfidStudent"
+												placeholder="Student RFID"
+												class="ml-3 w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-2xl focus:outline-none"
+											/>
+										{/if}
+									</div>
 									<input
-										bind:this={modeSwitch}
-										on:change={toggleSwitch}
-										type="checkbox"
-										id="toggleMode"
-										name="toggleMode"
-										class="toggle checked:bg-[#2ea44f] ml-3"
+										bind:value={studentID}
+										type="text"
+										name="studentid"
+										id="studentid"
+										placeholder="Student ID"
+										class="mt-3 w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-2xl focus:outline-none"
 									/>
-									{#if rfidMode == 'On'}
-										<input
-											bind:value={studentRFID}
-											type="text"
-											name="rfidStudent"
-											id="rfidStudent"
-											placeholder={myVariable}
-											class="ml-3 w-full px-3 py-2 placeholder-gray-700 border border-gray-300 rounded-md focus:outline-none"
-											disabled
-										/>
-									{:else}
-										<input
-											type="text"
-											name="rfidStudent"
-											id="rfidStudent"
-											placeholder="Student RFID"
-											class="ml-3 w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-md focus:outline-none"
-										/>
-									{/if}
 								</div>
-								<input
-									bind:value={studentID}
-									type="text"
-									name="studentid"
-									id="studentid"
-									placeholder="Student ID"
-									class="mt-3 w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-md focus:outline-none"
-								/>
-							</div>
 
-							<div class="mb-6">
-								<label for="class" class="block mb-2 text-md font-medium text-gray"
-									>Select Class</label
-								>
+								<div class="mb-6">
+									<label for="class" class="block mb-2 text-md font-medium text-gray"
+										>Select Class</label
+									>
 
-								<select
-									bind:value={studentClass}
-									id="classSelect1"
-									class="pl-2 py-2 w-full rounded-md border placeholder-gray-300 border-gray-300 text-md"
-								>
-									{#each data as item1}
-										<option value={item1.className}>{item1.className}</option>
-									{/each}
-								</select>
-								<button
-									on:click={createStudent}
-									class="mt-3 w-full px-3 py-4 text-white rounded-md bg-[#2ea44f] focus:outline-none"
-									>Add</button
-								>
+									<select
+										bind:value={studentClass}
+										id="classSelect1"
+										class="pl-2 py-2 w-full rounded-2xl border placeholder-gray-300 border-gray-300 text-md"
+									>
+										{#each data as item1}
+											<option value={item1.className}>{item1.className}</option>
+										{/each}
+									</select>
+									<button
+										on:click={createStudent}
+										class="font-medium rounded-2xl mt-3 w-full px-3 py-4 text-white bg-[#2ea44f] focus:outline-none"
+										>Add</button
+									>
+								</div>
 							</div>
 						</div>
+						<!--END-->
 					</div>
-					<!--END-->
 				</div>
-			</div>
 
-			<div class="p-4 lg:w-1/3">
-				<div
-					class="h-full bg-gray-100 bg-opacity-75 px-8 pt-16 pb-12 rounded-lg overflow-hidden text-center relative"
-				>
-					<!--CREATE TEACHER'S ACCOUNT-->
-					<div class="max-w-md mx-auto">
-						<div class="text-center" />
-						<div class="m-7">
-							<div class="mb-6">
-								<label for="teacher" class="block mb-6 text-lg font-medium text-gray"
-									>Create Teacher's Account</label
-								>
-								<input
-									bind:value={teachFullName}
-									type="name"
-									name="fullname"
-									id="teacherfullname"
-									placeholder="Full Name"
-									class="w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-md focus:outline-none"
-								/>
-								<input
-									bind:value={teachEmail}
-									type="email"
-									name="teachEmail"
-									id="teachEmail"
-									placeholder="Email"
-									class="mt-3 w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-md focus:outline-none"
-								/>
-								<input
-									bind:value={teachPassword}
-									type="password"
-									name="password"
-									id="password"
-									placeholder="Password"
-									class="mt-3 w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-md focus:outline-none"
-								/>
-								<input
-									bind:value={teachPasswordCon}
-									type="password"
-									name="confpassword"
-									id="confpassword"
-									placeholder="Confirm Password"
-									class="mt-3 w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-md focus:outline-none"
-								/>
-
-								<div class="mb-2 mt-4">
-									<label for="teacher" class="block mb-2 text-md font-medium text-gray"
-										>Add Subject</label
+				<div class="p-4 lg:w-1/3">
+					<div
+						class="h-full bg-white rounded-2xl shadow-2xl bg-opacity-75 px-8 pt-16 pb-12 overflow-hidden text-center relative"
+					>
+						<!--CREATE TEACHER'S ACCOUNT-->
+						<div class="max-w-md mx-auto">
+							<div class="text-center" />
+							<div class="m-7">
+								<div class="mb-6">
+									<label for="teacher" class="block mb-6 text-lg font-medium text-gray"
+										>Create Teacher's Account</label
 									>
 									<input
-										bind:value={teachSubject}
+										bind:value={teachFullName}
 										type="name"
 										name="fullname"
 										id="teacherfullname"
-										placeholder="Add Subject"
-										class="w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-md focus:outline-none"
+										placeholder="Full Name"
+										class="w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-2xl focus:outline-none"
 									/>
-								</div>
-								<label for="teacherclass" class="block mb-2 text-md font-medium text-gray"
-									>Add Class to Teacher</label
-								>
-								<select
-									bind:value={tSelectClass}
-									id="classSelect2"
-									class="pl-2 py-2 w-full rounded-md border border-gray-300 focus:bg-white text-md"
-								>
-									{#each data as item2}
-										<option value={item2.className}>{item2.className}</option>
-									{/each}
-								</select>
-							</div>
+									<input
+										bind:value={teachEmail}
+										type="email"
+										name="teachEmail"
+										id="teachEmail"
+										placeholder="Email"
+										class="mt-3 w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-2xl focus:outline-none"
+									/>
+									<input
+										bind:value={teachPassword}
+										type="password"
+										name="password"
+										id="password"
+										placeholder="Password"
+										class="mt-3 w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-2xl focus:outline-none"
+									/>
+									<input
+										bind:value={teachPasswordCon}
+										type="password"
+										name="confpassword"
+										id="confpassword"
+										placeholder="Confirm Password"
+										class="mt-3 w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-2xl focus:outline-none"
+									/>
 
-							<button
-								on:click={createTeacher}
-								class=" w-full px-3 py-4 text-white rounded-md bg-[#2ea44f] focus:outline-none"
-								>Add</button
-							>
+									<div class="mb-2 mt-4">
+										<label for="teacher" class="block mb-2 text-md font-medium text-gray"
+											>Add Subject</label
+										>
+										<input
+											bind:value={teachSubject}
+											type="name"
+											name="fullname"
+											id="teacherfullname"
+											placeholder="Add Subject"
+											class="w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-2xl focus:outline-none"
+										/>
+									</div>
+									<label for="teacherclass" class="block mb-2 text-md font-medium text-gray"
+										>Add Class to Teacher</label
+									>
+									<select
+										bind:value={tSelectClass}
+										id="classSelect2"
+										class="pl-2 py-2 w-full rounded-2xl border border-gray-300 focus:bg-white text-md"
+									>
+										{#each data as item2}
+											<option value={item2.className}>{item2.className}</option>
+										{/each}
+									</select>
+								</div>
+
+								<button
+									on:click={createTeacher}
+									class=" rounded-2xl w-full px-3 py-4 font-medium text-white bg-[#2ea44f] focus:outline-none"
+									>Add</button
+								>
+							</div>
 						</div>
+						<!--END-->
 					</div>
-					<!--END-->
 				</div>
 			</div>
 		</div>
-	</div>
-</section>
-
+	</section>
+</body>
 <!--div class='flex items-center flex-col justify-center pt-20 bg-slate-white'>
     <div class="container mx-auto">
         <div class="max-w-md mx-auto">
@@ -526,9 +542,9 @@
                 <form action="?/" method="POST">
                     <div class="mb-6">
                         <label for="username" class="block mb-2 text-md font-medium text-gray">Add Class</label>
-                        <input type="username" name="username" id="username" placeholder="Add Student" class="w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-md focus:outline-none"/>
+                        <input type="username" name="username" id="username" placeholder="Add Student" class="w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-2xl focus:outline-none"/>
                     </div>
-                        <button class=" w-full px-3 py-4 text-white rounded-md bg-[#2ea44f] focus:outline-none">Add</button>
+                        <button class=" w-full px-3 py-4 text-white rounded-2xl bg-[#2ea44f] focus:outline-none">Add</button>
                 </form>
             </div>
         </div>
@@ -542,16 +558,16 @@
                 <form action="?/" method="POST">
                     <div class="mb-6">
                         <label for="username" class="block mb-2 text-md font-medium text-gray">Register Student</label>
-                        <input type="username" name="username" id="username" placeholder="Full Name" class="w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-md focus:outline-none"/>
+                        <input type="username" name="username" id="username" placeholder="Full Name" class="w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-2xl focus:outline-none"/>
                     </div>
 
                     <form action="?/" method="POST">
                         <div class="mb-6">
                             <label for="username" class="block mb-2 text-md font-medium text-gray">Select Class</label>
-                            <input type="username" name="username" id="username" placeholder="Full Name" class="w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-md focus:outline-none"/>
+                            <input type="username" name="username" id="username" placeholder="Full Name" class="w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-2xl focus:outline-none"/>
                         </div>
 
-                        <button class=" w-full px-3 py-4 text-white rounded-md bg-[#2ea44f] focus:outline-none">Add</button>
+                        <button class=" w-full px-3 py-4 text-white rounded-2xl bg-[#2ea44f] focus:outline-none">Add</button>
                 </form>
             </div>
         </div>

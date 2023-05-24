@@ -1,11 +1,12 @@
 <!-- Header Logo Center -->
-<header class="w-full text-gray-700 bg-white border-t border-gray-100 shadow-sm body-font">
+<body class="bg-gray-100 w-screen h-screen">
+<header class="w-full text-gray-700 bg-gray-50 border-t border-gray-100 shadow-sm body-font">
 	<div class="container flex flex-col flex-wrap items-center pt-2 mx-auto md:flex-row">
 		<nav class="flex flex-wrap items-center text-base lg:w-2/5 md:ml-auto" />
 		<p
 			class="flex items-center order-first mb-4 font-medium text-gray-900 lg:order-none lg:w-1/5 title-font lg:items-center lg:justify-center md:mb-0"
 		>
-			<img src="Mwenzi.png" class="w-30 h-24" alt="..." />
+			<img src="Mwenzi.png" class="w-30 h-20 pb-2" alt="..." />
 		</p>
 		<div class="inline-flex items-center h-full lg:w-2/5 lg:justify-end lg:ml-0">
 			<button class="dropdown dropdown-end">
@@ -43,10 +44,10 @@
 <div class="mx-20 my-10 px-44">
 	<div class="flex flex-row justify-center">
 		<div class="container mt-20 pt-4 lg:w-1/4 pr-2">
-			<div class="h-full bg-gray-100 bg-opacity-75 pb-16 rounded-lg overflow-hidden">
+			<div class="h-full bg-white shadow-xl pb-16 rounded-2xl overflow-hidden">
 				<div class="flex flex-row mt-2 justify-center">
-					<img src="register.png" class="h-10 mt-4" alt="..." />
-					<h1 class="pl-1 pt-5 pb-2 font-medium text-2xl mb-5 text-gray-700">REGISTER</h1>
+					<img src="register.png" class="h-9 mt-4" alt="..." />
+					<h1 class="pl-1 pt-5 pb-2 font-medium text-xl mb-5 text-gray-700">REGISTER</h1>
 				</div>
 
 				<!-- ADDED CLASS-->
@@ -54,7 +55,7 @@
 					<a href="/Admin-Register">
 						<!-- svelte-ignore a11y-label-has-associated-control -->
 						<label
-							class="btn h-28 w-48 bg-[#2ea44f] border-transparent hover:bg-[#23853f] hover:border-transparent text-xl"
+							class="btn mt-2 h-24 w-56 rounded-2xl bg-[#2ea44f] border-transparent hover:bg-[#23853f] hover:border-transparent text-xl"
 							>REGISTER</label
 						>
 					</a>
@@ -62,10 +63,10 @@
 			</div>
 		</div>
 		<div class="container mt-20 pt-4 lg:w-1/4 pl-2">
-			<div class="h-full bg-gray-100 bg-opacity-75 pb-16 rounded-lg overflow-hidden">
+			<div class="h-full bg-white shadow-xl pb-16 rounded-2xl overflow-hidden">
 				<div class="flex flex-row mt-2 justify-center">
-					<img src="update.png" class="h-10 mt-4" alt="..." />
-					<h1 class="pl-1 pt-5 pb-2 font-medium text-2xl mb-5 text-gray-700">UPDATE</h1>
+					<img src="update.png" class="h-9 mt-4" alt="..." />
+					<h1 class="pl-1 pt-5 pb-2 font-medium text-xl mb-5 text-gray-700">UPDATE</h1>
 				</div>
 
 				<!-- ADDED CLASS-->
@@ -73,7 +74,7 @@
 					<a href="/Admin-Update">
 						<!-- svelte-ignore a11y-label-has-associated-control -->
 						<label
-							class="btn h-28 w-48 bg-[#2ea44f] border-transparent hover:bg-[#23853f] hover:border-transparent text-xl"
+							class="btn mt-2 rounded-2xl h-24 w-56 bg-[#2ea44f] border-transparent hover:bg-[#23853f] hover:border-transparent text-xl"
 							>UPDATE</label
 						>
 					</a>
@@ -82,3 +83,4 @@
 		</div>
 	</div>
 </div>
+</body>
