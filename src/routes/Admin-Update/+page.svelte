@@ -5,8 +5,20 @@
 	import { getDatabase, ref, onValue, get, set, remove } from 'firebase/database';
 	import { auth, database } from '$lib/firebase';
 	import { onMount } from 'svelte';
-	import { query, collection, where, getDocs } from 'firebase/firestore';
-	import { updateDoc, arrayUnion, doc, arrayRemove } from 'firebase/firestore';
+	import { query, collection, where, getDocs, Firestore } from 'firebase/firestore';
+
+	import {
+		updateDoc,
+		arrayUnion,
+		doc,
+		arrayRemove,
+		collectionGroup,
+		setDoc,
+		addDoc,
+		deleteDoc,
+		deleteField
+	} from 'firebase/firestore';
+	import { FieldPath, FieldValue } from 'firebase/firestore';
 
 	let studentNumber;
 	let rfidTag;
@@ -20,7 +32,6 @@
 		const querySnapshot = await getDocs(queryRef);
 		querySnapshot.forEach((doc) => {
 			const docData = doc.data();
-			console.log(docData);
 
 			if (docData.hasOwnProperty('studentRFID')) {
 				studentGetRFID = docData.studentRFID;
@@ -39,6 +50,8 @@
 		set(ref(database, 'rfid/' + rfidTag), rfidTag);
 		studentClassUpdate();
 		studentSubjectUpdate();
+		studentRecitationUpdate();
+		searchCopyAndCreate();
 	}
 
 	async function studentClassUpdate() {
@@ -47,8 +60,6 @@
 		const querySnapshot = await getDocs(queryRef);
 
 		querySnapshot.forEach((document) => {
-			console.log('Matching document:', document.data());
-
 			const docRef = doc(firestore, 'classes', document.id);
 			const studentsArray = document.data().students;
 			const updatedStudents = studentsArray.filter((student) => student !== studentGetRFID);
@@ -73,8 +84,6 @@
 		const querySnapshot = await getDocs(queryRef);
 
 		querySnapshot.forEach((document) => {
-			console.log('Matching document:', document.data());
-
 			const docRef = doc(firestore, 'Subject', document.id);
 			const studentsArray = document.data().students;
 			const updatedStudents = studentsArray.filter((student) => student !== studentGetRFID);
@@ -93,7 +102,71 @@
 		});
 	}
 
-	async function studentRecitationUpdate() {}
+	async function studentRecitationUpdate() {
+		const subjectQuerySnapshot = await getDocs(collection(firestore, 'Subject'));
+
+		subjectQuerySnapshot.forEach(async (subjectDoc) => {
+			const recitationQuerySnapshot = await getDocs(collection(subjectDoc.ref, 'Recitation'));
+
+			recitationQuerySnapshot.forEach(async (recitationDoc) => {
+				if (recitationDoc.id === studentGetRFID) {
+					console.log('Found Document:', recitationDoc.data());
+
+					// Delete the document
+					const docRef = doc(collection(subjectDoc.ref, 'Recitation'), recitationDoc.id);
+					await deleteDoc(docRef);
+					console.log('Document deleted successfully');
+				}
+			});
+		});
+	}
+	async function searchCopyAndCreate() {
+		const subjectQuerySnapshot = await getDocs(collection(firestore, 'Subject'));
+
+		for (const subjectDoc of subjectQuerySnapshot.docs) {
+			const attendanceQuerySnapshot = await getDocs(collection(subjectDoc.ref, 'Attendance'));
+
+			for (const attendanceDoc of attendanceQuerySnapshot.docs) {
+				const attendanceData = attendanceDoc.data();
+
+				const fieldsToDelete = [];
+
+				for (const [key, value] of Object.entries(attendanceData)) {
+					if (typeof value === 'object' && key.includes(studentGetRFID)) {
+						console.log('Map name:', key);
+						console.log('Map value:', value);
+
+						// Create a new field map with the name from the rfidTag variable
+						const insertAtt = { [rfidTag]: { ...value } };
+
+						// Add field name to the list of fields to delete
+						fieldsToDelete.push(key);
+
+						// Update the document with the new field
+						try {
+							await updateDoc(attendanceDoc.ref, insertAtt);
+							console.log('New field inserted successfully!');
+						} catch (error) {
+							console.error('Error inserting new field:', error);
+						}
+					}
+				}
+
+				// Delete the fields
+				const deleteFieldsPromises = fieldsToDelete.map((fieldName) => {
+					const fieldPath = fieldName;
+					return updateDoc(attendanceDoc.ref, fieldPath, deleteField());
+				});
+
+				try {
+					await Promise.all(deleteFieldsPromises);
+					console.log('Fields deleted successfully!');
+				} catch (error) {
+					console.error('Error deleting fields:', error);
+				}
+			}
+		}
+	}
 </script>
 
 <body class="bg-gray-100 w-screen h-screen">

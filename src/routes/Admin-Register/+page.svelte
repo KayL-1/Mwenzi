@@ -197,7 +197,8 @@
 					userRole: 'student',
 					Name: studentName,
 					studentID: studentID,
-					studentRFID: myVariable
+					studentRFID: myVariable,
+					class: studentClass
 				});
 
 				const docRef2 = doc(firestore, 'classes', studentClass);
@@ -227,7 +228,8 @@
 					userRole: 'student',
 					Name: studentName,
 					studentID: studentID,
-					studentRFID: studentRFID
+					studentRFID: studentRFID,
+					class: studentClass
 				});
 
 				const docRef2 = doc(firestore, 'classes', studentClass);

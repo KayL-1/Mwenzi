@@ -32,25 +32,23 @@ exports.createDailyAttendance = functions.pubsub
 			const subjectName = subjectDoc.id;
 			const attendanceDocRef = subjectDoc.ref.collection('Attendance').doc(formattedDate);
 
-			const createStudentFieldArray = async () => {
-				const studentFieldArray = {};
+			const createStudentFieldObject = async () => {
+				const studentFieldObject = {};
 				const subjectData = subjectDoc.data();
 				const students = subjectData.students || []; // Retrieve the 'students' array from the parent document
 
 				students.forEach((student) => {
-					studentFieldArray[student] = {
+					studentFieldObject[student] = {
 						time: '00:00',
 						status: 'Absent'
 					};
 				});
 
-				return studentFieldArray;
+				return studentFieldObject;
 			};
 
-			const attendancePromise = createStudentFieldArray().then((studentFieldArray) => {
-				const attendanceData = {
-					students: studentFieldArray
-				};
+			const attendancePromise = createStudentFieldObject().then((studentFieldObject) => {
+				const attendanceData = studentFieldObject;
 				return attendanceDocRef.set(attendanceData);
 			});
 
@@ -66,7 +64,6 @@ exports.createDailyAttendance = functions.pubsub
 			return null;
 		}
 	});
-
 // Create and deploy your first functions
 // https://firebase.google.com/docs/functions/get-started
 
