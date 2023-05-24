@@ -45,7 +45,7 @@
 				</a>
 			</div>
 			<div class="m-7">
-				<div class="mb-6">
+				<div class="mb-4">
 					<label for="email" class="block mb-2 text-md font-medium text-gray">Username</label>
 					<input
 						bind:value={email}
@@ -53,23 +53,23 @@
 						name="email"
 						id="email"
 						placeholder="Email"
-						class="w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-md focus:outline-none"
+						class="w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-3xl focus:outline-none"
 					/>
 				</div>
 				<div class="mb-6">
-					<label for="password" class="text-md font-medium text-gray">Password</label>
+					<label for="password" class="block mb-2 text-md font-medium text-gray">Password</label>
 					<input
 						bind:value={password}
 						type="password"
 						name="password"
 						id="password"
 						placeholder="Password"
-						class="w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-md focus:outline-none"
+						class="w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-3xl focus:outline-none"
 					/>
 				</div>
 				<button
 					on:click={login}
-					class=" w-full px-3 py-4 text-white rounded-md bg-[#2ea44f] focus:outline-none"
+					class="w-full px-3 py-4 text-white font-medium rounded-3xl bg-[#2ea44f] hover:bg-[#1e7d3f] focus:outline-none duration-300 hover:scale-105 "
 					>Log In</button
 				>
 			</div>
