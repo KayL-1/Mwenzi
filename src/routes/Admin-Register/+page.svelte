@@ -6,6 +6,7 @@
 		query,
 		where,
 		getDocs,
+		getDoc,
 		collection,
 		addDoc,
 		updateDoc,
@@ -24,7 +25,9 @@
 	let teachPassword = '';
 	let teachPasswordCon = '';
 	let tSelectClass = '';
+	let tSubject = '';
 	let teachEmail = '';
+	let teachSubject = '';
 
 	let studentName = '';
 	let studentRFID = '';
@@ -60,6 +63,23 @@
 				await updateDoc(docRef2, {
 					teachers: arrayUnion(userID)
 				});
+
+				const docSnapshot = await getDoc(doc(firestore, 'classes', tSelectClass));
+
+				teachSubject = tSelectClass + ' - ' + teachSubject;
+
+				if (docSnapshot.exists()) {
+					// Get the student array from the document data
+					const { students } = docSnapshot.data();
+
+					// Update the document in the "Subject" collection
+					await setDoc(doc(firestore, 'Subject', teachSubject), {
+						teacherID: userID,
+						students: [...students] // Insert the copied students array
+					});
+				} else {
+					console.log('Document does not exist');
+				}
 
 				console.log('Document created in Firestore with ID:', userID);
 			} catch (error) {
@@ -167,7 +187,7 @@
 
 				const docRef2 = doc(firestore, 'classes', studentClass);
 				await updateDoc(docRef2, {
-					students: arrayUnion(userID)
+					students: arrayUnion(myVariable)
 				});
 
 				writeUserData1();
@@ -197,7 +217,7 @@
 
 				const docRef2 = doc(firestore, 'classes', studentClass);
 				await updateDoc(docRef2, {
-					students: arrayUnion(userID)
+					students: arrayUnion(studentRFID)
 				});
 
 				writeUserData2();
@@ -411,6 +431,7 @@
 										>Add Subject</label
 									>
 									<input
+										bind:value={teachSubject}
 										type="name"
 										name="fullname"
 										id="teacherfullname"
