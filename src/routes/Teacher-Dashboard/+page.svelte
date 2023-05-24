@@ -70,7 +70,7 @@
 						<a href="/" class="ml-12 py-2 flex align-center font-medium">Settings</a>
 					</li>
 					<li class="rounded-md hover:bg-gray-200">
-						<a href="/.." class="ml-12 py-2 flex text-center font-medium">Log out</a>
+						<a href="/Login" class="ml-12 py-2 flex text-center font-medium">Log out</a>
 					</li>
 				</ul>
 			</button>
@@ -81,7 +81,7 @@
 <div class="mx-20 my-8 px-44 bg-gray-100">
 	<div class="w-1/2 flex flex-row mr-4 mt-1 ">
 		<select
-			class="mr-2 h-8 w-1/3 rounded-xl border-none placeholder-gray-300 font-medium text-center bg-green-200"
+			class="mr-2 h-8 w-1/3 rounded-xl border-none placeholder-gray-300 font-medium text-center bg-white shadow-md"
 		>
 			<option>Rambutan - Science</option>
 			<option>Marge</option>
