@@ -78,21 +78,21 @@
 	</div>
 </header>
 
-<div class="mx-20 my-10 px-44">
-	<div class="w-1/2 flex flex-row mr-4 mt-1">
+<div class="mx-20 my-8 px-44">
+	<div class="w-1/2 flex flex-row mr-4 mt-1 ">
 		<select
-			class="mr-2 h-8 w-1/3 rounded-2xl border-none placeholder-gray-300 font-medium text-center mt-3 bg-gray-100"
+			class="mr-2 h-8 w-1/3 rounded-2xl border-none placeholder-gray-300 font-medium text-center bg-green-200"
 		>
-			<option>Rambutan - Mapeh</option>
+			<option>Rambutan - Science</option>
 			<option>Marge</option>
 		</select>
 	</div>
 
 	<div class="flex flex-row justify-center">
 		<div class="basis-1/2 container mt-2 pt-4 lg:w-3/6">
-			<div class="h-full bg-gray-100 bg-opacity-75 pb-12 rounded-3xl">
+			<div class="h-full bg-blue-100 bg-opacity-75 pb-12 rounded-3xl">
 				<div class="flex flex-row mt-2">
-					<img src="addclass.png" class="h-10 mt-4 pl-8" alt="..." />
+					<img src="addclass.png" class="h-9 mt-4 pl-8" alt="..." />
 					<h1 class="pl-1 pt-5 pb-2 font-medium text-xl mb-5 text-gray-700">Attendance</h1>
 				</div>
 
@@ -371,9 +371,9 @@
 		</div>
 
 		<div class="basis-1/2 ml-2 container mt-2 pt-4 lg:w-3/6">
-			<div class="h-full bg-gray-100 bg-opacity-75 pb-12 rounded-3xl text-center">
+			<div class="h-full bg-blue-100 bg-opacity-75 pb-12 rounded-3xl text-center">
 				<div class="flex flex-row mt-2">
-					<img src="leaderboard.png" class="h-10 mt-4 pl-9 pr-1" alt="..." />
+					<img src="leaderboard.png" class="h-9 mt-4 pl-9 pr-1" alt="..." />
 					<h1 class="pl-1 pt-5 pb-4 font-medium text-xl text-gray-700">Leaderboards</h1>
 					<div class="w-full flex flex-row-reverse items-center">
 						<div class="form-control">
@@ -428,8 +428,8 @@
 									</thead>
 									<tbody>
 										<!--RANK 1-->
-										<tr class="border-b bg-yellow-300">
-											<td class="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
+										<tr class="border-b bg-white">
+											<td class="text-sm text-gray-500 font-medium  px-6 py-4 whitespace-nowrap">
 												1
 											</td>
 											<td class="text-md text-gray-900 font-medium px-6 py-3 whitespace-nowrap">
@@ -446,7 +446,7 @@
 										<!--END RANK 1-->
 
 										<!--RANK 2-->
-										<tr class="border-b bg-green-300">
+										<tr class="border-b bg-white">
 											<td class="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
 												2
 											</td>
@@ -464,7 +464,7 @@
 										<!--END RANK 2-->
 
 										<!--RANK 3-->
-										<tr class="border-b bg-blue-300">
+										<tr class="border-b bg-white">
 											<td class="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
 												3
 											</td>
@@ -482,7 +482,7 @@
 										<!--END RANK 3-->
 
 										<!--RANK 4-->
-										<tr class="border-b bg-red-100">
+										<tr class="border-b bg-white">
 											<td class="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
 												4
 											</td>
@@ -500,7 +500,7 @@
 										<!--END RANK 4-->
 
 										<!--RANK 5-->
-										<tr class="border-b bg-red-50">
+										<tr class="border-b bg-white">
 											<td class="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
 												5
 											</td>
@@ -518,7 +518,7 @@
 										<!--END RANK 5-->
 
 										<!--RANK 6-->
-										<tr class="border-b">
+										<tr class="border-b bg-white">
 											<td class="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
 												6
 											</td>
@@ -546,10 +546,10 @@
 
 	<div class="flex flex-row justify-center">
 		<div class="basis-1/2 container mt-7 lg:w-1/4">
-			<div class="h-full bg-gray-100 bg-opacity-75 pb-16 rounded-3xl overflow-hidden text-center">
+			<div class="h-full bg-blue-100 bg-opacity-75 pb-16 rounded-3xl overflow-hidden text-center">
 				<div class="flex flex-row mt-2">
-					<img src="randomizer.png" class="h-10 mt-4 pl-8" alt="..." />
-					<h1 class="pl-1 pt-5 pb-2 font-medium text-xl mb-5 text-gray-700">RANDOMIZER</h1>
+					<img src="randomizer.png" class="h-9 mt-4 pl-8" alt="..." />
+					<h1 class="pl-1 pt-5 pb-2 font-medium text-xl mb-5 text-gray-700">Randomizer</h1>
 				</div>
 				<div>
 					<button
@@ -562,11 +562,11 @@
 
 		<div class="basis-1/2 container mt-7 lg:w-1/4">
 			<div
-				class="ml-2 h-full bg-gray-100 bg-opacity-75 pb-16 rounded-3xl overflow-hidden text-center"
+				class="ml-2 h-full bg-blue-100 bg-opacity-75 pb-16 rounded-3xl overflow-hidden text-center"
 			>
 				<div class="flex flex-row mt-2">
 					<img src="group.png" class="h-8 mt-4 pl-8 pr-1" alt="..." />
-					<h1 class="pl-1 pt-5 pb-2 font-medium text-xl mb-5 text-gray-700">CREATE GROUP</h1>
+					<h1 class="pl-1 pt-5 pb-2 font-medium text-xl mb-5 text-gray-700">Create Group</h1>
 				</div>
 				<div>
 					<button
@@ -579,11 +579,11 @@
 
 		<div class="basis-1/3 container mt-7 lg:w-96">
 			<div
-				class="ml-2 h-full bg-gray-100 bg-opacity-75 pb-16 rounded-3xl overflow-hidden text-center"
+				class="ml-2 h-full bg-blue-100 bg-opacity-75 pb-16 rounded-3xl overflow-hidden text-center"
 			>
 				<div class="flex flex-row mt-2">
 					<img src="timer.png" class="h-9 mt-3 pl-8" alt="..." />
-					<h1 class="pl-1 pt-4 pb-2 font-medium text-xl mb-5 text-gray-700">TIMER</h1>
+					<h1 class="pl-1 pt-4 pb-2 font-medium text-xl mb-5 text-gray-700">Timer</h1>
 				</div>
 				<div>
 					<button
