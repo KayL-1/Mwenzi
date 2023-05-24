@@ -38,6 +38,8 @@
 	let myVariable = '';
 	let rfidMode = '';
 
+	let modeSwitch;
+
 	// CREATE TEACHERS ACC
 	async function createTeacher() {
 		if (teachPassword === teachPasswordCon) {
@@ -52,12 +54,12 @@
 				console.log('createAccount');
 				console.log(userID);
 
-				// const docRef = await setDoc(doc(firestore, 'users', userID), {
-				// 	UID: userID,
-				// 	email: teachEmail,
-				// 	userRole: 'teacher',
-				// 	Name: teachFullName
-				// });
+				const docRef = await setDoc(doc(firestore, 'users', userID), {
+					UID: userID,
+					email: teachEmail,
+					userRole: 'teacher',
+					Name: teachFullName
+				});
 
 				const docRef2 = doc(firestore, 'classes', tSelectClass);
 				await updateDoc(docRef2, {
@@ -254,6 +256,20 @@
 		console.error('Using Normal Way');
 	}
 
+	function toggleSwitch() {
+		console.log(modeSwitch.checked);
+
+		if (modeSwitch.checked) {
+			// Checkbox is checked
+			set(ref(database, 'rfidMode/register'), 'On');
+			console.log('Using Arduino RFID');
+		} else {
+			// Checkbox is not checked
+			set(ref(database, 'rfidMode/register'), 'Off');
+			console.log('Using Normal Way');
+		}
+	}
+
 	displayClasses();
 	listenForChanges();
 	displayData();
@@ -351,25 +367,33 @@
 									class="mt-3 w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-md focus:outline-none"
 								/>
 								<div class="mt-3 flex items-center">
-								<input type="checkbox" class="toggle checked:bg-[#2ea44f] ml-3" checked />
-								{#if rfidMode == 'On'}
 									<input
-										bind:value={studentRFID}
-										type="text"
-										name="rfidStudent"
-										id="rfidStudent"
-										placeholder={myVariable}
-										class="ml-3 w-full px-3 py-2 placeholder-gray-700 border border-gray-300 rounded-md focus:outline-none" disabled
+										bind:this={modeSwitch}
+										on:change={toggleSwitch}
+										type="checkbox"
+										id="toggleMode"
+										name="toggleMode"
+										class="toggle checked:bg-[#2ea44f] ml-3"
 									/>
-								{:else}
-									<input
-										type="text"
-										name="rfidStudent"
-										id="rfidStudent"
-										placeholder="Student RFID"
-										class="ml-3 w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-md focus:outline-none"
-									/>
-								{/if}
+									{#if rfidMode == 'On'}
+										<input
+											bind:value={studentRFID}
+											type="text"
+											name="rfidStudent"
+											id="rfidStudent"
+											placeholder={myVariable}
+											class="ml-3 w-full px-3 py-2 placeholder-gray-700 border border-gray-300 rounded-md focus:outline-none"
+											disabled
+										/>
+									{:else}
+										<input
+											type="text"
+											name="rfidStudent"
+											id="rfidStudent"
+											placeholder="Student RFID"
+											class="ml-3 w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-md focus:outline-none"
+										/>
+									{/if}
 								</div>
 								<input
 									bind:value={studentID}
