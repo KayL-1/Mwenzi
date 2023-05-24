@@ -375,6 +375,32 @@
 				<div class="flex flex-row mt-2">
 					<img src="leaderboard.png" class="h-10 mt-4 pl-9 pr-1" alt="..." />
 					<h1 class="pl-1 pt-5 pb-4 font-medium text-xl text-gray-700">Leaderboards</h1>
+					<div class="w-full flex flex-row-reverse items-center">
+						<div class="form-control">
+							<div class="input-group scale-75">
+								<input
+										type="text"
+										placeholder="Search student"
+										class="w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-md focus:outline-none"
+									/>
+								<button class="btn btn-square">
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										class="h-6 w-6"
+										fill="none"
+										viewBox="0 0 24 24"
+										stroke="currentColor"
+										><path
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											stroke-width="2"
+											d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+										/></svg
+									>
+								</button>
+							</div>
+						</div>
+					</div>
 					<!--button class="btn">Sections</button-->
 				</div>
 
@@ -395,6 +421,9 @@
 											<th scope="col" class="text-sm font-medium text-gray-900 px-6 py-4">
 												Points
 											</th>
+											<th scope="col" class="text-sm font-medium text-gray-900 px-1 py-4">
+												Update Points
+											</th>
 										</tr>
 									</thead>
 									<tbody>
@@ -403,11 +432,15 @@
 											<td class="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
 												1
 											</td>
-											<td class="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
+											<td class="text-md text-gray-900 font-medium px-6 py-3 whitespace-nowrap">
 												Ace Dela Cuesta
 											</td>
 											<td class="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
 												54
+											</td>
+											<td class="flex mt-2 justify-center">
+												<img src="minus.png" class="btn btn-sm px-1 bg-transparent hover:bg-transparent border-none" alt="..." />
+												<img src="add.png" class="btn btn-sm px-1 bg-transparent hover:bg-transparent border-none" alt="..." />
 											</td>
 										</tr>
 										<!--END RANK 1-->
@@ -417,11 +450,15 @@
 											<td class="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
 												2
 											</td>
-											<td class="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
+											<td class="text-md text-gray-900 font-medium px-6 py-3 whitespace-nowrap">
 												Kyle Dela Pena
 											</td>
 											<td class="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
 												53
+											</td>
+											<td class="flex mt-2 justify-center">
+												<img src="minus.png" class="btn btn-sm px-1 bg-transparent hover:bg-transparent border-none" alt="..." />
+												<img src="add.png" class="btn btn-sm px-1 bg-transparent hover:bg-transparent border-none" alt="..." />
 											</td>
 										</tr>
 										<!--END RANK 2-->
@@ -431,11 +468,15 @@
 											<td class="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
 												3
 											</td>
-											<td class="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
+											<td class="text-MD text-gray-900 font-medium px-6 py-3 whitespace-nowrap">
 												Luis Santiago
 											</td>
 											<td class="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
 												52
+											</td>
+											<td class="flex mt-2 justify-center">
+												<img src="minus.png" class="btn btn-sm px-1 bg-transparent hover:bg-transparent border-none" alt="..." />
+												<img src="add.png" class="btn btn-sm px-1 bg-transparent hover:bg-transparent border-none" alt="..." />
 											</td>
 										</tr>
 										<!--END RANK 3-->
@@ -445,11 +486,15 @@
 											<td class="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
 												4
 											</td>
-											<td class="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
+											<td class="text-md text-gray-900 font-medium px-6 py-3 whitespace-nowrap">
 												Lebron James
 											</td>
 											<td class="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
 												52
+											</td>
+											<td class="flex mt-2 justify-center">
+												<img src="minus.png" class="btn btn-sm px-1 bg-transparent hover:bg-transparent border-none" alt="..." />
+												<img src="add.png" class="btn btn-sm px-1 bg-transparent hover:bg-transparent border-none" alt="..." />
 											</td>
 										</tr>
 										<!--END RANK 4-->
@@ -459,11 +504,15 @@
 											<td class="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
 												5
 											</td>
-											<td class="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
+											<td class="text-md text-gray-900 font-medium px-6 py-3 whitespace-nowrap">
 												Stephen Curry
 											</td>
 											<td class="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
 												52
+											</td>
+											<td class="flex mt-2 justify-center">
+												<img src="minus.png" class="btn btn-sm px-1 bg-transparent hover:bg-transparent border-none" alt="..." />
+												<img src="add.png" class="btn btn-sm px-1 bg-transparent hover:bg-transparent border-none" alt="..." />
 											</td>
 										</tr>
 										<!--END RANK 5-->
@@ -473,15 +522,18 @@
 											<td class="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
 												6
 											</td>
-											<td class="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
+											<td class="text-md text-gray-900 font-medium px-6 py-3 whitespace-nowrap">
 												Raffy T
 											</td>
 											<td class="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
 												52
 											</td>
+											<td class="flex mt-2 justify-center">
+												<img src="minus.png" class="btn btn-sm px-1 bg-transparent hover:bg-transparent border-none" alt="..." />
+												<img src="add.png" class="btn btn-sm px-1 bg-transparent hover:bg-transparent border-none" alt="..." />
+											</td>
 										</tr>
 										<!--END RANK 6-->
-
 									</tbody>
 								</table>
 							</div>
@@ -513,12 +565,12 @@
 				class="ml-2 h-full bg-gray-100 bg-opacity-75 pb-16 rounded-3xl overflow-hidden text-center"
 			>
 				<div class="flex flex-row mt-2">
-					<img src="group.png" class="h-10 mt-4 pl-8 pr-1" alt="..." />
+					<img src="group.png" class="h-8 mt-4 pl-8 pr-1" alt="..." />
 					<h1 class="pl-1 pt-5 pb-2 font-medium text-xl mb-5 text-gray-700">CREATE GROUP</h1>
 				</div>
 				<div>
 					<button
-						class="btn h-24 w-48 bg-[#0A805E] border-transparent hover:bg-[#08664b] hover:border-transparent text-xl rounded-3xl"
+						class="btn h-24 w-56 bg-[#0A805E] border-transparent hover:bg-[#08664b] hover:border-transparent text-xl rounded-3xl"
 						>CREATE</button
 					>
 				</div>
@@ -530,8 +582,8 @@
 				class="ml-2 h-full bg-gray-100 bg-opacity-75 pb-16 rounded-3xl overflow-hidden text-center"
 			>
 				<div class="flex flex-row mt-2">
-					<img src="timer.png" class="h-10 mt-3 pl-8" alt="..." />
-					<h1 class="pl-1 pt-5 pb-2 font-medium text-xl mb-5 text-gray-700">TIMER</h1>
+					<img src="timer.png" class="h-9 mt-3 pl-8" alt="..." />
+					<h1 class="pl-1 pt-4 pb-2 font-medium text-xl mb-5 text-gray-700">TIMER</h1>
 				</div>
 				<div>
 					<button
