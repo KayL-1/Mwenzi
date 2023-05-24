@@ -317,14 +317,27 @@
 									placeholder="Student Email"
 									class="mt-3 w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-md focus:outline-none"
 								/>
-								<input
-									bind:value={studentRFID}
-									type="text"
-									name="rfidStudent"
-									id="rfidStudent"
-									placeholder={rfidMode === 'On' ? myVariable : 'Student RFID'}
-									class="mt-3 w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-md focus:outline-none"
-								/>
+								<div class="mt-3 flex items-center">
+								<input type="checkbox" class="toggle checked:bg-[#2ea44f] ml-3" checked />
+								{#if rfidMode == 'On'}
+									<input
+										bind:value={studentRFID}
+										type="text"
+										name="rfidStudent"
+										id="rfidStudent"
+										placeholder={myVariable}
+										class="ml-3 w-full px-3 py-2 placeholder-gray-700 border border-gray-300 rounded-md focus:outline-none" disabled
+									/>
+								{:else}
+									<input
+										type="text"
+										name="rfidStudent"
+										id="rfidStudent"
+										placeholder="Student RFID"
+										class="ml-3 w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-md focus:outline-none"
+									/>
+								{/if}
+								</div>
 								<input
 									bind:value={studentID}
 									type="text"

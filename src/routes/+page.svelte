@@ -2,7 +2,7 @@
 	<div class="container mx-auto">
 		<div class="max-w-md mx-auto">
 			<div class="text-center">
-				<img src="Mwenzi.png" class="h-auto max-w-full mb-5 duration-500 hover:-translate-y-60" alt="..." />
+				<img src="Mwenzi.png" class="h-auto max-w-full mb-5 duration-500 hover:-translate-y-48" alt="..." />
 			</div>
 
 			<div class="flex flex-col justify-center items-center">
