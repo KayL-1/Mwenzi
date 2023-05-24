@@ -35,15 +35,15 @@
 	// }
 	// displayClasses();
 </script>
-
+<body class="bg-gray-100 w-screen h-screen">
 <!-- Header Logo Center -->
-<header class="w-full text-gray-700 bg-white border-t border-gray-100 shadow-sm body-font">
+<header class="w-full text-gray-700 bg-gray-50 border-t border-gray-100 shadow-sm body-font">
 	<div class="container flex flex-col flex-wrap items-center pt-2 mx-auto md:flex-row">
 		<nav class="flex flex-wrap items-center text-base lg:w-2/5 md:ml-auto" />
 		<p
 			class="flex items-center order-first mb-4 font-medium text-gray-900 lg:order-none lg:w-1/5 title-font lg:items-center lg:justify-center md:mb-0"
 		>
-			<img src="Mwenzi.png" class="w-30 h-24" alt="..." />
+			<img src="Mwenzi.png" class="w-30 h-20 pb-2" alt="..." />
 		</p>
 		<div class="inline-flex items-center h-full lg:w-2/5 lg:justify-end lg:ml-0">
 			<button class="dropdown dropdown-end">
@@ -67,7 +67,7 @@
 					class="text-center mt-2 dropdown-content shadow bg-base-100 rounded-md w-40 h-20"
 				>
 					<li class="rounded-md hover:bg-gray-200">
-						<a href="/.." class="ml-12 py-2 flex align-center font-medium">Settings</a>
+						<a href="/" class="ml-12 py-2 flex align-center font-medium">Settings</a>
 					</li>
 					<li class="rounded-md hover:bg-gray-200">
 						<a href="/.." class="ml-12 py-2 flex text-center font-medium">Log out</a>
@@ -78,10 +78,10 @@
 	</div>
 </header>
 
-<div class="mx-20 my-8 px-44">
+<div class="mx-20 my-8 px-44 bg-gray-100">
 	<div class="w-1/2 flex flex-row mr-4 mt-1 ">
 		<select
-			class="mr-2 h-8 w-1/3 rounded-2xl border-none placeholder-gray-300 font-medium text-center bg-green-200"
+			class="mr-2 h-8 w-1/3 rounded-xl border-none placeholder-gray-300 font-medium text-center bg-green-200"
 		>
 			<option>Rambutan - Science</option>
 			<option>Marge</option>
@@ -90,7 +90,7 @@
 
 	<div class="flex flex-row justify-center">
 		<div class="basis-1/2 container mt-2 pt-4 lg:w-3/6">
-			<div class="h-full bg-blue-100 bg-opacity-75 pb-12 rounded-3xl">
+			<div class="h-full bg-white bg-opacity-75 pb-12 rounded-3xl shadow-lg">
 				<div class="flex flex-row mt-2">
 					<img src="addclass.png" class="h-9 mt-4 pl-8" alt="..." />
 					<h1 class="pl-1 pt-5 pb-2 font-medium text-xl mb-5 text-gray-700">Attendance</h1>
@@ -279,7 +279,7 @@
 										</td>
 										<!--ACTIONS-->
 										<td class="py-1 px-6 text-center justify-center">
-											<input type="radio" name="radio-3" class="radio w-5 h-5 radio-error" />
+											<input type="radio" name="radio-5" class="radio w-5 h-5 radio-error" />
 											<input
 												type="radio"
 												name="radio-5"
@@ -315,7 +315,7 @@
 										</td>
 										<!--ACTIONS-->
 										<td class="py-1 px-6 text-center justify-center">
-											<input type="radio" name="radio-3" class="radio w-5 h-5 radio-error" />
+											<input type="radio" name="radio-6" class="radio w-5 h-5 radio-error" />
 											<input
 												type="radio"
 												name="radio-6"
@@ -351,7 +351,7 @@
 										</td>
 										<!--ACTIONS-->
 										<td class="py-1 px-6 text-center justify-center">
-											<input type="radio" name="radio-3" class="radio w-5 h-5 radio-error" />
+											<input type="radio" name="radio-7" class="radio w-5 h-5 radio-error" />
 											<input
 												type="radio"
 												name="radio-7"
@@ -370,8 +370,8 @@
 			</div>
 		</div>
 
-		<div class="basis-1/2 ml-2 container mt-2 pt-4 lg:w-3/6">
-			<div class="h-full bg-blue-100 bg-opacity-75 pb-12 rounded-3xl text-center">
+		<div class="basis-1/2 ml-4 container mt-2 pt-4 lg:w-3/6">
+			<div class="h-full bg-white bg-opacity-75 pb-12 rounded-3xl text-center shadow-lg">
 				<div class="flex flex-row mt-2">
 					<img src="leaderboard.png" class="h-9 mt-4 pl-9 pr-1" alt="..." />
 					<h1 class="pl-1 pt-5 pb-4 font-medium text-xl text-gray-700">Leaderboards</h1>
@@ -546,7 +546,7 @@
 
 	<div class="flex flex-row justify-center">
 		<div class="basis-1/2 container mt-7 lg:w-1/4">
-			<div class="h-full bg-blue-100 bg-opacity-75 pb-16 rounded-3xl overflow-hidden text-center">
+			<div class="h-full bg-white shadow-xl bg-opacity-75 pb-16 rounded-3xl overflow-hidden text-center">
 				<div class="flex flex-row mt-2">
 					<img src="randomizer.png" class="h-9 mt-4 pl-8" alt="..." />
 					<h1 class="pl-1 pt-5 pb-2 font-medium text-xl mb-5 text-gray-700">Randomizer</h1>
@@ -562,7 +562,7 @@
 
 		<div class="basis-1/2 container mt-7 lg:w-1/4">
 			<div
-				class="ml-2 h-full bg-blue-100 bg-opacity-75 pb-16 rounded-3xl overflow-hidden text-center"
+				class="ml-2 h-full bg-white shadow-xl  bg-opacity-75 pb-16 rounded-3xl overflow-hidden text-center"
 			>
 				<div class="flex flex-row mt-2">
 					<img src="group.png" class="h-8 mt-4 pl-8 pr-1" alt="..." />
@@ -579,7 +579,7 @@
 
 		<div class="basis-1/3 container mt-7 lg:w-96">
 			<div
-				class="ml-2 h-full bg-blue-100 bg-opacity-75 pb-16 rounded-3xl overflow-hidden text-center"
+				class="ml-2 h-full bg-white shadow-xl  bg-opacity-75 pb-16 rounded-3xl overflow-hidden text-center"
 			>
 				<div class="flex flex-row mt-2">
 					<img src="timer.png" class="h-9 mt-3 pl-8" alt="..." />
@@ -595,6 +595,7 @@
 		</div>
 	</div>
 </div>
+</body>
 <!--ATTENDANCE LIST-->
 <!--div class='flex mt-20 min-h-screen bg-slate-white'>
         <div class="container mx-auto">

@@ -1,11 +1,12 @@
 <!-- Header Logo Center -->
-<header class="w-full text-gray-700 bg-white border-t border-gray-100 shadow-sm body-font">
+<body class="bg-gray-100 w-screen h-screen">
+<header class="w-full text-gray-700 bg-gray-50 border-t border-gray-100 shadow-sm body-font">
 	<div class="container flex flex-col flex-wrap items-center pt-2 mx-auto md:flex-row">
 		<nav class="flex flex-wrap items-center text-base lg:w-2/5 md:ml-auto" />
 		<p
 			class="flex items-center order-first mb-4 font-medium text-gray-900 lg:order-none lg:w-1/5 title-font lg:items-center lg:justify-center md:mb-0"
 		>
-			<img src="Mwenzi.png" class="w-30 h-24" alt="..." />
+			<img src="Mwenzi.png" class="w-30 h-20 pb-2" alt="..." />
 		</p>
 		<div class="inline-flex items-center h-full lg:w-2/5 lg:justify-end lg:ml-0">
 			<button class="dropdown dropdown-end">
@@ -42,7 +43,7 @@
 
 <div class="flex flex-row mx-20 my-20 justify-center">
     <div class="basis-1/2 container mt-2 pt-4 lg:w-3/6">
-        <div class="h-full bg-blue-100 bg-opacity-75 pb-12 rounded-3xl">
+        <div class="h-full bg-white shadow-xl bg-opacity-75 pb-12 rounded-3xl">
             <div class="flex flex-row mt-2">
                 <img src="addclass.png" class="h-10 mt-4 pl-8" alt="..." />
                 <h1 class="pl-1 pt-5 pb-2 font-medium text-xl mb-5 text-gray-700">Attendance Logs</h1>
@@ -245,7 +246,7 @@
     </div>
 
     <div class="basis-1/2 ml-2 container mt-2 pt-4 lg:w-3/6">
-        <div class="h-full bg-blue-100 bg-opacity-75 pb-12 rounded-3xl text-center">
+        <div class="h-full bg-white shadow-lg bg-opacity-75 pb-12 rounded-3xl text-center">
             <div class="flex flex-row mt-2">
                 <img src="leaderboard.png" class="h-10 mt-4 pl-9 pr-1" alt="..." />
                 <h1 class="pl-1 pt-5 pb-4 font-medium text-xl text-gray-700">Leaderboards</h1>
@@ -276,7 +277,7 @@
                                 </thead>
                                 <tbody>
                                     <!--RANK 1-->
-                                    <tr class="border-b bg-yellow-200">
+                                    <tr class="border-b bg-white">
                                         <td class="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
                                             1
                                         </td>
@@ -290,7 +291,7 @@
                                     <!--END RANK 1-->
 
                                     <!--RANK 2-->
-                                    <tr class="border-b bg-green-300">
+                                    <tr class="border-b bg-white">
                                         <td class="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
                                             2
                                         </td>
@@ -304,7 +305,7 @@
                                     <!--END RANK 2-->
 
                                     <!--RANK 3-->
-                                    <tr class="border-b bg-blue-300">
+                                    <tr class="border-b bg-white">
                                         <td class="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
                                             3
                                         </td>
@@ -318,7 +319,7 @@
                                     <!--END RANK 3-->
 
                                     <!--RANK 4-->
-                                    <tr class="border-b bg-red-100">
+                                    <tr class="border-b bg-white">
                                         <td class="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
                                             4
                                         </td>
@@ -332,7 +333,7 @@
                                     <!--END RANK 4-->
 
                                     <!--RANK 5-->
-                                    <tr class="border-b bg-red-50">
+                                    <tr class="border-b bg-white">
                                         <td class="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
                                             5
                                         </td>
@@ -367,3 +368,4 @@
         </div>
     </div>
 </div>
+</body>
