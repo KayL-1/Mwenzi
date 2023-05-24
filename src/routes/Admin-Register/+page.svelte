@@ -52,12 +52,12 @@
 				console.log('createAccount');
 				console.log(userID);
 
-				const docRef = await setDoc(doc(firestore, 'users', userID), {
-					UID: userID,
-					email: teachEmail,
-					userRole: 'teacher',
-					Name: teachFullName
-				});
+				// const docRef = await setDoc(doc(firestore, 'users', userID), {
+				// 	UID: userID,
+				// 	email: teachEmail,
+				// 	userRole: 'teacher',
+				// 	Name: teachFullName
+				// });
 
 				const docRef2 = doc(firestore, 'classes', tSelectClass);
 				await updateDoc(docRef2, {
@@ -73,10 +73,23 @@
 					const { students } = docSnapshot.data();
 
 					// Update the document in the "Subject" collection
-					await setDoc(doc(firestore, 'Subject', teachSubject), {
+					const subjectDocRef = doc(firestore, 'Subject', teachSubject);
+					await setDoc(subjectDocRef, {
 						teacherID: userID,
 						students: [...students] // Insert the copied students array
 					});
+
+					// Create a subcollection "Recitation" inside the "Subject" document
+					const recitationCollectionRef = collection(subjectDocRef, 'Recitation');
+
+					// Loop through the students array and create documents in the "Recitation" subcollection
+					for (const student of students) {
+						const recitationDocRef = doc(recitationCollectionRef, student);
+						await setDoc(recitationDocRef, {
+							totalPoints: 0 // Set the initial value of totalPoints to 0
+							// Add more fields as needed for each student in the Recitation document
+						});
+					}
 				} else {
 					console.log('Document does not exist');
 				}
