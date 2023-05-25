@@ -5,14 +5,14 @@
 		<div class="container mx-auto flex justify-between ">
 			<div class="lg:xp-0 flex w-full flex-row items-center justify-start px-5 lg:w-auto">
 				<!-- svelte-ignore a11y-missing-attribute -->
-				<a class="py-[15px]">
+				<a class="py-3">
 					<!-- svelte-ignore a11y-missing-attribute -->
 					<img src="/Mwenzi.png" class="w-full h-12" />
 				</a>
 				<div class="ml-[50px] hidden space-x-10 lg:block">
 					<!-- svelte-ignore a11y-invalid-attribute -->
 					<a
-						class="text-primary py-[25px] text-sm font-medium"
+						class="text-primary py-[20px] text-sm font-medium"
 						href="">Home</a>
 					<!-- svelte-ignore a11y-invalid-attribute -->
 					<a class="false py-[29px] text-sm" href="">About</a>
@@ -27,7 +27,7 @@
 
 <!--BODY1-->
 
-<section class="pt-8 bg-gray-100 bg-cover text-gray-600 body-font">
+<section class="pt-12 bg-gray-100 text-gray-600 body-font">
 	<div class="container mx-auto flex flex-start px-8 md:flex-row flex-col items-center">
 		<div class="flex flex-col align-middle text-left pr-10">
 			<h1 class="title-font sm:text-4xl text-3xl mb-4 font-medium text-gray-900">
@@ -57,7 +57,7 @@
 	</div>
 </section>
 
-<!--END HEADER 1-->
+<!--END BODY 1-->
 
 <!--BODY2-->
 <section class="bg-gray-100 text-gray-600 body-font">
@@ -334,7 +334,7 @@
 					<img
 						alt="team"
 						class="flex-shrink-0 rounded-lg w-48 h-48 object-cover object-center sm:mb-0 mb-4"
-						src="https://dummyimage.com/204x204"
+						src="/wis.jpg"
 					/>
 					<div class="flex-grow sm:pl-8">
 						<h2 class="title-font font-medium text-lg text-gray-900">Luis Santiago</h2>
