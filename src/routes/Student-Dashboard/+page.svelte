@@ -30,10 +30,10 @@
 					class="text-center mt-2 dropdown-content shadow bg-base-100 rounded-md w-40 h-20"
 				>
 					<li class="rounded-md hover:bg-gray-200">
-						<a href="/.." class="ml-12 py-2 flex align-center font-medium">Settings</a>
+						<a href="/" class="ml-12 py-2 flex align-center font-medium">Settings</a>
 					</li>
 					<li class="rounded-md hover:bg-gray-200">
-						<a href="/.." class="ml-12 py-2 flex text-center font-medium">Log out</a>
+						<a href="/Login" class="ml-12 py-2 flex text-center font-medium">Log out</a>
 					</li>
 				</ul>
 			</button>
