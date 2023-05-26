@@ -16,54 +16,57 @@ const { Firestore } = require('firebase-admin/firestore');
 admin.initializeApp();
 
 exports.createDailyAttendance = functions.pubsub
-	.schedule('0 0 * * *')
-	.timeZone('Asia/Manila')
-	.onRun(async (context) => {
-		const currentDate = new Date();
-		const year = currentDate.getFullYear().toString();
-		const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
-		const day = currentDate.getDate().toString().padStart(2, '0');
-		const formattedDate = `${year}-${month}-${day}`;
+  .schedule('0 0 * * *')
+  .timeZone('Asia/Manila')
+  .onRun(async (context) => {
+    const currentDate = new Date();
+    currentDate.setUTCHours(0, 0, 0, 0); // Set current date to the start of the day in UTC
 
-		const subjectSnapshot = await admin.firestore().collection('Subject').get();
+    const year = currentDate.getUTCFullYear().toString();
+    const month = (currentDate.getUTCMonth() + 1).toString().padStart(2, '0');
+    const day = currentDate.getUTCDate().toString().padStart(2, '0');
+    const formattedDate = `${year}-${month}-${day}`;
 
-		const attendancePromises = [];
-		subjectSnapshot.forEach((subjectDoc) => {
-			const subjectName = subjectDoc.id;
-			const attendanceDocRef = subjectDoc.ref.collection('Attendance').doc(formattedDate);
+    const subjectSnapshot = await admin.firestore().collection('Subject').get();
 
-			const createStudentFieldObject = async () => {
-				const studentFieldObject = {};
-				const subjectData = subjectDoc.data();
-				const students = subjectData.students || []; // Retrieve the 'students' array from the parent document
+    const attendancePromises = [];
+    subjectSnapshot.forEach((subjectDoc) => {
+      const subjectName = subjectDoc.id;
+      const attendanceDocRef = subjectDoc.ref.collection('Attendance').doc(formattedDate);
 
-				students.forEach((student) => {
-					studentFieldObject[student] = {
-						time: '00:00',
-						status: 'Absent'
-					};
-				});
+      const createStudentFieldObject = async () => {
+        const studentFieldObject = {};
+        const subjectData = subjectDoc.data();
+        const students = subjectData.students || []; // Retrieve the 'students' array from the parent document
 
-				return studentFieldObject;
-			};
+        students.forEach((student) => {
+          studentFieldObject[student] = {
+            time: '00:00',
+            status: 'Absent',
+            dataStatus: 'unchanged'
+          };
+        });
 
-			const attendancePromise = createStudentFieldObject().then((studentFieldObject) => {
-				const attendanceData = studentFieldObject;
-				return attendanceDocRef.set(attendanceData);
-			});
+        return studentFieldObject;
+      };
 
-			attendancePromises.push(attendancePromise);
-		});
+      const attendancePromise = createStudentFieldObject().then((studentFieldObject) => {
+        const attendanceData = studentFieldObject;
+        return attendanceDocRef.set(attendanceData);
+      });
 
-		try {
-			await Promise.all(attendancePromises);
-			console.log(`Attendance documents created for ${formattedDate}`);
-			return null;
-		} catch (error) {
-			console.error('Error creating attendance documents:', error);
-			return null;
-		}
-	});
+      attendancePromises.push(attendancePromise);
+    });
+
+    try {
+      await Promise.all(attendancePromises);
+      console.log(`Attendance documents created for ${formattedDate}`);
+      return null;
+    } catch (error) {
+      console.error('Error creating attendance documents:', error);
+      return null;
+    }
+  });
 // Create and deploy your first functions
 // https://firebase.google.com/docs/functions/get-started
 

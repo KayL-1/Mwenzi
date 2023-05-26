@@ -392,7 +392,6 @@
 											/>
 										{/if}
 
-										
 										{#if rfidMode == 'On'}
 											<input
 												bind:value={studentRFID}
@@ -405,6 +404,7 @@
 											/>
 										{:else}
 											<input
+												bind:value={studentRFID}
 												type="text"
 												name="rfidStudent"
 												id="rfidStudent"
