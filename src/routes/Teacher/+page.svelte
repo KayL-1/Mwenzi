@@ -4,9 +4,13 @@
 	import { firebase, firestore, functions } from '$lib/firebase';
 	import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 	import { Firestore, doc, getDoc } from 'firebase/firestore';
+	import { userId } from '../../lib/userStorage';
+	import { onMount } from 'svelte';
+	import { browser } from '$app/environment';
 
 	let email = '';
 	let password = '';
+	let userUID = '';
 
 	function login() {
 		signInWithEmailAndPassword(auth, email, password)
@@ -19,11 +23,14 @@
 					console.log('Document data:', userData);
 
 					if (userData.userRole === 'teacher') {
-						console.log('User is an admin');
+						console.log('User is a teacher');
+						userId.set(userID)
+						userUID = localStorage.getItem("userId");
+						console.log(userUID);
 						window.location.replace('../Teacher-Dashboard');
 					} else {
-						console.log('User is not an Teacher');
-						// Handle case when user is not an admin
+						console.log('User is not a Teacher');
+						// Handle case when user is not a teacher
 					}
 				} else {
 					console.log('No such document!');
@@ -34,6 +41,12 @@
 				const errorMessage = error.message;
 			});
 	}
+
+	onMount(() => {
+		userId.subscribe((val) => {
+			if (browser) localStorage.userId = val;
+		});
+	});
 </script>
 
 <div class="flex items-center justify-center min-h-screen bg-slate-white">
@@ -69,7 +82,7 @@
 				</div>
 				<button
 					on:click={login}
-					class=" w-full px-3 py-4 text-white bg-[#2ea44f] focus:outline-none font-medium rounded-3xl hover:bg-[#1e7d3f] duration-300 hover:scale-105 "
+					class=" w-full px-3 py-4 text-white bg-[#2ea44f] focus:outline-none font-medium rounded-3xl hover:bg-[#1e7d3f] duration-300 hover:scale-105"
 					>Log In</button
 				>
 			</div>
