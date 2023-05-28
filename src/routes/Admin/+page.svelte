@@ -7,6 +7,7 @@
 	import { userId } from '../../lib/userStorage';
 	import { onMount } from 'svelte';
 	import { browser } from '$app/environment';
+	import toast, { Toaster } from 'svelte-french-toast';
 
 	let email = '';
 	let password = '';
@@ -26,19 +27,23 @@
 						console.log('User is a Student');
 						userId.set(userID);
 						userUID = localStorage.getItem('userId');
-						console.log(userUID);
+						toast.success('Log In Successful');
 						window.location.replace('../Admin-Dashboard');
 					} else {
-						console.log('User is not a Admin');
-						// Handle case when user is not a teacher
+						console.log('User is not an admin');
+						toast.error('User is not an admin');
+						// Handle case when user is not an admin
 					}
 				} else {
 					console.log('No such document!');
+					toast.error('No such document!');
+					
 				}
 			})
 			.catch((error) => {
 				const errorCode = error.code;
 				const errorMessage = error.message;
+				toast.error('Wrong User Credentials');
 			});
 	}
 
@@ -49,12 +54,12 @@
 	});
 </script>
 
-<div class="flex items-center justify-center min-h-screen bg-slate-white">
+<div class="flex items-center justify-center min-h-screen bg-gray-100">
 	<div class="container mx-auto">
 		<div class="max-w-md mx-auto">
 			<div class="text-center">
-				<a href="/..    ">
-					<img src="Mwenzi.png" class="h-auto max-w-full" alt="..." />
+				<a href="/Login">
+					<img src="Mwenzi.png" class="h-auto max-w-full duration-500 hover:scale-105 hover:-translate-10" alt="..." />
 				</a>
 			</div>
 			<div class="m-7">
@@ -94,3 +99,4 @@
 		</div>
 	</div>
 </div>
+<Toaster />
