@@ -4,6 +4,8 @@
 	import { firebase, firestore, functions } from '$lib/firebase';
 	import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 	import { Firestore, doc, getDoc } from 'firebase/firestore';
+	import { onMount } from 'svelte';
+	import { browser } from '$app/environment';
 
 	let email = '';
 	let password = '';

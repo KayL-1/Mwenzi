@@ -305,6 +305,8 @@
 			}
 		}
 	}
+
+	console.log("BAANGH", attendance);
 </script>
 
 <body class="bg-gray-100 w-screen h-screen">
