@@ -7,6 +7,7 @@
 	import { userId } from '../../lib/userStorage';
 	import { onMount } from 'svelte';
 	import { browser } from '$app/environment';
+	import toast, { Toaster } from 'svelte-french-toast';
 
 	let email = '';
 	let password = '';
@@ -24,21 +25,25 @@
 
 					if (userData.userRole === 'teacher') {
 						console.log('User is a teacher');
-						userId.set(userID)
-						userUID = localStorage.getItem("userId");
+						toast.success('Log In Successful');
+						userId.set(userID);
+						userUID = localStorage.getItem('userId');
 						console.log(userUID);
 						window.location.replace('../Teacher-Dashboard');
 					} else {
 						console.log('User is not a Teacher');
+						toast.error('User is not a Teacher');
 						// Handle case when user is not a teacher
 					}
 				} else {
 					console.log('No such document!');
+					toast.error('No such document!');
 				}
 			})
 			.catch((error) => {
 				const errorCode = error.code;
 				const errorMessage = error.message;
+				toast.error('Wrong User Credentials');
 			});
 	}
 
@@ -53,16 +58,16 @@
 	<div class="container mx-auto">
 		<div class="max-w-md mx-auto">
 			<div class="text-center">
-				<a href="/..    ">
-					<img src="Mwenzi.png" class="h-auto max-w-full" alt="..." />
+				<a href="/Login">
+					<img src="Mwenzi.png" class="h-auto max-w-full duration-500 hover:scale-105 hover:-translate-10" alt="..." />
 				</a>
 			</div>
 			<div class="m-7">
 				<div class="mb-4">
-					<label for="email" class="block mb-2 text-md font-medium text-gray">Email</label>
+					<label for="email" class="block mb-2 text-md font-medium text-gray">Email</label>	
 					<input
 						bind:value={email}
-						type="email"
+						type="email" required
 						name="email"
 						id="email"
 						placeholder="Email"
@@ -89,3 +94,4 @@
 		</div>
 	</div>
 </div>
+<Toaster />
