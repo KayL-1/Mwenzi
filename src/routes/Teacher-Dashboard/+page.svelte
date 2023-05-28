@@ -380,7 +380,7 @@
 								<table class="rounded-2xl">
 									<thead>
 										<tr
-											class="bg-gray-100 text-gray-600 uppercase text-sm leading-normal sticky top-0"
+											class="bg-gray-100 text-gray-600 text-sm leading-normal sticky top-0"
 										>
 											<th class="py-3 px-6 text-left">Student</th>
 											<th class="py-3 px-6 text-center">RFID Tag</th>

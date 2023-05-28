@@ -37,7 +37,6 @@
 				} else {
 					console.log('No such document!');
 					toast.error('No such document!');
-					
 				}
 			})
 			.catch((error) => {
@@ -59,7 +58,11 @@
 		<div class="max-w-md mx-auto">
 			<div class="text-center">
 				<a href="/Login">
-					<img src="Mwenzi.png" class="h-auto max-w-full duration-500 hover:scale-105 hover:-translate-10" alt="..." />
+					<img
+						src="Mwenzi.png"
+						class="h-auto max-w-full duration-500 hover:scale-105 hover:-translate-10"
+						alt="..."
+					/>
 				</a>
 			</div>
 			<div class="m-7">

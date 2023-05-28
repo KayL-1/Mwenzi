@@ -59,37 +59,43 @@
 		<div class="max-w-md mx-auto">
 			<div class="text-center">
 				<a href="/Login">
-					<img src="Mwenzi.png" class="h-auto max-w-full duration-500 hover:scale-105 hover:-translate-10" alt="..." />
+					<img
+						src="Mwenzi.png"
+						class="h-auto max-w-full duration-500 hover:scale-105 hover:-translate-10"
+						alt="..."
+					/>
 				</a>
 			</div>
 			<div class="m-7">
-				<div class="mb-4">
-					<label for="email" class="block mb-2 text-md font-medium text-gray">Email</label>
-					<input
-						bind:value={email}
-						type="email"
-						name="email"
-						id="email"
-						placeholder="Email"
-						class="w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-3xl focus:outline-none"
-					/>
-				</div>
-				<div class="mb-6">
-					<label for="password" class="block mb-2 text-md font-medium text-gray">Password</label>
-					<input
-						bind:value={password}
-						type="password"
-						name="password"
-						id="password"
-						placeholder="Password"
-						class="w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-3xl focus:outline-none"
-					/>
-				</div>
-				<button
-					on:click={login}
-					class=" w-full px-3 py-4 text-white bg-[#2ea44f] focus:outline-none font-medium rounded-3xl hover:bg-[#1e7d3f] duration-300 hover:scale-105"
-					>Log In</button
-				>
+				<form>
+					<div class="mb-4">
+						<label for="email" class="block mb-2 text-md font-medium text-gray">Email</label>
+						<input
+							bind:value={email}
+							type="email"
+							name="email"
+							id="email"
+							placeholder="Email"
+							class="w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-3xl focus:outline-none"
+						/>
+					</div>
+					<div class="mb-6">
+						<label for="password" class="block mb-2 text-md font-medium text-gray">Password</label>
+						<input
+							bind:value={password}
+							type="password"
+							name="password"
+							id="password"
+							placeholder="Password"
+							class="w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-3xl focus:outline-none"
+						/>
+					</div>
+					<button
+						on:click={login}
+						class=" w-full px-3 py-4 text-white bg-[#2ea44f] focus:outline-none font-medium rounded-3xl hover:bg-[#1e7d3f] duration-300 hover:scale-105"
+						>Log In</button
+					>
+				</form>
 			</div>
 		</div>
 	</div>
