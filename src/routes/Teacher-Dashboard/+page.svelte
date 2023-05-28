@@ -339,7 +339,7 @@
 										</thead>
 										<tbody>
 											<!--RANK 1-->
-											<tr class="border-b bg-white">
+											<tr class="border-b bg-gray">
 												<td class="text-sm text-gray-500 font-medium px-6 py-4 whitespace-nowrap">
 													1
 												</td>
