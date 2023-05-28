@@ -132,6 +132,9 @@
 				item.name = name;
 			}
 		});
+		attendance.sort((a, b) => {
+			return a.name.localeCompare(b.name);
+		});
 		attendance = attendance;
 		console.log(attendance);
 	}
@@ -270,6 +273,38 @@
 			// Perform any other actions specific to the add button
 		}
 	}
+
+	async function changeStatus(action, documentID) {
+		const attendanceCollectionRef = collection(firestore, 'Subject', `${selecTSub}`, 'Attendance');
+		if (action === 'present') {
+			console.log('CHECK CGHECK 2', action);
+			const attendanceDocRef = doc(attendanceCollectionRef, currentDatee);
+			const attendanceDocSnapshot = await getDoc(attendanceDocRef);
+			if (attendanceDocSnapshot.exists()) {
+				console.log('EXIST');
+				const attendanceData = attendanceDocSnapshot.data();
+				const fieldName = Object.keys(attendanceData).find((key) => key === documentID);
+				if (fieldName) {
+					attendanceData[fieldName].status = 'Present';
+					attendanceData[fieldName].dataStatus = 'changed';
+					await setDoc(attendanceDocRef, attendanceData);
+				}
+			}
+		} else if (action === 'absent') {
+			console.log('CHECK CGHECK 1', action);
+			const attendanceDocRef = doc(attendanceCollectionRef, currentDatee);
+			const attendanceDocSnapshot = await getDoc(attendanceDocRef);
+			if (attendanceDocSnapshot.exists()) {
+				const attendanceData = attendanceDocSnapshot.data();
+				const fieldName = Object.keys(attendanceData).find((key) => key === documentID);
+				if (fieldName) {
+					attendanceData[fieldName].status = 'Absent';
+					attendanceData[fieldName].dataStatus = 'changed';
+					await setDoc(attendanceDocRef, attendanceData);
+				}
+			}
+		}
+	}
 </script>
 
 <body class="bg-gray-100 w-screen h-screen">
@@ -387,24 +422,32 @@
 												<!--ACTIONS-->
 												<td class="py-1 px-6 text-center justify-center">
 													{#if data.status == 'Present'}
-														<input type="radio" name={data.id} class="radio w-5 h-5 radio-error" />
+														<input
+															type="radio"
+															name={data.id}
+															class="radio w-5 h-5 radio-error"
+															on:click={() => changeStatus('absent', data.id)}
+														/>
 														<input
 															type="radio"
 															name={data.id}
 															class="radio w-5 h-5 radio-success"
 															checked
+															on:click={() => changeStatus('present', data.id)}
 														/>
 													{:else}
 														<input
 															type="radio"
 															name={data.id}
 															class="radio w-5 h-5 radio-error"
+															on:click={() => changeStatus('absent', data.id)}
 															checked
 														/>
 														<input
 															type="radio"
 															name={data.id}
 															class="radio w-5 h-5 radio-success"
+															on:click={() => changeStatus('present', data.id)}
 														/>
 													{/if}
 													<!--END ACTION-->
