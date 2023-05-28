@@ -1,3 +1,38 @@
+<script>
+	import { auth, database } from '$lib/firebase';
+	import {
+		doc,
+		setDoc,
+		query,
+		where,
+		getDocs,
+		collection,
+		getDoc,
+		onSnapshot,
+		updateDoc
+	} from 'firebase/firestore';
+	import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
+	import { goto } from '$app/navigation';
+	import { firebase, firestore, functions } from '$lib/firebase';
+	import { getDatabase, ref, onValue, get, child } from 'firebase/database';
+	import { userId } from '../../lib/userStorage';
+	import { onMount } from 'svelte';
+
+	
+	onMount(() => {
+		const unsubscribe = userId.subscribe((value) => {
+			// Use the value of userId here
+			userUID = localStorage.getItem('userId');
+			// You can perform any other actions with the user ID
+			classCheck();
+			attendanceCheck();
+			return () => {
+				unsubscribe();
+			};
+		});
+	});
+</script>
+
 <!-- Header Logo Center -->
 <body class="bg-gray-100 w-screen h-screen">
 	<header class="w-full text-gray-700 bg-gray-50 border-t border-gray-100 shadow-sm body-font">
@@ -245,7 +280,7 @@
 			</div>
 		</div>
 
-        <!--LEADERBOARDS-->
+		<!--LEADERBOARDS-->
 		<div class="basis-1/2 ml-2 container mt-2 pt-4 lg:w-3/6">
 			<div class="h-full bg-white shadow-lg bg-opacity-75 pb-12 rounded-3xl text-center">
 				<div class="flex flex-row mt-2">

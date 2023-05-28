@@ -20,6 +20,8 @@
 
 					if (userData.userRole === 'admin') {
 						console.log('User is an admin');
+						userId.set(userID);
+						userUID = localStorage.getItem('userId');
 						window.location.replace('../Admin-Dashboard');
 					} else {
 						console.log('User is not an admin');
@@ -34,6 +36,12 @@
 				const errorMessage = error.message;
 			});
 	}
+
+	onMount(() => {
+		userId.subscribe((val) => {
+			if (browser) localStorage.userId = val;
+		});
+	});
 </script>
 
 <div class="flex items-center justify-center min-h-screen bg-slate-white">

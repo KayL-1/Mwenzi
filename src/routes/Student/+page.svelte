@@ -1,37 +1,90 @@
+<script>
+	import { goto } from '$app/navigation';
+	import { auth } from '$lib/firebase';
+	import { firebase, firestore, functions } from '$lib/firebase';
+	import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+	import { Firestore, doc, getDoc } from 'firebase/firestore';
+	import { userId } from '../../lib/userStorage';
+	import { onMount } from 'svelte';
+	import { browser } from '$app/environment';
+
+	let email = '';
+	let password = '';
+	let userUID = '';
+
+	function login() {
+		signInWithEmailAndPassword(auth, email, password)
+			.then(async (userCredential) => {
+				const userID = userCredential.user.uid;
+				const docSnap = await getDoc(doc(firestore, 'users', userID));
+
+				if (docSnap.exists()) {
+					const userData = docSnap.data();
+					console.log('Document data:', userData);
+
+					if (userData.userRole === 'student') {
+						console.log('User is a Student');
+						userId.set(userID);
+						userUID = localStorage.getItem('userId');
+						console.log(userUID);
+						window.location.replace('../Student-Dashboard');
+					} else {
+						console.log('User is not a Student');
+						// Handle case when user is not a teacher
+					}
+				} else {
+					console.log('No such document!');
+				}
+			})
+			.catch((error) => {
+				const errorCode = error.code;
+				const errorMessage = error.message;
+			});
+	}
+
+	onMount(() => {
+		userId.subscribe((val) => {
+			if (browser) localStorage.userId = val;
+		});
+	});
+</script>
+
 <div class="flex items-center justify-center min-h-screen bg-slate-white">
 	<div class="container mx-auto">
 		<div class="max-w-md mx-auto">
 			<div class="text-center">
-				<a href="/..">
+				<a href="/..    ">
 					<img src="Mwenzi.png" class="h-auto max-w-full" alt="..." />
 				</a>
 			</div>
 			<div class="m-7">
-				<form action="?/" method="POST">
-					<div class="mb-4">
-						<label for="username" class="block mb-2 text-md font-medium text-gray">Email</label>
-						<input
-							type="username"
-							name="username"
-							id="username"
-							placeholder="Username"
-							class="w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-3xl focus:outline-none"
-						/>
-					</div>
-					<div class="mb-6">
-						<label for="password" class="block text-md mb-2 font-medium text-gray">Password</label>
-						<input
-							type="password"
-							name="password"
-							id="password"
-							placeholder="Password"
-							class="w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-3xl focus:outline-none"
-						/>
-					</div>
-					<button class="font-medium w-full px-3 py-4 text-white rounded-3xl bg-[#2ea44f] focus:outline-none hover:bg-[#1e7d3f] duration-300 hover:scale-105 "
-						>Log In</button
-					>
-				</form>
+				<div class="mb-4">
+					<label for="email" class="block mb-2 text-md font-medium text-gray">Email</label>
+					<input
+						bind:value={email}
+						type="email"
+						name="email"
+						id="email"
+						placeholder="Email"
+						class="w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-3xl focus:outline-none"
+					/>
+				</div>
+				<div class="mb-6">
+					<label for="password" class="block mb-2 text-md font-medium text-gray">Password</label>
+					<input
+						bind:value={password}
+						type="password"
+						name="password"
+						id="password"
+						placeholder="Password"
+						class="w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-3xl focus:outline-none"
+					/>
+				</div>
+				<button
+					on:click={login}
+					class=" w-full px-3 py-4 text-white bg-[#2ea44f] focus:outline-none font-medium rounded-3xl hover:bg-[#1e7d3f] duration-300 hover:scale-105"
+					>Log In</button
+				>
 			</div>
 		</div>
 	</div>
