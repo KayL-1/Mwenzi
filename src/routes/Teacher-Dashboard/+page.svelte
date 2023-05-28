@@ -1,6 +1,16 @@
 <script>
 	import { auth, database } from '$lib/firebase';
-	import { doc, setDoc, query, where, getDocs, collection, getDoc } from 'firebase/firestore';
+	import {
+		doc,
+		setDoc,
+		query,
+		where,
+		getDocs,
+		collection,
+		getDoc,
+		onSnapshot,
+		updateDoc
+	} from 'firebase/firestore';
 	import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 	import { goto } from '$app/navigation';
 	import { firebase, firestore, functions } from '$lib/firebase';
@@ -13,6 +23,7 @@
 	let docsArray = [];
 	let attendance = [];
 	let nameArray = [];
+	let recitation = [];
 
 	let currentDatee;
 
@@ -27,27 +38,87 @@
 		}));
 	}
 
-	async function attendanceCheck() {
-		const attendanceCollectionRef = collection(firestore, 'Subject', `${selecTSub}`, 'Attendance');
-		const attendanceDocRef = doc(attendanceCollectionRef, '2023-05-26');
-		const attendanceDocSnapshot = await getDoc(attendanceDocRef);
+	async function recitationCheck() {
+		const attendanceCollectionReflll = collection(
+			firestore,
+			'Subject',
+			`${selecTSub}`,
+			'Recitation'
+		);
+		return onSnapshot(attendanceCollectionReflll, (snapshot) => {
+			recitation = [];
+			// Clear the recitation array before populating it again
+			snapshot.forEach((doc) => {
+				const documentData = doc.data();
+				const documentName = doc.id;
+				const totalPoints = documentData.totalPoints;
 
-		attendance = Object.entries(attendanceDocSnapshot.data()).map(([key, value]) => ({
-			id: key,
-			...value
-		}));
-		console.log(attendance);
-		fetchNames();
-		fetchTime();
+				const documentInfo = {
+					id: documentName,
+					totalPoints: totalPoints
+				};
+
+				recitation.push(documentInfo);
+			});
+
+			recitation.sort((a, b) => b.totalPoints - a.totalPoints);
+
+			recitation.forEach((item, index) => {
+				item.ranking = index + 1;
+			});
+
+			console.log('Updated recitation array with ranking:', recitation);
+			console.log('recitation array:', recitation);
+			fetchNamesTwo();
+		});
+	}
+
+	function attendanceCheck() {
+		const attendanceCollectionRef = collection(firestore, 'Subject', `${selecTSub}`, 'Attendance');
+		const attendanceDocRef = doc(attendanceCollectionRef, currentDatee);
+
+		return onSnapshot(attendanceDocRef, (attendanceDocSnapshot) => {
+			attendance = Object.entries(attendanceDocSnapshot.data()).map(([key, value]) => ({
+				id: key,
+				...value
+			}));
+
+			console.log(attendance);
+			// Update your UI or perform any other actions with the updated data here
+			fetchTime();
+			fetchNames();
+		});
 	}
 
 	// Iterate over each object
-	async function fetchNames() {
+	async function fetchNamesTwo() {
 		const refer = collection(firestore, 'users');
-		const ids = attendance.map((item) => item.id); // Extract all IDs from the attendance array
+		const ids = recitation.map((item) => item.id); // Extract all IDs from the recitation array
 
 		// Query the Firestore documents by IDs
 		const snapshot = await getDocs(refer, where('studentRFID', 'in', ids));
+
+		snapshot.forEach((doc) => {
+			const id = doc.data().studentRFID;
+			const name = doc.data().Name;
+
+			// Find the item in the recitation array with the matching ID
+			const item = recitation.find((el) => el.id === id);
+
+			if (item) {
+				// Update the name property for the matching item
+				item.name = name;
+			}
+		});
+		recitation = recitation;
+	}
+
+	async function fetchNames() {
+		const refers = collection(firestore, 'users');
+		const ids = attendance.map((item) => item.id); // Extract all IDs from the attendance array
+
+		// Query the Firestore documents by IDs
+		const snapshot = await getDocs(refers, where('studentRFID', 'in', ids));
 
 		snapshot.forEach((doc) => {
 			const id = doc.data().studentRFID;
@@ -71,13 +142,33 @@
 		const promises = ids.map((id) =>
 			onValue(
 				child(dbRef, `RFIDATTENDANCE/${currentDatee}/${id}`),
-				(snapshot) => {
+				async (snapshot) => {
 					if (snapshot.exists()) {
-						// Update the attendance array with the data
-						const index = attendance.findIndex((item) => item.id === id);
-						if (index !== -1) {
-							attendance[index].time = snapshot.val().TIME;
-							attendance[index].status = 'Present';
+						const attendanceCollectionRef = collection(
+							firestore,
+							'Subject',
+							`${selecTSub}`,
+							'Attendance'
+						);
+						const attendanceDocRef = doc(attendanceCollectionRef, currentDatee);
+						try {
+							const attendanceDocSnapshot = await getDoc(attendanceDocRef);
+							if (attendanceDocSnapshot.exists()) {
+								const attendanceData = attendanceDocSnapshot.data();
+								const fieldName = Object.keys(attendanceData).find((key) => key === id);
+								if (fieldName && attendanceData[fieldName].dataStatus !== 'changed') {
+									attendanceData[fieldName].time = snapshot.val().TIME;
+									attendanceData[fieldName].status = 'Present';
+									attendanceData[fieldName].dataStatus = 'changed';
+									await setDoc(attendanceDocRef, attendanceData);
+								} else {
+									console.log(`Field with ID not found or data status is already changed: ${id}`);
+								}
+							} else {
+								console.log('Attendance document does not exist');
+							}
+						} catch (error) {
+							console.error('Error updating attendance document:', error);
 						}
 					} else {
 						console.log(`No data available for ID: ${id}`);
@@ -117,6 +208,7 @@
 		console.log(selecTSub);
 		classCheck();
 		attendanceCheck();
+		recitationCheck();
 	}
 
 	onMount(() => {
@@ -125,12 +217,59 @@
 			userUID = localStorage.getItem('userId');
 			// You can perform any other actions with the user ID
 			classCheck();
+			attendanceCheck();
 			return () => {
 				unsubscribe();
 			};
 		});
 	});
 	getDate();
+
+	async function changeDocumentID(action, documentID) {
+		const recitationCollectionReflllty = collection(
+			firestore,
+			'Subject',
+			`${selecTSub}`,
+			'Recitation'
+		);
+
+		if (action === 'minus') {
+			const recitationDocRef = doc(recitationCollectionReflllty, documentID);
+
+			// Retrieve the document data
+			const docSnapshot = await getDoc(recitationDocRef);
+			if (docSnapshot.exists()) {
+				const docData = docSnapshot.data();
+
+				// Decrease the value of the totalPoint field by 1
+				const newTotalPoint = docData.totalPoints - 1;
+
+				// Update the document with the new value
+				await updateDoc(recitationDocRef, { totalPoints: newTotalPoint });
+				console.log('Minus button clicked for document ID:', documentID);
+			}
+		}
+
+		// Perform the desired action based on the button clicked
+		else if (action === 'add') {
+			const recitationDocRefe = doc(recitationCollectionReflllty, documentID);
+
+			// Retrieve the document data
+			const docSnapshot = await getDoc(recitationDocRefe);
+			if (docSnapshot.exists()) {
+				const docData = docSnapshot.data();
+
+				// Decrease the value of the totalPoint field by 1
+				const newTotalPoint = docData.totalPoints + 1;
+
+				// Update the document with the new value
+				await updateDoc(recitationDocRefe, { totalPoints: newTotalPoint });
+				console.log('Minus button clicked for document ID:', documentID);
+			}
+			console.log('Add button clicked for document ID:', documentID);
+			// Perform any other actions specific to the add button
+		}
+	}
 </script>
 
 <body class="bg-gray-100 w-screen h-screen">
@@ -338,161 +477,37 @@
 											</tr>
 										</thead>
 										<tbody>
-											<!--RANK 1-->
-											<tr class="border-b bg-white">
-												<td class="text-sm text-gray-500 font-medium px-6 py-4 whitespace-nowrap">
-													1
-												</td>
-												<td class="text-md text-gray-900 font-medium px-6 py-3 whitespace-nowrap">
-													Ace Dela Cuesta
-												</td>
-												<td class="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
-													54
-												</td>
-												<td class="flex mt-2 justify-center">
-													<img
-														src="minus.png"
-														class="btn btn-sm px-1 bg-transparent hover:bg-transparent border-none"
-														alt="..."
-													/>
-													<img
-														src="add.png"
-														class="btn btn-sm px-1 bg-transparent hover:bg-transparent border-none"
-														alt="..."
-													/>
-												</td>
-											</tr>
-											<!--END RANK 1-->
-
-											<!--RANK 2-->
-											<tr class="border-b bg-white">
-												<td class="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
-													2
-												</td>
-												<td class="text-md text-gray-900 font-medium px-6 py-3 whitespace-nowrap">
-													Kyle Dela Pena
-												</td>
-												<td class="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
-													53
-												</td>
-												<td class="flex mt-2 justify-center">
-													<img
-														src="minus.png"
-														class="btn btn-sm px-1 bg-transparent hover:bg-transparent border-none"
-														alt="..."
-													/>
-													<img
-														src="add.png"
-														class="btn btn-sm px-1 bg-transparent hover:bg-transparent border-none"
-														alt="..."
-													/>
-												</td>
-											</tr>
-											<!--END RANK 2-->
-
-											<!--RANK 3-->
-											<tr class="border-b bg-white">
-												<td class="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
-													3
-												</td>
-												<td class="text-MD text-gray-900 font-medium px-6 py-3 whitespace-nowrap">
-													Luis Santiago
-												</td>
-												<td class="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
-													52
-												</td>
-												<td class="flex mt-2 justify-center">
-													<img
-														src="minus.png"
-														class="btn btn-sm px-1 bg-transparent hover:bg-transparent border-none"
-														alt="..."
-													/>
-													<img
-														src="add.png"
-														class="btn btn-sm px-1 bg-transparent hover:bg-transparent border-none"
-														alt="..."
-													/>
-												</td>
-											</tr>
-											<!--END RANK 3-->
-
-											<!--RANK 4-->
-											<tr class="border-b bg-white">
-												<td class="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
-													4
-												</td>
-												<td class="text-md text-gray-900 font-medium px-6 py-3 whitespace-nowrap">
-													Lebron James
-												</td>
-												<td class="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
-													52
-												</td>
-												<td class="flex mt-2 justify-center">
-													<img
-														src="minus.png"
-														class="btn btn-sm px-1 bg-transparent hover:bg-transparent border-none"
-														alt="..."
-													/>
-													<img
-														src="add.png"
-														class="btn btn-sm px-1 bg-transparent hover:bg-transparent border-none"
-														alt="..."
-													/>
-												</td>
-											</tr>
-											<!--END RANK 4-->
-
-											<!--RANK 5-->
-											<tr class="border-b bg-white">
-												<td class="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
-													5
-												</td>
-												<td class="text-md text-gray-900 font-medium px-6 py-3 whitespace-nowrap">
-													Stephen Curry
-												</td>
-												<td class="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
-													52
-												</td>
-												<td class="flex mt-2 justify-center">
-													<img
-														src="minus.png"
-														class="btn btn-sm px-1 bg-transparent hover:bg-transparent border-none"
-														alt="..."
-													/>
-													<img
-														src="add.png"
-														class="btn btn-sm px-1 bg-transparent hover:bg-transparent border-none"
-														alt="..."
-													/>
-												</td>
-											</tr>
-											<!--END RANK 5-->
-
-											<!--RANK 6-->
-											<tr class="border-b bg-white">
-												<td class="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
-													6
-												</td>
-												<td class="text-md text-gray-900 font-medium px-6 py-3 whitespace-nowrap">
-													Raffy T
-												</td>
-												<td class="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
-													52
-												</td>
-												<td class="flex mt-2 justify-center">
-													<img
-														src="minus.png"
-														class="btn btn-sm px-1 bg-transparent hover:bg-transparent border-none"
-														alt="..."
-													/>
-													<img
-														src="add.png"
-														class="btn btn-sm px-1 bg-transparent hover:bg-transparent border-none"
-														alt="..."
-													/>
-												</td>
-											</tr>
-											<!--END RANK 6-->
+											{#each recitation as data}
+												<!-- Table row for each recitation item -->
+												<tr class="border-b bg-white">
+													<!-- Display the data for each recitation item -->
+													<td class="text-sm text-gray-500 font-medium px-6 py-4 whitespace-nowrap">
+														{data.ranking}
+													</td>
+													<td class="text-md text-gray-900 font-medium px-6 py-3 whitespace-nowrap">
+														{data.name}
+													</td>
+													<td class="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
+														{data.totalPoints}
+													</td>
+													<td class="flex mt-2 justify-center">
+														<!-- svelte-ignore a11y-click-events-have-key-events -->
+														<img
+															src="minus.png"
+															class="btn btn-sm px-1 bg-transparent hover:bg-transparent border-none"
+															alt="..."
+															on:click={() => changeDocumentID('minus', data.id)}
+														/>
+														<!-- svelte-ignore a11y-click-events-have-key-events -->
+														<img
+															src="add.png"
+															class="btn btn-sm px-1 bg-transparent hover:bg-transparent border-none"
+															alt="..."
+															on:click={() => changeDocumentID('add', data.id)}
+														/>
+													</td>
+												</tr>
+											{/each}
 										</tbody>
 									</table>
 								</div>

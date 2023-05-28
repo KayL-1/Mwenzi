@@ -16,15 +16,15 @@ const { Firestore } = require('firebase-admin/firestore');
 admin.initializeApp();
 
 exports.createDailyAttendance = functions.pubsub
-  .schedule('0 0 * * *')
+  .schedule('0 4 * * *')
   .timeZone('Asia/Manila')
   .onRun(async (context) => {
     const currentDate = new Date();
-    currentDate.setUTCHours(0, 0, 0, 0); // Set current date to the start of the day in UTC
+    const gmt8Date = new Date(currentDate.valueOf() + 8 * 60 * 60 * 1000); // Adjust the date to GMT+8
 
-    const year = currentDate.getUTCFullYear().toString();
-    const month = (currentDate.getUTCMonth() + 1).toString().padStart(2, '0');
-    const day = currentDate.getUTCDate().toString().padStart(2, '0');
+    const year = gmt8Date.getUTCFullYear().toString();
+    const month = (gmt8Date.getUTCMonth() + 1).toString().padStart(2, '0');
+    const day = gmt8Date.getUTCDate().toString().padStart(2, '0');
     const formattedDate = `${year}-${month}-${day}`;
 
     const subjectSnapshot = await admin.firestore().collection('Subject').get();
