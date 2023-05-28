@@ -1,6 +1,5 @@
 
-
-<body class="bg-gray-100 w-screen h-screen">
+<body class="bg-gray-100 w-auto h-auto">
 	<!--HEADER-->
 	<header
 		class="fixed top-0 w-full text-gray-700 bg-gray-50 border-t border-gray-100 shadow-sm body-font"
@@ -17,9 +16,9 @@
 					<!-- svelte-ignore a11y-invalid-attribute -->
 					<a class="text-primary py-[20px] text-sm font-medium" href="/..">Home</a>
 					<!-- svelte-ignore a11y-invalid-attribute -->
-					<a class="false py-[29px] text-sm" href="/About-Us">About</a>
+					<a class="py-[29px] text-sm hover:text-primary" href="/About-Us ">About Us</a>
 					<!-- svelte-ignore a11y-invalid-attribute -->
-					<a class="false py-[29px] text-sm" href="">Contact Us</a>
+					<a class="false py-[29px] text-sm hover:text-primary" href="">Contact Us</a>
 				</div>
 			</div>
 		</div>
@@ -28,7 +27,7 @@
 
 	<!--BODY1-->
 	<section class="bg-gray-100 text-gray-600 body-font mt-10">
-		<div class="mt-10 container mx-auto flex flex-start px-8 md:flex-row flex-col items-center">
+		<div class="mt-12 container mx-auto flex flex-start px-8 md:flex-row flex-col items-center">
 			<div class="flex flex-col align-middle text-left pr-10">
 				<h1 class="title-font sm:text-4xl text-3xl mb-4 font-medium text-gray-900">
 					Mwenzi Classroom Management Tool
@@ -36,10 +35,11 @@
 				</h1>
 				<p class="mb-8 leading-relaxed w-4/5">
 					<!-- svelte-ignore a11y-missing-attribute -->
-					Experience seamless classroom management with <a class="font-bold">Mwenzi</a>:
-					Revolutionize your teaching experience with our web-based application that integrates
+					Experience seamless classroom management with <a class="font-bold"> Mwenzi </a>: Revolutionize your teaching experience
 					<!-- svelte-ignore a11y-missing-attribute -->
-					<a class="font-bold">RFID</a> for attendance tracking, group creation, and leaderboard feature.
+					with our web-based application, designed exclusively for <a class="underline" href="https://www.facebook.com/coloongelementaryschoolvalenzuelacity/">Coloong Elementary School</a>, that integrates
+					<!-- svelte-ignore a11y-missing-attribute -->
+					<a class="font-bold"> RFID </a> for attendance tracking, group creation, and leaderboard feature.
 				</p>
 				<div class="flex justify-left">
 					<a href="/Login">
@@ -198,9 +198,11 @@
 			</div>
 			<div class="flex flex-wrap -m-4">
 				<div class="p-4 lg:w-1/3">
+					<a href="/About-Us">
 					<div
 						class="h-full flex sm:flex-row flex-col items-center sm:justify-start justify-center text-center sm:text-left"
 					>
+					
 						<img
 							alt="team"
 							class="flex-shrink-0 rounded-lg w-48 h-48 object-cover object-center sm:mb-0 mb-4"
@@ -265,14 +267,17 @@
 				</div>
 
 				<div class="p-4 lg:w-1/3">
+					<a href="/About-Us">
 					<div
 						class="h-full flex sm:flex-row flex-col items-center sm:justify-start justify-center text-center sm:text-left"
 					>
+					
 						<img
 							alt="team"
 							class="flex-shrink-0 rounded-lg w-48 h-48 object-cover object-center sm:mb-0 mb-4"
 							src="/kyle.jpg"
 						/>
+					
 						<div class="flex-grow sm:pl-8">
 							<h2 class="title-font font-medium text-lg text-gray-900">Kyle Dela Peña</h2>
 							<h3 class="text-gray-500 mb-3">Back-End Developer</h3>
@@ -330,6 +335,7 @@
 				</div>
 
 				<div class="p-4 lg:w-1/3">
+					<a href="/About-Us">
 					<div
 						class="h-full flex sm:flex-row flex-col items-center sm:justify-start justify-center text-center sm:text-left"
 					>
