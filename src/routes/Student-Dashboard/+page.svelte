@@ -216,9 +216,9 @@
 			</div>
 		</div>
 	</header>
-	<div class="mx-20 my-8 px-44 bg-gray-100">
+	<div class="mx-20 my-8 px-44 bg-gray-100 mt-20">
 		<!--SELECTSUBJECT-->
-		<div class="w-1/2 flex flex-row mr-4 mt-1">
+		<div class="w-1/2 flex flex-row mx-20">
 			<select
 				bind:value={selecTSub}
 				on:change={change}
@@ -229,7 +229,7 @@
 				{/each}
 			</select>
 		</div>
-		<div class="flex flex-row mx-20 my-20 justify-center">
+		<div class="flex flex-row mx-20 mb-20 justify-center">
 			<div class="basis-1/2 container mt-2 pt-4 lg:w-3/6">
 				<div class="h-full bg-white shadow-xl bg-opacity-75 pb-12 rounded-3xl">
 					<div class="flex flex-row mt-2">
@@ -243,13 +243,11 @@
 							<div class="bg-white shadow-md rounded-xl h-64 overflow-y-scroll snap-y">
 								<table class="rounded-2xl w-full">
 									<thead>
-										<tr
-											class="bg-gray-100 text-gray-600 uppercase text-sm leading-normal sticky top-0"
-										>
-											<th class="py-3 px-6 text-left">Student</th>
-											<th class="py-3 px-6 text-center">RFID Tag</th>
-											<th class="py-3 px-6 text-center">Time</th>
-											<th class="py-3 px-6 text-center">Status</th>
+										<tr class="bg-gray-100 text-gray-900 text-sm leading-normal sticky top-0">
+											<th class="py-3 px-6 text-left font-medium">Student</th>
+											<th class="py-3 px-6 text-center font-medium">RFID Tag</th>
+											<th class="py-3 px-6 text-center font-medium">Time</th>
+											<th class="py-3 px-6 text-center font-medium">Status</th>
 										</tr>
 									</thead>
 
