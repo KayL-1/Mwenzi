@@ -25,6 +25,8 @@
 	let studentInfo = [];
 	let studentGetRFID;
 
+	let teacherUID;
+
 	// Create a reference to the 'users' collection
 	async function studentUpdate() {
 		const collectionRef = collection(firestore, 'users');
@@ -52,6 +54,18 @@
 		studentSubjectUpdate();
 		studentRecitationUpdate();
 		searchCopyAndCreate();
+		updateStudUser();
+	}
+
+	async function updateStudUser() {
+		const collectionRef = collection(firestore, 'users');
+		const queryRef = query(collectionRef, where('studentID', '==', studentNumber));
+		const querySnapshot = await getDocs(queryRef);
+
+		querySnapshot.forEach((doc) => {
+			updateDoc(doc.ref, { studentRFID: rfidTag });
+		});
+		console.log("HAHHAH")
 	}
 
 	async function studentClassUpdate() {
@@ -251,9 +265,9 @@
 										class="w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-2xl focus:outline-none"
 									/>
 									<input
-										type="email"
-										name="studentEmail"
-										id="studentEmail"
+										type="text"
+										name="rfidStudent"
+										id="rfidStudent"
 										placeholder="Class"
 										class="mt-3 w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-2xl focus:outline-none"
 									/>
