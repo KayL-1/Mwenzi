@@ -306,11 +306,11 @@
 		}
 	}
 
-	console.log("BAANGH", attendance);
+	console.log('BAANGH', attendance);
 </script>
 
 <body class="bg-gray-100 w-screen h-screen">
-	<!-- Header Logo Center -->
+	<!--HEADER-->
 	<header class="w-full text-gray-700 bg-gray-50 border-t border-gray-100 shadow-sm body-font">
 		<div class="container flex flex-col flex-wrap items-center pt-2 mx-auto md:flex-row">
 			<nav class="flex flex-wrap items-center text-base lg:w-2/5 md:ml-auto" />
@@ -351,8 +351,10 @@
 			</div>
 		</div>
 	</header>
+	<!--ENDHEADER-->
 
 	<div class="mx-20 my-8 px-44 bg-gray-100">
+		<!--SELECTSUBJECT-->
 		<div class="w-1/2 flex flex-row mr-4 mt-1">
 			<select
 				bind:value={selecTSub}
@@ -360,11 +362,11 @@
 				class="mr-2 h-8 w-1/3 rounded-xl border-none placeholder-gray-300 font-medium text-center bg-white shadow-md"
 			>
 				{#each docsArray as item1}
-					<option value={item1.id}>{item1.id}</option>
+					<option class="rounded-xl" value={item1.id}>{item1.id}</option>
 				{/each}
 			</select>
 		</div>
-
+		<!--SELECTSUBJECT-->
 		<div class="flex flex-row justify-center">
 			<div class="basis-1/2 container mt-2 pt-4 lg:w-3/6">
 				<div class="h-full bg-white bg-opacity-75 pb-12 rounded-3xl shadow-lg">
@@ -379,9 +381,7 @@
 							<div class="bg-white shadow-md rounded-xl h-64 overflow-y-scroll snap-y">
 								<table class="rounded-2xl">
 									<thead>
-										<tr
-											class="bg-gray-100 text-gray-600 text-sm leading-normal sticky top-0"
-										>
+										<tr class="bg-gray-100 text-gray-600 text-sm leading-normal sticky top-0">
 											<th class="py-3 px-6 text-left">Student</th>
 											<th class="py-3 px-6 text-center">RFID Tag</th>
 											<th class="py-3 px-6 text-center">Time</th>
@@ -464,7 +464,7 @@
 					</div>
 				</div>
 			</div>
-
+			<!--LEADERBOARDS-->
 			<div class="basis-1/2 ml-4 container mt-2 pt-4 lg:w-3/6">
 				<div class="h-full bg-white bg-opacity-75 pb-12 rounded-3xl text-center shadow-lg">
 					<div class="flex flex-row mt-2">
@@ -562,7 +562,9 @@
 				</div>
 			</div>
 		</div>
+		<!--LEADERBOARDS-->
 
+		<!--RANDOMIZER-->
 		<div class="flex flex-row justify-center">
 			<div class="basis-1/2 container mt-7 lg:w-1/4">
 				<div
@@ -615,28 +617,25 @@
 				</div>
 			</div>
 		</div>
+		<!--ENDRANDOMIZER-->
 	</div>
+
+	<!--VIEW OUR POLICY-->
+		<!-- The button to open modal -->
+		<div class="w-full flex justify-end mt-24 px-10">
+			<label for="my-modal-3" class="btn bg-gray-50 border-none shadow-xl text-gray-800 hover:bg-gray-300 normal-case">View Policy</label>
+
+			<!-- Put this part before </body> tag -->
+			<input type="checkbox" id="my-modal-3" class="modal-toggle" />
+			<div class="modal">
+				<div class="modal-box relative">
+					<label for="my-modal-3" class="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
+					<h3 class="text-lg font-bold text-center">Mwenzi's Policy</h3>
+					<p class="py-4">
+					
+					</p>
+				</div>
+			</div>
+		</div>
+		<!--END VIEW OUR POLICY-->
 </body>
-<!--ATTENDANCE LIST-->
-<!--div class='flex mt-20 min-h-screen bg-slate-white'>
-        <div class="container mx-auto">
-            <div class="max-w-md mx-auto">
-                <div class="text-center">
-                </div>
-                <div class="m-7">   
-                    <form action="?/" method="POST">
-                        <div class="mb-6">
-                            <label for="listofstudents" class="block mb-2 text-md font-medium text-gray">List of Students</label>
-                            <ul class="border border-gray-200 rounded overflow-hidden shadow-md">
-                                <li class="px-4 py-2 bg-white hover:bg-sky-100 hover:text-sky-900 border-b last:border-none border-gray-200 transition-all duration-300 ease-in-out">Student 1 | RFID Tag</li>
-                                <li class="px-4 py-2 bg-white hover:bg-sky-100 hover:text-sky-900 border-b last:border-none border-gray-200 transition-all duration-300 ease-in-out">Student 2 | RFID Tag</li>
-                                <li class="px-4 py-2 bg-white hover:bg-sky-100 hover:text-sky-900 border-b last:border-none border-gray-200 transition-all duration-300 ease-in-out">Student 3 | RFID Tag</li>
-                                <li class="px-4 py-2 bg-white hover:bg-sky-100 hover:text-sky-900 border-b last:border-none border-gray-200 transition-all duration-300 ease-in-out">Student 4 | RFID Tag</li>
-                                <li class="px-4 py-2 bg-white hover:bg-sky-100 hover:text-sky-900 border-b last:border-none border-gray-200 transition-all duration-300 ease-in-out">Student 5 | RFID Tag</li>
-                            </ul>
-                    </form>
-                </div>
-            </div>
-        </div>
-    	</div-->
-<!--ATTENDANCE LIST-->
