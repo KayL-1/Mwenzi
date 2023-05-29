@@ -9,7 +9,8 @@
 		collection,
 		getDoc,
 		onSnapshot,
-		updateDoc
+		updateDoc,
+		FieldPath
 	} from 'firebase/firestore';
 	import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 	import { goto } from '$app/navigation';
@@ -18,14 +19,154 @@
 	import { userId } from '../../lib/userStorage';
 	import { onMount } from 'svelte';
 
-	
+	let userUID;
+	let selecTSub;
+	let docsArray = [];
+	let attendance = [];
+	let recitation = [];
+	let rank = 0;
+
+	let userRFID;
+
+	async function getRFID() {
+		const collectionRef = collection(firestore, 'users');
+		const queryOne = query(collectionRef, where('UID', '==', userUID));
+		const querySnapshot = await getDocs(queryOne);
+
+		if (!querySnapshot.empty) {
+			querySnapshot.forEach((doc) => {
+				userRFID = doc.data().studentRFID;
+				console.log(userRFID);
+			});
+		} else {
+			console.log('No matching documents found.');
+		}
+
+		classCheck();
+	}
+
+	async function recitationCheck() {
+		const attendanceCollectionReflll = collection(
+			firestore,
+			'Subject',
+			`${selecTSub}`,
+			'Recitation'
+		);
+		return onSnapshot(attendanceCollectionReflll, (snapshot) => {
+			recitation = [];
+			// Clear the recitation array before populating it again
+			snapshot.forEach((doc) => {
+				const documentData = doc.data();
+				const documentName = doc.id;
+				const totalPoints = documentData.totalPoints;
+
+				const documentInfo = {
+					id: documentName,
+					totalPoints: totalPoints
+				};
+
+				recitation.push(documentInfo);
+			});
+
+			recitation.sort((a, b) => b.totalPoints - a.totalPoints);
+
+			recitation.forEach((item, index) => {
+				item.ranking = index + 1;
+			});
+
+			console.log('Updated recitation array with ranking:', recitation);
+			console.log('recitation array:', recitation);
+
+			rank = recitation.find((item) => item.id === userRFID).ranking;
+			fetchNamesTwo();
+		});
+	}
+
+	async function classCheck() {
+		const collectionRef = collection(firestore, 'Subject');
+		const queryRef = query(collectionRef, where('students', 'array-contains', userRFID));
+		const querySnapshot = await getDocs(queryRef);
+
+		docsArray = querySnapshot.docs.map((doc) => ({
+			id: doc.id,
+			data: doc.data()
+		}));
+	}
+
+	async function attendanceCheck() {
+		const query = collection(firestore, 'Subject', `${selecTSub}`, 'Attendance');
+		const snapshot = await getDocs(query);
+
+		snapshot.forEach((doc) => {
+			const data = doc.data();
+			if (data.hasOwnProperty(userRFID)) {
+				const fieldValue = data[userRFID];
+				const attendanceObject = { id: userRFID, ...fieldValue };
+				attendance.push(attendanceObject);
+			}
+		});
+
+		fetchNames();
+	}
+
+	async function fetchNames() {
+		const refers = collection(firestore, 'users');
+		const ids = attendance.map((item) => item.id); // Extract all IDs from the attendance array
+
+		// Query the Firestore documents by IDs
+		const snapshot = await getDocs(refers, where('studentRFID', 'in', ids));
+
+		snapshot.forEach((doc) => {
+			const id = doc.data().studentRFID;
+			const name = doc.data().Name;
+
+			// Find all items in the attendance array with the matching ID
+			const matchingItems = attendance.filter((el) => el.id === id);
+
+			if (matchingItems.length > 0) {
+				// Update the name property for all matching items
+				matchingItems.forEach((item) => {
+					item.name = name;
+				});
+			}
+		});
+		attendance = attendance;
+		console.log(attendance);
+	}
+
+	async function fetchNamesTwo() {
+		const refer = collection(firestore, 'users');
+		const ids = recitation.map((item) => item.id); // Extract all IDs from the recitation array
+
+		// Query the Firestore documents by IDs
+		const snapshot = await getDocs(refer, where('studentRFID', 'in', ids));
+
+		snapshot.forEach((doc) => {
+			const id = doc.data().studentRFID;
+			const name = doc.data().Name;
+
+			// Find the item in the recitation array with the matching ID
+			const item = recitation.find((el) => el.id === id);
+
+			if (item) {
+				// Update the name property for the matching item
+				item.name = name;
+			}
+		});
+		recitation = recitation;
+	}
+
+	async function change() {
+		attendanceCheck();
+		recitationCheck();
+	}
 	onMount(() => {
 		const unsubscribe = userId.subscribe((value) => {
 			// Use the value of userId here
 			userUID = localStorage.getItem('userId');
+			console.log(userUID);
 			// You can perform any other actions with the user ID
-			classCheck();
-			attendanceCheck();
+			getRFID();
 			return () => {
 				unsubscribe();
 			};
@@ -75,333 +216,138 @@
 			</div>
 		</div>
 	</header>
-
-	<div class="flex flex-row mx-20 my-20 justify-center">
-		<div class="basis-1/2 container mt-2 pt-4 lg:w-3/6">
-			<div class="h-full bg-white shadow-xl bg-opacity-75 pb-12 rounded-3xl">
-				<div class="flex flex-row mt-2">
-					<img src="addclass.png" class="h-10 mt-4 pl-8" alt="..." />
-					<h1 class="pl-1 pt-5 pb-2 font-medium text-xl mb-5 text-gray-700">Attendance Logs</h1>
-				</div>
-
-				<!-- ADDED CLASS-->
-				<div class="flex justify-center font-sans">
-					<div class="flex scale-110 mt-3">
-						<div class="bg-white shadow-md rounded-xl h-64 overflow-y-scroll snap-y">
-							<table class="rounded-2xl w-full">
-								<thead>
-									<tr
-										class="bg-gray-100 text-gray-600 uppercase text-sm leading-normal sticky top-0"
-									>
-										<th class="py-3 px-6 text-left">Student</th>
-										<th class="py-3 px-6 text-center">RFID Tag</th>
-										<th class="py-3 px-6 text-center">Time</th>
-										<th class="py-3 px-6 text-center">Status</th>
-									</tr>
-								</thead>
-								<!--ROW 1-->
-								<tbody class="text-gray-600 text-sm font-light">
-									<tr class="border-b border-gray-200 hover:bg-gray-100">
-										<td class="py-1 px-6 text-left">
-											<div class="flex items-center">
-												<span>Eshal Rosas</span>
-											</div>
-										</td>
-										<td class="py-1 px-6 text-center">
-											<div class="flex items-center justify-center">
-												<p>12345678910</p>
-											</div>
-										</td>
-										<td class="py-1 px-6 text-center">
-											<span class="">7:15</span>
-										</td>
-										<td class="py-1 px-6 text-center">
-											<span class="bg-green-500 text-white py-1 px-3 rounded-full text-xs"
-												>Present
-											</span>
-										</td>
-									</tr>
-								</tbody>
-								<!--END ROW 1-->
-
-								<!--ROW 2-->
-								<tbody class="text-gray-600 text-sm font-light">
-									<tr class="border-b border-gray-200 hover:bg-gray-100">
-										<td class="py-1 px-6 text-left">
-											<div class="flex items-center">
-												<span>Eshal Rosas</span>
-											</div>
-										</td>
-										<td class="py-1 px-6 text-center">
-											<div class="flex items-center justify-center">
-												<p>12345678910</p>
-											</div>
-										</td>
-										<td class="py-1 px-6 text-center">
-											<span class="">7:15</span>
-										</td>
-										<td class="py-1 px-6 text-center">
-											<span class="bg-red-500 text-white py-1 px-3 rounded-full text-xs"
-												>Absent
-											</span>
-										</td>
-									</tr>
-								</tbody>
-								<!--END ROW 2-->
-
-								<!--ROW 3-->
-								<tbody class="text-gray-600 text-sm font-light">
-									<tr class="border-b border-gray-200 hover:bg-gray-100">
-										<td class="py-1 px-6 text-left">
-											<div class="flex items-center">
-												<span>Eshal Rosas</span>
-											</div>
-										</td>
-										<td class="py-1 px-6 text-center">
-											<div class="flex items-center justify-center">
-												<p>12345678910</p>
-											</div>
-										</td>
-										<td class="py-1 px-6 text-center">
-											<span class="">7:15</span>
-										</td>
-										<td class="py-1 px-6 text-center">
-											<span class="bg-green-500 text-white py-1 px-3 rounded-full text-xs"
-												>Present
-											</span>
-										</td>
-									</tr>
-								</tbody>
-								<!--END ROW 3-->
-
-								<!--ROW 4-->
-								<tbody class="text-gray-600 text-sm font-light">
-									<tr class="border-b border-gray-200 hover:bg-gray-100">
-										<td class="py-1 px-6 text-left">
-											<div class="flex items-center">
-												<span>Eshal Rosas</span>
-											</div>
-										</td>
-										<td class="py-1 px-6 text-center">
-											<div class="flex items-center justify-center">
-												<p>12345678910</p>
-											</div>
-										</td>
-										<td class="py-1 px-6 text-center">
-											<span class="">7:15</span>
-										</td>
-										<td class="py-1 px-6 text-center">
-											<span class="bg-green-500 text-white py-1 px-3 rounded-full text-xs"
-												>Present
-											</span>
-										</td>
-									</tr>
-								</tbody>
-								<!--END ROW 4-->
-
-								<!--ROW 5-->
-								<tbody class="text-gray-600 text-sm font-light">
-									<tr class="border-b border-gray-200 hover:bg-gray-100">
-										<td class="py-1 px-6 text-left">
-											<div class="flex items-center">
-												<span>Eshal Rosas</span>
-											</div>
-										</td>
-										<td class="py-1 px-6 text-center">
-											<div class="flex items-center justify-center">
-												<p>12345678910</p>
-											</div>
-										</td>
-										<td class="py-1 px-6 text-center">
-											<span class="">7:15</span>
-										</td>
-										<td class="py-1 px-6 text-center">
-											<span class="bg-green-500 text-white py-1 px-3 rounded-full text-xs"
-												>Present
-											</span>
-										</td>
-									</tr>
-								</tbody>
-								<!--END ROW 5-->
-
-								<!--ROW 6-->
-								<tbody class="text-gray-600 text-sm font-light">
-									<tr class="border-b border-gray-200 hover:bg-gray-100">
-										<td class="py-1 px-6 text-left">
-											<div class="flex items-center">
-												<span>Eshal Rosas</span>
-											</div>
-										</td>
-										<td class="py-1 px-6 text-center">
-											<div class="flex items-center justify-center">
-												<p>12345678910</p>
-											</div>
-										</td>
-										<td class="py-1 px-6 text-center">
-											<span class="">7:15</span>
-										</td>
-										<td class="py-1 px-6 text-center">
-											<span class="bg-green-500 text-white py-1 px-3 rounded-full text-xs"
-												>Present
-											</span>
-										</td>
-									</tr>
-								</tbody>
-								<!--END ROW 6-->
-
-								<!--ROW 7-->
-								<tbody class="text-gray-600 text-sm font-light">
-									<tr class="border-b border-gray-200 hover:bg-gray-100">
-										<td class="py-1 px-6 text-left">
-											<div class="flex items-center">
-												<span>Eshal Rosas</span>
-											</div>
-										</td>
-										<td class="py-1 px-6 text-center">
-											<div class="flex items-center justify-center">
-												<p>12345678910</p>
-											</div>
-										</td>
-										<td class="py-1 px-6 text-center">
-											<span class="">7:15</span>
-										</td>
-										<td class="py-1 px-6 text-center">
-											<span class="bg-green-500 text-white py-1 px-3 rounded-full text-xs"
-												>Present
-											</span>
-										</td>
-									</tr>
-								</tbody>
-								<!--END ROW 7-->
-							</table>
-						</div>
-					</div>
-				</div>
-			</div>
+	<div class="mx-20 my-8 px-44 bg-gray-100">
+		<!--SELECTSUBJECT-->
+		<div class="w-1/2 flex flex-row mr-4 mt-1">
+			<select
+				bind:value={selecTSub}
+				on:change={change}
+				class="mr-2 h-8 w-1/3 rounded-xl border-none placeholder-gray-300 font-medium text-center bg-white shadow-md"
+			>
+				{#each docsArray as item1}
+					<option class="rounded-xl" value={item1.id}>{item1.id}</option>
+				{/each}
+			</select>
 		</div>
-
-		<!--LEADERBOARDS-->
-		<div class="basis-1/2 ml-2 container mt-2 pt-4 lg:w-3/6">
-			<div class="h-full bg-white shadow-lg bg-opacity-75 pb-12 rounded-3xl text-center">
-				<div class="flex flex-row mt-2">
-					<img src="leaderboard.png" class="h-10 mt-4 pl-9 pr-1" alt="..." />
-					<h1 class="pl-1 pt-5 pb-4 font-medium text-xl text-gray-700">Leaderboards</h1>
-					<div class="w-full flex flex-row-reverse items-center">
-						<h1 class="mr-12 font-medium text-xl text-gray-700">Your Rank: 4</h1>
+		<div class="flex flex-row mx-20 my-20 justify-center">
+			<div class="basis-1/2 container mt-2 pt-4 lg:w-3/6">
+				<div class="h-full bg-white shadow-xl bg-opacity-75 pb-12 rounded-3xl">
+					<div class="flex flex-row mt-2">
+						<img src="addclass.png" class="h-10 mt-4 pl-8" alt="..." />
+						<h1 class="pl-1 pt-5 pb-2 font-medium text-xl mb-5 text-gray-700">Attendance Logs</h1>
 					</div>
-					<!--button class="btn">Sections</button-->
-				</div>
 
-				<!-- component -->
-				<div class="flex flex-col">
-					<div class="overflow-x-auto">
-						<div class="py-2 w-full sm:px-6 lg:px-8">
-							<div class=" overflow-y-scroll h-64 bg-white shadow-md rounded-xl">
-								<table class="w-full text-center">
-									<thead class="border-b sticky top-0 bg-gray-100">
-										<tr>
-											<th scope="col" class="text-sm font-medium text-gray-900 px-6 py-4">
-												Rank
-											</th>
-											<th scope="col" class="text-sm font-medium text-gray-900 px-6 py-4">
-												Name
-											</th>
-											<th scope="col" class="text-sm font-medium text-gray-900 px-6 py-4">
-												Points
-											</th>
+					<!-- ADDED CLASS-->
+					<div class="flex justify-center font-sans">
+						<div class="flex scale-110 mt-3">
+							<div class="bg-white shadow-md rounded-xl h-64 overflow-y-scroll snap-y">
+								<table class="rounded-2xl w-full">
+									<thead>
+										<tr
+											class="bg-gray-100 text-gray-600 uppercase text-sm leading-normal sticky top-0"
+										>
+											<th class="py-3 px-6 text-left">Student</th>
+											<th class="py-3 px-6 text-center">RFID Tag</th>
+											<th class="py-3 px-6 text-center">Time</th>
+											<th class="py-3 px-6 text-center">Status</th>
 										</tr>
 									</thead>
-									<tbody>
-										<!--RANK 1-->
-										<tr class="border-b bg-white">
-											<td class="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
-												1
-											</td>
-											<td class="text-md text-gray-900 font-medium px-6 py-3 whitespace-nowrap">
-												Ace Dela Cuesta
-											</td>
-											<td class="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
-												54
-											</td>
-										</tr>
-										<!--END RANK 1-->
 
-										<!--RANK 2-->
-										<tr class="border-b bg-white">
-											<td class="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
-												2
-											</td>
-											<td class="text-md text-gray-900 font-medium px-6 py-3 whitespace-nowrap">
-												Kyle Dela Pena
-											</td>
-											<td class="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
-												53
-											</td>
-										</tr>
-										<!--END RANK 2-->
-
-										<!--RANK 3-->
-										<tr class="border-b bg-white">
-											<td class="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
-												3
-											</td>
-											<td class="text-MD text-gray-900 font-medium px-6 py-3 whitespace-nowrap">
-												Luis Santiago
-											</td>
-											<td class="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
-												52
-											</td>
-										</tr>
-										<!--END RANK 3-->
-
-										<!--RANK 4-->
-										<tr class="border-b bg-white">
-											<td class="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
-												4
-											</td>
-											<td class="text-md text-gray-900 font-medium px-6 py-3 whitespace-nowrap">
-												Lebron James
-											</td>
-											<td class="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
-												52
-											</td>
-										</tr>
-										<!--END RANK 4-->
-
-										<!--RANK 5-->
-										<tr class="border-b bg-white">
-											<td class="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
-												5
-											</td>
-											<td class="text-md text-gray-900 font-medium px-6 py-3 whitespace-nowrap">
-												Stephen Curry
-											</td>
-											<td class="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
-												52
-											</td>
-										</tr>
-										<!--END RANK 5-->
-
-										<!--RANK 6-->
-										<tr class="border-b">
-											<td class="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
-												6
-											</td>
-											<td class="text-md text-gray-900 font-medium px-6 py-3 whitespace-nowrap">
-												Raffy T
-											</td>
-											<td class="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
-												52
-											</td>
-										</tr>
-										<!--END RANK 6-->
+									<tbody class="text-gray-600 text-sm font-light">
+										{#each attendance as data}
+											<tr class="border-b border-gray-200 hover:bg-gray-100">
+												<td class="py-1 px-6 text-left">
+													<div class="flex items-center">
+														<span>{data.name}</span>
+													</div>
+												</td>
+												<td class="py-1 px-6 text-center">
+													<div class="flex items-center justify-center">
+														<p>{data.id}</p>
+													</div>
+												</td>
+												<td class="py-1 px-6 text-center">
+													<span class="">{data.time}</span>
+												</td>
+												{#if data.status == 'Present'}
+													<td class="py-1 px-6 text-center">
+														<span class="bg-green-500 text-white py-1 px-3 rounded-full text-xs"
+															>Present
+														</span>
+													</td>
+												{:else}
+													<td class="py-1 px-6 text-center">
+														<span class="bg-red-500 text-white py-1 px-3 rounded-full text-xs"
+															>Absent
+														</span>
+													</td>
+												{/if}
+											</tr>{/each}
 									</tbody>
+
+									<!--END ROW 1-->
 								</table>
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
+
+			<!--LEADERBOARDS-->
+			<div class="basis-1/2 ml-2 container mt-2 pt-4 lg:w-3/6">
+				<div class="h-full bg-white shadow-lg bg-opacity-75 pb-12 rounded-3xl text-center">
+					<div class="flex flex-row mt-2">
+						<img src="leaderboard.png" class="h-10 mt-4 pl-9 pr-1" alt="..." />
+						<h1 class="pl-1 pt-5 pb-4 font-medium text-xl text-gray-700">Leaderboards</h1>
+						<div class="w-full flex flex-row-reverse items-center">
+							<h1 class="mr-12 font-medium text-xl text-gray-700">Your Rank: {rank}</h1>
+						</div>
+						<!--button class="btn">Sections</button-->
+					</div>
+
+					<!-- component -->
+					<div class="flex flex-col">
+						<div class="overflow-x-auto">
+							<div class="py-2 w-full sm:px-6 lg:px-8">
+								<div class=" overflow-y-scroll h-64 bg-white shadow-md rounded-xl">
+									<table class="w-full text-center">
+										<thead class="border-b sticky top-0 bg-gray-100">
+											<tr>
+												<th scope="col" class="text-sm font-medium text-gray-900 px-6 py-4">
+													Rank
+												</th>
+												<th scope="col" class="text-sm font-medium text-gray-900 px-6 py-4">
+													Name
+												</th>
+												<th scope="col" class="text-sm font-medium text-gray-900 px-6 py-4">
+													Points
+												</th>
+											</tr>
+										</thead>
+										<tbody>
+											{#each recitation as data}
+												<!-- Table row for each recitation item -->
+												<tr class="border-b bg-white">
+													<!-- Display the data for each recitation item -->
+													<td class="text-sm text-gray-500 font-medium px-6 py-4 whitespace-nowrap">
+														{data.ranking}
+													</td>
+													<td class="text-md text-gray-900 font-medium px-6 py-3 whitespace-nowrap">
+														{data.name}
+													</td>
+													<td class="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
+														{data.totalPoints}
+													</td>
+												</tr>
+											{/each}
+										</tbody>
+									</table>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
-	</div>
-</body>
+	</div></body
+>
