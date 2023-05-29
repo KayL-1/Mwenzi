@@ -286,7 +286,6 @@
 				const fieldName = Object.keys(attendanceData).find((key) => key === documentID);
 				if (fieldName) {
 					attendanceData[fieldName].status = 'Present';
-					attendanceData[fieldName].dataStatus = 'changed';
 					await setDoc(attendanceDocRef, attendanceData);
 				}
 			}
@@ -299,7 +298,6 @@
 				const fieldName = Object.keys(attendanceData).find((key) => key === documentID);
 				if (fieldName) {
 					attendanceData[fieldName].status = 'Absent';
-					attendanceData[fieldName].dataStatus = 'changed';
 					await setDoc(attendanceDocRef, attendanceData);
 				}
 			}
@@ -410,20 +408,19 @@
 												{#if data.status == 'Present'}
 													<td class="py-1 px-6 text-center">
 														<span class="bg-green-500 text-white py-1 px-3 rounded-full text-xs"
-															>Present
-														</span>
+															>Present</span
+														>
 													</td>
 												{:else}
 													<td class="py-1 px-6 text-center">
 														<span class="bg-red-500 text-white py-1 px-3 rounded-full text-xs"
-															>Absent
-														</span>
+															>Absent</span
+														>
 													</td>
 												{/if}
-
 												<!--ACTIONS-->
 												<td class="py-1 px-6 text-center justify-center">
-													{#if data.status == 'Present'}
+													{#if data.status == 'Absent'}
 														<input
 															type="radio"
 															name={data.id}
@@ -452,9 +449,9 @@
 															on:click={() => changeStatus('present', data.id)}
 														/>
 													{/if}
-													<!--END ACTION-->
-												</td></tr
-											>
+												</td>
+												<!--END ACTION-->
+											</tr>
 										{/each}
 									</tbody>
 									<!--END ROW 1-->
@@ -621,21 +618,23 @@
 	</div>
 
 	<!--VIEW OUR POLICY-->
-		<!-- The button to open modal -->
-		<div class="w-full flex justify-end mt-24 px-10">
-			<label for="my-modal-3" class="btn bg-gray-50 border-none shadow-xl text-gray-800 hover:bg-gray-300 normal-case">View Policy</label>
+	<!-- The button to open modal -->
+	<div class="w-full flex justify-end mt-24 px-10">
+		<label
+			for="my-modal-3"
+			class="btn bg-gray-50 border-none shadow-xl text-gray-800 hover:bg-gray-300 normal-case"
+			>View Policy</label
+		>
 
-			<!-- Put this part before </body> tag -->
-			<input type="checkbox" id="my-modal-3" class="modal-toggle" />
-			<div class="modal">
-				<div class="modal-box relative">
-					<label for="my-modal-3" class="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
-					<h3 class="text-lg font-bold text-center">Mwenzi's Policy</h3>
-					<p class="py-4">
-					
-					</p>
-				</div>
+		<!-- Put this part before </body> tag -->
+		<input type="checkbox" id="my-modal-3" class="modal-toggle" />
+		<div class="modal">
+			<div class="modal-box relative">
+				<label for="my-modal-3" class="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
+				<h3 class="text-lg font-bold text-center">Mwenzi's Policy</h3>
+				<p class="py-4" />
 			</div>
 		</div>
-		<!--END VIEW OUR POLICY-->
+	</div>
+	<!--END VIEW OUR POLICY-->
 </body>

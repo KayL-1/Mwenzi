@@ -14,6 +14,11 @@
 	let userUID = '';
 
 	function login() {
+		if (email === '' || password === '') {
+			console.log('Email or password is empty');
+			toast.error('Email or Password is empty');
+			return; // Exit the function
+		}
 		signInWithEmailAndPassword(auth, email, password)
 			.then(async (userCredential) => {
 				const userID = userCredential.user.uid;

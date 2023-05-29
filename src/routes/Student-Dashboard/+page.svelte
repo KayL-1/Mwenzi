@@ -101,7 +101,7 @@
 			const data = doc.data();
 			if (data.hasOwnProperty(userRFID)) {
 				const fieldValue = data[userRFID];
-				const attendanceObject = { id: userRFID, ...fieldValue };
+				const attendanceObject = { id: userRFID, date: doc.id, ...fieldValue };
 				attendance.push(attendanceObject);
 			}
 		});
@@ -244,7 +244,7 @@
 								<table class="rounded-2xl w-full">
 									<thead>
 										<tr class="bg-gray-100 text-gray-900 text-sm leading-normal sticky top-0">
-											<th class="py-3 px-6 text-left font-medium">Student</th>
+											<th class="py-3 px-6 text-left font-medium">Date</th>
 											<th class="py-3 px-6 text-center font-medium">RFID Tag</th>
 											<th class="py-3 px-6 text-center font-medium">Time</th>
 											<th class="py-3 px-6 text-center font-medium">Status</th>
@@ -256,7 +256,7 @@
 											<tr class="border-b border-gray-200 hover:bg-gray-100">
 												<td class="py-1 px-6 text-left">
 													<div class="flex items-center">
-														<span>{data.name}</span>
+														<span>{data.date}</span>
 													</div>
 												</td>
 												<td class="py-1 px-6 text-center">
@@ -324,19 +324,45 @@
 										</thead>
 										<tbody>
 											{#each recitation as data}
-												<!-- Table row for each recitation item -->
-												<tr class="border-b bg-white">
-													<!-- Display the data for each recitation item -->
-													<td class="text-sm text-gray-500 font-medium px-6 py-4 whitespace-nowrap">
-														{data.ranking}
-													</td>
-													<td class="text-md text-gray-900 font-medium px-6 py-3 whitespace-nowrap">
-														{data.name}
-													</td>
-													<td class="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
-														{data.totalPoints}
-													</td>
-												</tr>
+												{#if data.id == userRFID}
+													<tr class="border-b bg-sky-400">
+														<!-- Display the data for each recitation item -->
+														<td
+															class="text-sm text-gray-500 font-medium px-6 py-4 whitespace-nowrap"
+														>
+															{data.ranking}
+														</td>
+														<td
+															class="text-md text-gray-900 font-medium px-6 py-3 whitespace-nowrap"
+														>
+															{data.name}
+														</td>
+														<td
+															class="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap"
+														>
+															{data.totalPoints}
+														</td>
+													</tr>
+												{:else}
+													<tr class="border-b bg-white">
+														<!-- Display the data for each recitation item -->
+														<td
+															class="text-sm text-gray-500 font-medium px-6 py-4 whitespace-nowrap"
+														>
+															{data.ranking}
+														</td>
+														<td
+															class="text-md text-gray-900 font-medium px-6 py-3 whitespace-nowrap"
+														>
+															{data.name}
+														</td>
+														<td
+															class="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap"
+														>
+															{data.totalPoints}
+														</td>
+													</tr>
+												{/if}
 											{/each}
 										</tbody>
 									</table>
