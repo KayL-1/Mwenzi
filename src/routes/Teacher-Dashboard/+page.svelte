@@ -420,7 +420,7 @@
 												{/if}
 												<!--ACTIONS-->
 												<td class="py-1 px-6 text-center justify-center">
-													{#if data.status == 'Absent'}
+													{#if data.status == 'Present'}
 														<input
 															type="radio"
 															name={data.id}
