@@ -88,6 +88,7 @@
 			fetchTime();
 			fetchNames();
 		});
+		attendance = attendance;
 	}
 
 	// Iterate over each object
@@ -364,13 +365,20 @@
 				{/each}
 			</select>
 		</div>
-		<!--SELECTSUBJECT-->
+		<!--SELECTSUBJECT-->	
 		<div class="flex flex-row justify-center">
 			<div class="basis-1/2 container mt-2 pt-4 lg:w-3/6">
 				<div class="h-full bg-white bg-opacity-75 pb-12 rounded-3xl shadow-lg">
 					<div class="flex flex-row mt-2">
 						<img src="addclass.png" class="h-9 mt-4 pl-8" alt="..." />
 						<h1 class="pl-1 pt-5 pb-2 font-medium text-xl mb-5 text-gray-700">Attendance</h1>
+						<div class="w-full flex flex-row-reverse mr-5">
+						<select
+							class="w-1/3 mt-4 h-8 flex rounded-xl border-none placeholder-gray-300 font-medium text-center bg-white shadow-md"
+						>
+							<option class="rounded-xl" value={currentDatee}>{currentDatee}</option>
+						</select>
+						</div>
 					</div>
 
 					<!-- ADDED CLASS-->
