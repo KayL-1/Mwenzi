@@ -365,7 +365,7 @@
 				{/each}
 			</select>
 		</div>
-		<!--SELECTSUBJECT-->	
+		<!--SELECTSUBJECT-->
 		<div class="flex flex-row justify-center">
 			<div class="basis-1/2 container mt-2 pt-4 lg:w-3/6">
 				<div class="h-full bg-white bg-opacity-75 pb-12 rounded-3xl shadow-lg">
@@ -373,11 +373,11 @@
 						<img src="addclass.png" class="h-9 mt-4 pl-8" alt="..." />
 						<h1 class="pl-1 pt-5 pb-2 font-medium text-xl mb-5 text-gray-700">Attendance</h1>
 						<div class="w-full flex flex-row-reverse mr-5">
-						<select
-							class="w-1/3 mt-4 h-8 flex rounded-xl border-none placeholder-gray-300 font-medium text-center bg-white shadow-md"
-						>
-							<option class="rounded-xl" value={currentDatee}>{currentDatee}</option>
-						</select>
+							<select
+								class="w-1/3 mt-4 h-8 flex rounded-xl border-none placeholder-gray-300 font-medium text-center bg-white shadow-md"
+							>
+								<option class="rounded-xl" value={currentDatee}>{currentDatee}</option>
+							</select>
 						</div>
 					</div>
 
@@ -579,11 +579,25 @@
 						<img src="randomizer.png" class="h-9 mt-4 pl-8" alt="..." />
 						<h1 class="pl-1 pt-5 pb-2 font-medium text-xl mb-5 text-gray-700">Randomizer</h1>
 					</div>
-					<div>
-						<button
-							class="btn h-24 w-56 bg-[#EF5051] border-transparent hover:bg-red-600 hover:border-none text-xl rounded-3xl"
-							>SELECT</button
-						>
+
+					<label
+						for="randomizer"
+						class="btn h-24 w-56 bg-[#EF5051] border-transparent hover:bg-red-600 hover:border-none text-xl rounded-3xl"
+						>Randomizer</label
+					>
+
+					<!-- Put this part before </body> tag -->
+					<input type="checkbox" id="randomizer" class="modal-toggle" />
+					<div class="modal">
+						<div class="modal-box relative outline-dashed h-96">
+							<label for="randomizer" class="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
+							<h3 class="text-xl font-bold text-center">Randomizer</h3>
+							<button class="btn mt-10 w-1/2 bg-[#EF5051] hover:bg-red-600 border-none">
+								START
+							  </button>
+							  <!--KULANG PA NG LOADING ANIMATION AFTER START BUTTON CLICK-->
+							  <p class="mt-20 text-3xl font-bold text-center">STUDENT NAME</p>
+						</div>
 					</div>
 				</div>
 			</div>
