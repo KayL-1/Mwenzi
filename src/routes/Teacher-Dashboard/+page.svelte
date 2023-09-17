@@ -304,7 +304,88 @@
 			}
 		}
 	}
+	let studentNames = [];
+	let isRolling = false;
+	let previousStudentIndex = -1; // Initialize with an invalid index
 
+	async function getRandomName() {
+		if (isRolling) return; // Prevent multiple clicks while rolling
+		const collectionRef = collection(firestore, 'Subject');
+		const queryRef = query(collectionRef, where('teacherID', '==', userUID));
+		const querySnapshot = await getDocs(queryRef);
+
+		const docsArray = querySnapshot.docs.map((doc) => ({
+			id: doc.id,
+			data: doc.data()
+		}));
+
+		const studentsArray = docsArray.length > 0 ? docsArray[0].data.students : [];
+
+		if (studentsArray.length > 0) {
+			try {
+				studentNames = await getStudentNames(studentsArray);
+
+				// Start the rolling effect
+				startRolling();
+			} catch (error) {
+				console.error('Error fetching student data:', error);
+			}
+		} else {
+			console.log('No students available');
+		}
+	}
+
+	function startRolling() {
+    isRolling = true;
+    const randomizerNameElement = document.getElementById('randomizerName');
+    const iterations = 10;
+    const delay = 100;
+
+    function updateRandomName(iteration) {
+        let randomIndex;
+        do {
+            randomIndex = Math.floor(Math.random() * studentNames.length);
+        } while (randomIndex === previousStudentIndex); // Ensure a different student is selected
+
+        randomizerNameElement.textContent = studentNames[randomIndex];
+        previousStudentIndex = randomIndex;
+
+        if (iteration < iterations) {
+            setTimeout(() => updateRandomName(iteration + 1), delay);
+        } else {
+            // Stop rolling and set the final name to a random student
+            isRolling = false;
+            const finalRandomIndex = Math.floor(Math.random() * studentNames.length);
+            randomizerNameElement.textContent = studentNames[finalRandomIndex];
+        }
+    }
+
+    // Start the recursive rolling effect
+    updateRandomName(0);
+}
+
+	async function getStudentNames(studentIDs) {
+		const studentNames = [];
+
+		for (const studentID of studentIDs) {
+			try {
+				const queryRef1 = collection(firestore, 'users');
+				const queryRef2 = query(queryRef1, where('studentRFID', '==', studentID));
+				const studentDoc = await getDocs(queryRef2);
+				const studentArrays2 = studentDoc.docs.map((doc) => ({
+					id: doc.id,
+					data: doc.data()
+				}));
+
+				if (studentArrays2.length > 0) {
+					studentNames.push(studentArrays2[0].data.Name);
+				}
+			} catch (error) {
+				console.error('Error fetching student data:', error);
+			}
+		}
+		return studentNames;
+	}
 	console.log('BAANGH', attendance);
 </script>
 
@@ -592,11 +673,14 @@
 						<div class="modal-box relative outline-dashed h-96">
 							<label for="randomizer" class="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
 							<h3 class="text-xl font-bold text-center">Randomizer</h3>
-							<button class="btn mt-10 w-1/2 bg-[#EF5051] hover:bg-red-600 border-none">
+							<button
+								on:click={getRandomName}
+								class="btn mt-10 w-1/2 bg-[#EF5051] hover:bg-red-600 border-none"
+							>
 								START
-							  </button>
-							  <!--KULANG PA NG LOADING ANIMATION AFTER START BUTTON CLICK-->
-							  <p class="mt-20 text-3xl font-bold text-center">STUDENT NAME</p>
+							</button>
+							<!--KULANG PA NG LOADING ANIMATION AFTER START BUTTON CLICK-->
+							<p class="mt-20 text-3xl font-bold text-center" id="randomizerName">STUDENT NAME</p>
 						</div>
 					</div>
 				</div>
