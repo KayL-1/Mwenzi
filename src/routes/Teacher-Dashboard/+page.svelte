@@ -555,7 +555,7 @@
 				<div class="h-full bg-white bg-opacity-75 pb-12 rounded-3xl text-center shadow-lg">
 					<div class="flex flex-row mt-2">
 						<img src="leaderboard.png" class="h-9 mt-4 pl-9 pr-1" alt="..." />
-						<h1 class="pl-1 pt-5 pb-4 font-medium text-xl text-gray-700">Leaderboards</h1>
+						<h1 class="pl-1 pt-5 pb-4 w-80 font-medium text-xl text-gray-700">Recitation Points</h1>
 						<div class="w-full flex flex-row-reverse items-center">
 							<div class="form-control">
 								<div class="input-group scale-75">
