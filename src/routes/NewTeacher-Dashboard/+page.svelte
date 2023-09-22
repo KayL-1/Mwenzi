@@ -1,3 +1,16 @@
+<style>
+/* Style for the toggle when it's checked (toggled) */
+.toggle-success:checked {
+    background-color: #10B981; /* Green color */
+}
+
+/* Default style for the toggle when it's not checked (not toggled) */
+.toggle-success {
+    background-color: #EF4444; /* Red color */
+}
+</style>
+
+
 <body class=" bg-gray-50 min-h-screen">
 	<header class="text-gray-600 body-font">
 		<!-- svelte-ignore a11y-missing-attribute -->
@@ -10,7 +23,7 @@
 				class="flex order-first lg:order-none lg:w-1/5 title-font font-medium items-center text-gray-900 lg:items-center lg:justify-center mb-4 md:mb-0"
 			>
 				<select
-					class="select select-bordered focus:border-none border-gray-200 w-full h-5 max-w-xs rounded-3xl"
+					class="select select-bordered focus:border-none border-gray-200 w-full h-5 max-w-xs rounded-3xl shadow-sm"
 				>
 					<option disabled selected class="rounded-3xl">Select Class</option>
 					<option class="rounded-3xl">Math - Diamond</option>
@@ -126,20 +139,226 @@
 			</div>
 		</div>
 	</header>
-	<div class="flex flex-row card mx-10 mt-7">
+
+	<div class="flex flex-row card mx-10 mt-10">
 		<!--ATTENDANCE-->
-		<div class="w-3/5 bg-white bg-opacity-75 rounded-3xl text-center shadow-lg mx-2">
+		<div class="w-3/5 bg-white bg-opacity-75 rounded-3xl text-center shadow-lg mr-2">
 			<div class="flex flex-row mt-2">
 				<h1 class="pl-5 pt-2 font-medium text-md text-gray-700">Attendance</h1>
 			</div>
+
+			<div class="relative overflow-y-auto shadow-sm rounded-xl mx-5 my-5 h-96 max-h-96">
+				<table class="w-full text-sm text-gray-500 dark:text-gray-400">
+					<thead
+						class="text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 sticky top-0"
+					>
+						<tr>
+							<th scope="col" class="px-6 py-4 text-left">Student Name</th>
+							<th scope="col" class="px-6 py-4 text-center">RFID Tag</th>
+							<th scope="col" class="px-6 py-4 text-center">Time</th>
+							<th scope="col" class="px-6 py-4 text-center">Status</th>
+							<th scope="col" class="px-6 py-4 text-center">Manual Edit</th>
+							<th scope="col" class="px-6 py-4 text-right">Late</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr
+							class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+						>
+							<th scope="row" class="px-6 py-2 font-medium text-gray-900 dark:text-white text-left">
+								Luis Santiago
+							</th>
+							<td class="px-6 py-2 text-center">4AC3D4G6</td>
+							<td class="px-6 py-2 text-center"> 7:00 AM </td>
+							<td class="px-6 py-2">
+								<span class="bg-green-500 text-white font-md py-1 px-3 rounded-full text-xs"
+									>Present</span
+								>
+							</td>
+							<td class="px-6 py-2">
+								<input type="checkbox" class="toggle toggle-success h-6 pt-2" checked />
+							</td>
+							<td class="px-6 py-2 text-right">
+								<input type="checkbox" checked="" class="checkbox checkbox-warning" />
+							</td>
+						</tr>
+
+						<tr
+							class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+						>
+							<th scope="row" class="px-6 py-2 font-medium text-gray-900 dark:text-white text-left">
+								Kyle Dela Pena
+							</th>
+							<td class="px-6 py-2 text-center">5AC3B8G0</td>
+							<td class="px-6 py-2 text-center"> 7:00 AM </td>
+							<td class="px-6 py-2">
+								<span class="bg-red-500 text-white py-1 px-3 rounded-full text-xs">Absent</span>
+							</td>
+							<td class="px-6 py-2">
+								<input type="checkbox" class="toggle toggle-success h-6 pt-2" />
+							</td>
+							<td class="px-6 py-2 text-right">
+								<input type="checkbox" checked="" class="checkbox checkbox-warning" />
+							</td>
+						</tr>
+
+						<tr
+							class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+						>
+							<th scope="row" class="px-6 py-2 font-medium text-gray-900 dark:text-white text-left">
+								Ace Dela Cuesta
+							</th>
+							<td class="px-6 py-2 text-center">7BQ1D8L0</td>
+							<td class="px-6 py-2 text-center"> 7:00 AM </td>
+							<td class="px-6 py-2">
+								<span class="bg-yellow-500 text-white py-1 px-5 rounded-full text-xs"
+									>Late</span
+								>
+							</td>
+							<td class="px-6 py-2">
+								<input type="checkbox" class="toggle toggle-success h-6 pt-2" checked />
+							</td>
+							<td class="px-6 py-2 text-right">
+								<input type="checkbox" checked="checked" class="checkbox checkbox-warning" />
+							</td>
+						</tr>
+
+						<tr
+							class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+						>
+							<th scope="row" class="px-6 py-2 font-medium text-gray-900 dark:text-white text-left">
+								Luis Santiago
+							</th>
+							<td class="px-6 py-2 text-center">4AC3D4G6</td>
+							<td class="px-6 py-2 text-center"> 7:00 AM </td>
+							<td class="px-6 py-2">
+								<span class="bg-green-500 text-white font-md py-1 px-3 rounded-full text-xs"
+									>Present</span
+								>
+							</td>
+							<td class="px-6 py-2">
+								<input type="checkbox" class="toggle toggle-success h-6 pt-2" checked />
+							</td>
+							<td class="px-6 py-2 text-right">
+								<input type="checkbox" checked="" class="checkbox checkbox-warning" />
+							</td>
+						</tr>
+
+						<tr
+							class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+						>
+							<th scope="row" class="px-6 py-2 font-medium text-gray-900 dark:text-white text-left">
+								Luis Santiago
+							</th>
+							<td class="px-6 py-2 text-center">4AC3D4G6</td>
+							<td class="px-6 py-2 text-center"> 7:00 AM </td>
+							<td class="px-6 py-2">
+								<span class="bg-green-500 text-white font-md py-1 px-3 rounded-full text-xs"
+									>Present</span
+								>
+							</td>
+							<td class="px-6 py-2">
+								<input type="checkbox" class="toggle toggle-success h-6 pt-2" checked />
+							</td>
+							<td class="px-6 py-2 text-right">
+								<input type="checkbox" checked="" class="checkbox checkbox-warning" />
+							</td>
+						</tr>
+
+						<tr
+							class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+						>
+							<th scope="row" class="px-6 py-2 font-medium text-gray-900 dark:text-white text-left">
+								Luis Santiago
+							</th>
+							<td class="px-6 py-2 text-center">4AC3D4G6</td>
+							<td class="px-6 py-2 text-center"> 7:00 AM </td>
+							<td class="px-6 py-2">
+								<span class="bg-green-500 text-white font-md py-1 px-3 rounded-full text-xs"
+									>Present</span
+								>
+							</td>
+							<td class="px-6 py-2">
+								<input type="checkbox" class="toggle toggle-success h-6 pt-2" checked />
+							</td>
+							<td class="px-6 py-2 text-right">
+								<input type="checkbox" checked="" class="checkbox checkbox-warning" />
+							</td>
+						</tr>
+
+						<tr
+							class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+						>
+							<th scope="row" class="px-6 py-2 font-medium text-gray-900 dark:text-white text-left">
+								Luis Santiago
+							</th>
+							<td class="px-6 py-2 text-center">4AC3D4G6</td>
+							<td class="px-6 py-2 text-center"> 7:00 AM </td>
+							<td class="px-6 py-2">
+								<span class="bg-green-500 text-white font-md py-1 px-3 rounded-full text-xs"
+									>Present</span
+								>
+							</td>
+							<td class="px-6 py-2">
+								<input type="checkbox" class="toggle toggle-success  h-6 pt-2" checked />
+							</td>
+							<td class="px-6 py-2 text-right">
+								<input type="checkbox" checked="" class="checkbox checkbox-warning" />
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
 		</div>
-        <!--RECITATION POINTS-->
-		<div class="w-2/5 bg-white bg-opacity-75 pb-12 rounded-3xl text-center shadow-lg mx-2">
+
+		<!--RECITATION POINTS-->
+		<div class="w-2/5 bg-white bg-opacity-75 pb-12 rounded-3xl text-center shadow-lg mr-2">
 			<div class="flex flex-row mt-2">
 				<h1 class="pl-5 pt-2 font-medium text-md text-gray-700">Recitation Points</h1>
 			</div>
+
+			<div class="relative overflow-y-auto shadow-sm rounded-xl mx-5 my-5  max-h-80">
+				<table class="w-full text-sm text-gray-500 dark:text-gray-400">
+					<thead
+						class="text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 sticky top-0"
+					>
+						<tr>
+							<th scope="col" class="px-6 py-4 text-left"> Rank </th>
+							<th scope="col" class="px-6 py-4 text-left"> Name </th>
+							<th scope="col" class="px-6 py-4 text-left"> Points </th>
+							<th scope="col" class="px-6 py-4 text-left"> Update Points </th>
+						</tr>
+					</thead>
+					<tbody>
+						<!-- Table row for each recitation item -->
+						<tr class="border-b bg-white">
+							<!-- Display the data for each recitation item -->
+							<td class="text-sm text-gray-500 font-medium px-6 py-4 whitespace-nowrap">1</td>
+							<td class="text-md text-gray-900 font-medium px-6 py-3 whitespace-nowrap"
+								>Luis Santiago</td
+							>
+							<td class="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">5</td>
+							<td class="flex mt-2 justify-center">
+								<!-- svelte-ignore a11y-click-events-have-key-events -->
+								<img
+									src="minus.png"
+									class="btn btn-sm px-1 bg-transparent hover:bg-transparent border-none"
+									alt="..."
+								/>
+								<!-- svelte-ignore a11y-click-events-have-key-events -->
+								<img
+									src="add.png"
+									class="btn btn-sm px-1 bg-transparent hover:bg-transparent border-none"
+									alt="..."
+								/>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
 		</div>
-        <!--TO DO-->
+
+		<!--TO DO-->
 		<div class="w-2/5 bg-white bg-opacity-75 pb-12 rounded-3xl text-center shadow-lg">
 			<div class="flex flex-row mt-2">
 				<h1 class="pl-5 pt-2 font-medium text-md text-gray-700">To Do</h1>
@@ -147,36 +366,39 @@
 		</div>
 	</div>
 
-    <!--ACTIONS-->
-    <div class="flex flex-row card mx-10 mt-7">
+	<!--ACTIONS-->
+	<div class="flex flex-row card mx-10 mt-7">
 
 		<!--RANDOMIZER-->
-		<div class="w-2/5 bg-white bg-opacity-75 rounded-3xl text-center shadow-lg mx-2">
+		<div class="w-2/5 bg-white bg-opacity-75 rounded-3xl text-center shadow-lg mr-2 my-2">
 			<div class="flex flex-row mt-2">
 				<h1 class="pl-5 pt-2 font-medium text-md text-gray-700">Randomizer</h1>
 			</div>
+			<button class="my-10 h-24 w-56 btn btn-lg rounded-3xl bg-red-500 border-0 hover:bg-red-700">Randomizer</button>
 		</div>
 
-        <!--GROUP CREATOR-->
-		<div class="w-2/5 bg-white bg-opacity-75 pb-12 rounded-3xl text-center shadow-lg mx-2">
+		<!--GROUP CREATOR-->
+		<div class="w-2/5 bg-white bg-opacity-75 pb-12 rounded-3xl text-center shadow-lg mr-2">
 			<div class="flex flex-row mt-2">
 				<h1 class="pl-5 pt-2 font-medium text-md text-gray-700">Create Group</h1>
 			</div>
+			<button class="my-10 h-24 w-56 btn btn-lg rounded-3xl bg-green-500 border-0 hover:bg-green-700">Create Group</button>
 		</div>
 
-        <!--JAMBOARD-->
-		<div class="w-2/5 bg-white bg-opacity-75 pb-12 rounded-3xl text-center shadow-lg">
+		<!--JAMBOARD-->
+		<div class="w-2/5 bg-white bg-opacity-75 pb-12 rounded-3xl text-center shadow-lg mr-2">
 			<div class="flex flex-row mt-2">
 				<h1 class="pl-5 pt-2 font-medium text-md text-gray-700">Jamboard</h1>
 			</div>
+
+			<button class="my-10 h-24 w-56 btn btn-lg rounded-3xl bg-violet-500 border-0 hover:bg-violet-700">Open</button>
 		</div>
 
-        <!--TO BE FOLLOWED-->
-		<div class="w-2/5 bg-white bg-opacity-75 pb-12 rounded-3xl text-center shadow-lg">
+		<!--TO BE FOLLOWED-->
+		<div class="w-2/5 bg-white bg-opacity-75 pb-12 rounded-3xl text-center shadow-lg mr-2">
 			<div class="flex flex-row mt-2">
 				<h1 class="pl-5 pt-2 font-medium text-md text-gray-700">To be followed</h1>
 			</div>
 		</div>
 	</div>
-
 </body>
