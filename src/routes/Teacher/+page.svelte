@@ -34,7 +34,7 @@
 						userId.set(userID);
 						userUID = localStorage.getItem('userId');
 						console.log(userUID);
-						window.location.replace('../Teacher-Dashboard');
+						window.location.replace('../NewTeacher-Dashboard');
 					} else {
 						console.log('User is not a Teacher');
 						toast.error('User is not a Teacher');

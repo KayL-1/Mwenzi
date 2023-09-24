@@ -1,3 +1,439 @@
+<script>
+	import { auth, database } from '$lib/firebase';
+	import {
+		doc,
+		setDoc,
+		query,
+		where,
+		getDocs,
+		collection,
+		getDoc,
+		onSnapshot,
+		updateDoc
+	} from 'firebase/firestore';
+	import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
+	import { goto } from '$app/navigation';
+	import { firebase, firestore, functions } from '$lib/firebase';
+	import { getDatabase, ref, onValue, get, child } from 'firebase/database';
+	import { userId } from '../../lib/userStorage';
+	import { onMount } from 'svelte';
+
+	let userUID = '';
+	let selecTSub;
+	let docsArray = [];
+	let attendance = [];
+	let nameArray = [];
+	let recitation = [];
+
+	let currentDatee;
+
+	async function classCheck() {
+		const collectionRef = collection(firestore, 'Subject');
+		const queryRef = query(collectionRef, where('teacherID', '==', userUID));
+		const querySnapshot = await getDocs(queryRef);
+
+		docsArray = querySnapshot.docs.map((doc) => ({
+			id: doc.id,
+			data: doc.data()
+		}));
+	}
+
+	async function recitationCheck() {
+		const attendanceCollectionReflll = collection(
+			firestore,
+			'Subject',
+			`${selecTSub}`,
+			'Recitation'
+		);
+		return onSnapshot(attendanceCollectionReflll, (snapshot) => {
+			recitation = [];
+			// Clear the recitation array before populating it again
+			snapshot.forEach((doc) => {
+				const documentData = doc.data();
+				const documentName = doc.id;
+				const totalPoints = documentData.totalPoints;
+
+				const documentInfo = {
+					id: documentName,
+					totalPoints: totalPoints
+				};
+
+				recitation.push(documentInfo);
+			});
+
+			recitation.sort((a, b) => b.totalPoints - a.totalPoints);
+
+			recitation.forEach((item, index) => {
+				item.ranking = index + 1;
+			});
+
+			console.log('Updated recitation array with ranking:', recitation);
+			console.log('recitation array:', recitation);
+			fetchNamesTwo();
+		});
+	}
+
+	function attendanceCheck() {
+		const attendanceCollectionRef = collection(firestore, 'Subject', `${selecTSub}`, 'Attendance');
+		const attendanceDocRef = doc(attendanceCollectionRef, currentDatee);
+
+		return onSnapshot(attendanceDocRef, (attendanceDocSnapshot) => {
+			attendance = Object.entries(attendanceDocSnapshot.data()).map(([key, value]) => ({
+				id: key,
+				...value
+			}));
+
+			console.log(attendance);
+			// Update your UI or perform any other actions with the updated data here
+			fetchTime();
+			fetchNames();
+		});
+		attendance = attendance;
+	}
+
+	// Iterate over each object
+	async function fetchNamesTwo() {
+		const refer = collection(firestore, 'users');
+		const ids = recitation.map((item) => item.id); // Extract all IDs from the recitation array
+
+		// Query the Firestore documents by IDs
+		const snapshot = await getDocs(refer, where('studentRFID', 'in', ids));
+
+		snapshot.forEach((doc) => {
+			const id = doc.data().studentRFID;
+			const name = doc.data().Name;
+
+			// Find the item in the recitation array with the matching ID
+			const item = recitation.find((el) => el.id === id);
+
+			if (item) {
+				// Update the name property for the matching item
+				item.name = name;
+			}
+		});
+		recitation = recitation;
+	}
+
+	async function fetchNames() {
+		const refers = collection(firestore, 'users');
+		const ids = attendance.map((item) => item.id); // Extract all IDs from the attendance array
+
+		// Query the Firestore documents by IDs
+		const snapshot = await getDocs(refers, where('studentRFID', 'in', ids));
+
+		snapshot.forEach((doc) => {
+			const id = doc.data().studentRFID;
+			const name = doc.data().Name;
+
+			// Find the item in the attendance array with the matching ID
+			const item = attendance.find((el) => el.id === id);
+
+			if (item) {
+				// Update the name property for the matching item
+				item.name = name;
+			}
+		});
+		attendance.sort((a, b) => {
+			return a.name.localeCompare(b.name);
+		});
+		attendance = attendance;
+		console.log(attendance);
+	}
+	async function fetchTime() {
+		const ids = attendance.map((item) => item.id); // Extract all IDs from the attendance array
+
+		const dbRef = ref(getDatabase());
+		const promises = ids.map((id) =>
+			onValue(
+				child(dbRef, `RFIDATTENDANCE/${currentDatee}/${id}`),
+				async (snapshot) => {
+					if (snapshot.exists()) {
+						const attendanceCollectionRef = collection(
+							firestore,
+							'Subject',
+							`${selecTSub}`,
+							'Attendance'
+						);
+						const attendanceDocRef = doc(attendanceCollectionRef, currentDatee);
+						try {
+							const attendanceDocSnapshot = await getDoc(attendanceDocRef);
+							if (attendanceDocSnapshot.exists()) {
+								const attendanceData = attendanceDocSnapshot.data();
+								const fieldName = Object.keys(attendanceData).find((key) => key === id);
+								if (fieldName && attendanceData[fieldName].dataStatus !== 'changed') {
+									attendanceData[fieldName].time = snapshot.val().TIME;
+									attendanceData[fieldName].status = 'Present';
+									attendanceData[fieldName].dataStatus = 'changed';
+									await setDoc(attendanceDocRef, attendanceData);
+								} else {
+									console.log(`Field with ID not found or data status is already changed: ${id}`);
+								}
+							} else {
+								console.log('Attendance document does not exist');
+							}
+						} catch (error) {
+							console.error('Error updating attendance document:', error);
+						}
+					} else {
+						console.log(`No data available for ID: ${id}`);
+					}
+				},
+				(error) => {
+					console.error(error);
+				}
+			)
+		);
+
+		await Promise.all(promises);
+	}
+
+	function getDate() {
+		fetch('http://worldtimeapi.org/api/timezone/Asia/Manila')
+			.then((response) => response.json())
+			.then((data) => {
+				// Extract the date components
+				var currentDate = new Date(data.datetime);
+				var year = currentDate.getFullYear();
+				var month = currentDate.getMonth() + 1;
+				var day = currentDate.getDate();
+
+				// Format the date as desired (e.g., YYYY-MM-DD)
+				currentDatee =
+					year + '-' + month.toString().padStart(2, '0') + '-' + day.toString().padStart(2, '0');
+
+				console.log(currentDatee); // Output: 2023-05-26
+			})
+			.catch((error) => {
+				console.log('Error:', error);
+			});
+	}
+
+	async function change() {
+		console.log(selecTSub);
+		classCheck();
+		attendanceCheck();
+		recitationCheck();
+	}
+
+	onMount(() => {
+		const unsubscribe = userId.subscribe((value) => {
+			// Use the value of userId here
+			userUID = localStorage.getItem('userId');
+			// You can perform any other actions with the user ID
+			classCheck();
+			attendanceCheck();
+			return () => {
+				unsubscribe();
+			};
+		});
+	});
+	getDate();
+
+	async function changeDocumentID(action, documentID) {
+		const recitationCollectionReflllty = collection(
+			firestore,
+			'Subject',
+			`${selecTSub}`,
+			'Recitation'
+		);
+
+		if (action === 'minus') {
+			const recitationDocRef = doc(recitationCollectionReflllty, documentID);
+
+			// Retrieve the document data
+			const docSnapshot = await getDoc(recitationDocRef);
+			if (docSnapshot.exists()) {
+				const docData = docSnapshot.data();
+
+				// Decrease the value of the totalPoint field by 1
+				const newTotalPoint = docData.totalPoints - 1;
+
+				// Update the document with the new value
+				await updateDoc(recitationDocRef, { totalPoints: newTotalPoint });
+				console.log('Minus button clicked for document ID:', documentID);
+			}
+		}
+
+		// Perform the desired action based on the button clicked
+		else if (action === 'add') {
+			const recitationDocRefe = doc(recitationCollectionReflllty, documentID);
+
+			// Retrieve the document data
+			const docSnapshot = await getDoc(recitationDocRefe);
+			if (docSnapshot.exists()) {
+				const docData = docSnapshot.data();
+
+				// Decrease the value of the totalPoint field by 1
+				const newTotalPoint = docData.totalPoints + 1;
+
+				// Update the document with the new value
+				await updateDoc(recitationDocRefe, { totalPoints: newTotalPoint });
+				console.log('Minus button clicked for document ID:', documentID);
+			}
+			console.log('Add button clicked for document ID:', documentID);
+			// Perform any other actions specific to the add button
+		}
+	}
+
+	async function changeStatus(action, documentID) {
+		console.log(action);
+		const attendanceCollectionRef = collection(firestore, 'Subject', `${selecTSub}`, 'Attendance');
+		if (action === 'Present') {
+			console.log('CHECK CGHECK 2', action);
+			const attendanceDocRef = doc(attendanceCollectionRef, currentDatee);
+			const attendanceDocSnapshot = await getDoc(attendanceDocRef);
+			if (attendanceDocSnapshot.exists()) {
+				console.log('EXIST');
+				const attendanceData = attendanceDocSnapshot.data();
+				const fieldName = Object.keys(attendanceData).find((key) => key === documentID);
+				if (fieldName) {
+					attendanceData[fieldName].status = 'Present';
+					await setDoc(attendanceDocRef, attendanceData);
+				}
+			}
+		} else if (action === 'Absent') {
+			console.log('CHECK CGHECK 1', action);
+			const attendanceDocRef = doc(attendanceCollectionRef, currentDatee);
+			const attendanceDocSnapshot = await getDoc(attendanceDocRef);
+			if (attendanceDocSnapshot.exists()) {
+				const attendanceData = attendanceDocSnapshot.data();
+				const fieldName = Object.keys(attendanceData).find((key) => key === documentID);
+				if (fieldName) {
+					attendanceData[fieldName].status = 'Absent';
+					await setDoc(attendanceDocRef, attendanceData);
+				}
+			}
+		}
+	}
+
+	async function changeStatus2(action, documentID) {
+		console.log(action);
+		const attendanceCollectionRef = collection(firestore, 'Subject', `${selecTSub}`, 'Attendance');
+		if (action === 'True') {
+			console.log('CHECK CGHECK 2', action);
+			const attendanceDocRef = doc(attendanceCollectionRef, currentDatee);
+			const attendanceDocSnapshot = await getDoc(attendanceDocRef);
+			if (attendanceDocSnapshot.exists()) {
+				console.log('EXIST');
+				const attendanceData = attendanceDocSnapshot.data();
+				const fieldName = Object.keys(attendanceData).find((key) => key === documentID);
+				if (fieldName) {
+					attendanceData[fieldName].late = 'True';
+					await setDoc(attendanceDocRef, attendanceData);
+				}
+			}
+		} else if (action === 'False') {
+			console.log('CHECK CGHECK 1', action);
+			const attendanceDocRef = doc(attendanceCollectionRef, currentDatee);
+			const attendanceDocSnapshot = await getDoc(attendanceDocRef);
+			if (attendanceDocSnapshot.exists()) {
+				const attendanceData = attendanceDocSnapshot.data();
+				const fieldName = Object.keys(attendanceData).find((key) => key === documentID);
+				if (fieldName) {
+					attendanceData[fieldName].late = 'False';
+					await setDoc(attendanceDocRef, attendanceData);
+				}
+			}
+		}
+	}
+	let studentNames = [];
+	let isRolling = false;
+	let previousStudentIndex = -1; // Initialize with an invalid index
+	async function getRandomName() {
+		if (isRolling) return; // Prevent multiple clicks while rolling
+		const collectionRef = collection(firestore, 'Subject', selecTSub, 'Attendance');
+		const queryRef = query(collectionRef, where('status', '==', 'Present'));
+
+		return onSnapshot(queryRef, async (randomDocSnapshot) => {
+			docsArray = randomDocSnapshot.docs.map((doc) => ({
+				id: doc.id,
+				...doc.data()
+			}));
+
+			console.log(docsArray);
+
+			const presentStudentIds = docsArray.map((doc) => doc.id);
+			console.log(presentStudentIds);
+
+			if (presentStudentIds.length > 0) {
+				console.log('Present student IDs:', presentStudentIds);
+				// You can perform further actions with these IDs if needed
+				const randomStudentName = getRandomStudentName(docsArray);
+				updateRandomizerName(randomStudentName);
+			} else {
+				console.log('No students with status "Present"');
+				// Update the HTML element to display "No Currently Present"
+				updateRandomizerName('No Currently Present');
+			}
+		});
+	}
+	function updateRandomizerName(name) {
+		const randomizerNameElement = document.getElementById('randomizerName');
+		if (randomizerNameElement) {
+			randomizerNameElement.textContent = name;
+		}
+	}
+
+	// Helper function to get a random student name
+	function getRandomStudentName(studentArray) {
+		// Implement your logic to get a random student name from the studentArray
+		// For example, you can generate a random index and return the corresponding name
+		const randomIndex = Math.floor(Math.random() * studentArray.length);
+		return studentArray[randomIndex].name; // Replace with the correct property name for the student's name
+	}
+	function startRolling() {
+		isRolling = true;
+		const randomizerNameElement = document.getElementById('randomizerName');
+		const iterations = 10;
+		const delay = 100;
+
+		function updateRandomName(iteration) {
+			let randomIndex;
+			do {
+				randomIndex = Math.floor(Math.random() * studentNames.length);
+			} while (randomIndex === previousStudentIndex); // Ensure a different student is selected
+
+			randomizerNameElement.textContent = studentNames[randomIndex];
+			previousStudentIndex = randomIndex;
+
+			if (iteration < iterations) {
+				setTimeout(() => updateRandomName(iteration + 1), delay);
+			} else {
+				// Stop rolling and set the final name to a random student
+				isRolling = false;
+				const finalRandomIndex = Math.floor(Math.random() * studentNames.length);
+				randomizerNameElement.textContent = studentNames[finalRandomIndex];
+			}
+		}
+
+		// Start the recursive rolling effect
+		updateRandomName(0);
+	}
+
+	async function getStudentNames(studentIDs) {
+		const studentNames = [];
+
+		for (const studentID of studentIDs) {
+			try {
+				const queryRef1 = collection(firestore, 'users');
+				const queryRef2 = query(queryRef1, where('studentRFID', '==', studentID));
+				const studentDoc = await getDocs(queryRef2);
+				const studentArrays2 = studentDoc.docs.map((doc) => ({
+					id: doc.id,
+					data: doc.data()
+				}));
+
+				if (studentArrays2.length > 0) {
+					studentNames.push(studentArrays2[0].data.Name);
+				}
+			} catch (error) {
+				console.error('Error fetching student data:', error);
+			}
+		}
+		return studentNames;
+	}
+</script>
+
 <body class=" bg-gray-50 min-h-screen">
 	<header class="text-gray-600 body-font">
 		<!-- svelte-ignore a11y-missing-attribute -->
@@ -10,11 +446,14 @@
 				class="flex order-first lg:order-none lg:w-1/5 title-font font-medium items-center text-gray-900 lg:items-center lg:justify-center mb-4 md:mb-0"
 			>
 				<select
+					bind:value={selecTSub}
+					on:change={change}
 					class="select select-bordered focus:border-none border-gray-200 w-full h-5 max-w-xs rounded-3xl shadow-sm"
 				>
-					<option disabled selected class="rounded-3xl">Select Class</option>
-					<option class="rounded-3xl">Math - Diamond</option>
-					<option class="rounded-3xl">English - Ruby</option>
+					<option disabled selected hidden class="rounded-3xl">Select Class</option>
+					{#each docsArray as item1}
+						<option class="rounded-xl" value={item1.id}>{item1.id}</option>
+					{/each}
 				</select>
 			</a>
 			<div class="lg:w-2/5 inline-flex lg:justify-end ml-5 lg:ml-0 ou">
@@ -173,9 +612,8 @@
 			<select
 				class="justify-end border-gray-200 w-56 h-6 font-medium text-sm text-center mr-3 border border-gray focus:none rounded-3xl shadow-sm"
 			>
-				<option disabled selected class="rounded-3xl">Select Date</option>
-				<option class="rounded-3xl">Today</option>
-				<option class="rounded-3xl">September 14, 2023</option>
+				<option disabled selected hidden class="rounded-3xl">Select Date</option>
+				<option class="rounded-xl" value={currentDatee}>Today</option>
 			</select>
 			<div class="relative overflow-y-auto shadow-sm rounded-xl mx-5 my-5 h-96 max-h-96">
 				<table class="w-full text-sm text-gray-500 dark:text-gray-400">
@@ -192,148 +630,61 @@
 						</tr>
 					</thead>
 					<tbody>
-						<tr
-							class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-						>
-							<th scope="row" class="px-6 py-2 font-medium text-gray-900 dark:text-white text-left">
-								Luis Santiago
-							</th>
-							<td class="px-6 py-2 text-center">4AC3D4G6</td>
-							<td class="px-6 py-2 text-center"> 7:00 AM </td>
-							<td class="px-6 py-2">
-								<span class="bg-green-500 text-white font-md py-1 px-3 rounded-full text-xs"
-									>Present</span
+						{#each attendance as data}
+							<tr
+								class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+							>
+								<th
+									scope="row"
+									class="px-6 py-2 font-medium text-gray-900 dark:text-white text-left"
 								>
-							</td>
-							<td class="px-6 py-2">
-								<input type="checkbox" class="toggle toggle-success h-6 pt-2" checked />
-							</td>
-							<td class="px-6 py-2 text-right">
-								<input type="checkbox" checked="" class="checkbox checkbox-warning" />
-							</td>
-						</tr>
+									<span>{data.name}</span>
+								</th>
+								<td class="px-6 py-2 text-center"><p>{data.id}</p></td>
+								<td class="px-6 py-2 text-center">{data.time}</td>
+								{#if data.status == 'Present'}
+									<td class="py-1 px-6 text-center">
+										<span class="bg-green-500 text-white py-1 px-3 rounded-full text-xs"
+											>Present</span
+										>
+									</td>
+								{:else if data.status == 'Late'}
+									<td class="py-1 px-6 text-center">
+										<span class="bg-orange-500 text-white py-1 px-3 rounded-full text-xs">Late</span
+										>
+									</td>
+								{:else}
+									<td class="py-1 px-6 text-center">
+										<span class="bg-red-500 text-white py-1 px-3 rounded-full text-xs">Absent</span>
+									</td>
+								{/if}
+								<td class="px-6 py-2">
+									{#if data.status === 'Present'}
+										<input
+											type="checkbox"
+											class="toggle toggle-success h-6 pt-2"
+											checked
+											on:click={() => changeStatus('Absent', data.id)}
+										/>
+									{:else}
+										<input
+											type="checkbox"
+											class="toggle toggle-success h-6 pt-2"
+											on:click={() => changeStatus('Present', data.id)}
+										/>
+									{/if}
+								</td>
 
-						<tr
-							class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-						>
-							<th scope="row" class="px-6 py-2 font-medium text-gray-900 dark:text-white text-left">
-								Kyle Dela Pena
-							</th>
-							<td class="px-6 py-2 text-center">5AC3B8G0</td>
-							<td class="px-6 py-2 text-center"> 7:00 AM </td>
-							<td class="px-6 py-2">
-								<span class="bg-red-500 text-white py-1 px-3 rounded-full text-xs">Absent</span>
-							</td>
-							<td class="px-6 py-2">
-								<input type="checkbox" class="toggle toggle-success h-6 pt-2" />
-							</td>
-							<td class="px-6 py-2 text-right">
-								<input type="checkbox" checked="" class="checkbox checkbox-warning" />
-							</td>
-						</tr>
-
-						<tr
-							class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-						>
-							<th scope="row" class="px-6 py-2 font-medium text-gray-900 dark:text-white text-left">
-								Ace Dela Cuesta
-							</th>
-							<td class="px-6 py-2 text-center">7BQ1D8L0</td>
-							<td class="px-6 py-2 text-center"> 7:00 AM </td>
-							<td class="px-6 py-2">
-								<span class="bg-yellow-500 text-white py-1 px-5 rounded-full text-xs">Late</span>
-							</td>
-							<td class="px-6 py-2">
-								<input type="checkbox" class="toggle toggle-success h-6 pt-2" checked />
-							</td>
-							<td class="px-6 py-2 text-right">
-								<input type="checkbox" checked="checked" class="checkbox checkbox-warning" />
-							</td>
-						</tr>
-
-						<tr
-							class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-						>
-							<th scope="row" class="px-6 py-2 font-medium text-gray-900 dark:text-white text-left">
-								Luis Santiago
-							</th>
-							<td class="px-6 py-2 text-center">4AC3D4G6</td>
-							<td class="px-6 py-2 text-center"> 7:00 AM </td>
-							<td class="px-6 py-2">
-								<span class="bg-green-500 text-white font-md py-1 px-3 rounded-full text-xs"
-									>Present</span
-								>
-							</td>
-							<td class="px-6 py-2">
-								<input type="checkbox" class="toggle toggle-success h-6 pt-2" checked />
-							</td>
-							<td class="px-6 py-2 text-right">
-								<input type="checkbox" checked="" class="checkbox checkbox-warning" />
-							</td>
-						</tr>
-
-						<tr
-							class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-						>
-							<th scope="row" class="px-6 py-2 font-medium text-gray-900 dark:text-white text-left">
-								Luis Santiago
-							</th>
-							<td class="px-6 py-2 text-center">4AC3D4G6</td>
-							<td class="px-6 py-2 text-center"> 7:00 AM </td>
-							<td class="px-6 py-2">
-								<span class="bg-green-500 text-white font-md py-1 px-3 rounded-full text-xs"
-									>Present</span
-								>
-							</td>
-							<td class="px-6 py-2">
-								<input type="checkbox" class="toggle toggle-success h-6 pt-2" checked />
-							</td>
-							<td class="px-6 py-2 text-right">
-								<input type="checkbox" checked="" class="checkbox checkbox-warning" />
-							</td>
-						</tr>
-
-						<tr
-							class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-						>
-							<th scope="row" class="px-6 py-2 font-medium text-gray-900 dark:text-white text-left">
-								Luis Santiago
-							</th>
-							<td class="px-6 py-2 text-center">4AC3D4G6</td>
-							<td class="px-6 py-2 text-center"> 7:00 AM </td>
-							<td class="px-6 py-2">
-								<span class="bg-green-500 text-white font-md py-1 px-3 rounded-full text-xs"
-									>Present</span
-								>
-							</td>
-							<td class="px-6 py-2">
-								<input type="checkbox" class="toggle toggle-success h-6 pt-2" checked />
-							</td>
-							<td class="px-6 py-2 text-right">
-								<input type="checkbox" checked="" class="checkbox checkbox-warning" />
-							</td>
-						</tr>
-
-						<tr
-							class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-						>
-							<th scope="row" class="px-6 py-2 font-medium text-gray-900 dark:text-white text-left">
-								Luis Santiago
-							</th>
-							<td class="px-6 py-2 text-center">4AC3D4G6</td>
-							<td class="px-6 py-2 text-center"> 7:00 AM </td>
-							<td class="px-6 py-2">
-								<span class="bg-green-500 text-white font-md py-1 px-3 rounded-full text-xs"
-									>Present</span
-								>
-							</td>
-							<td class="px-6 py-2">
-								<input type="checkbox" class="toggle toggle-success h-6 pt-2" checked />
-							</td>
-							<td class="px-6 py-2 text-right">
-								<input type="checkbox" checked="" class="checkbox checkbox-warning" />
-							</td>
-						</tr>
+								<td class="px-6 py-2 text-right">
+									<input
+										type="checkbox"
+										checked={data.late === 'True' ? true : false}
+										class="checkbox checkbox-warning"
+										on:click={() => changeStatus2(data.late === 'True' ? 'False' : 'True', data.id)}
+									/>
+								</td>
+							</tr>
+						{/each}
 					</tbody>
 				</table>
 			</div>
@@ -358,29 +709,37 @@
 						</tr>
 					</thead>
 					<tbody>
-						<!-- Table row for each recitation item -->
-						<tr class="border-b bg-white">
-							<!-- Display the data for each recitation item -->
-							<td class="text-sm text-gray-500 font-medium px-6 py-4 whitespace-nowrap">1</td>
-							<td class="text-md text-gray-900 font-medium px-6 py-3 whitespace-nowrap"
-								>Luis Santiago</td
-							>
-							<td class="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">5</td>
-							<td class="flex mt-2 justify-center">
-								<!-- svelte-ignore a11y-click-events-have-key-events -->
-								<img
-									src="minus.png"
-									class="btn btn-sm px-1 bg-transparent hover:bg-transparent border-none"
-									alt="..."
-								/>
-								<!-- svelte-ignore a11y-click-events-have-key-events -->
-								<img
-									src="add.png"
-									class="btn btn-sm px-1 bg-transparent hover:bg-transparent border-none"
-									alt="..."
-								/>
-							</td>
-						</tr>
+						{#each recitation as data}
+							<!-- Table row for each recitation item -->
+							<tr class="border-b bg-white">
+								<!-- Display the data for each recitation item -->
+								<td class="text-sm text-gray-500 font-medium px-6 py-4 whitespace-nowrap">
+									{data.ranking}
+								</td>
+								<td class="text-md text-gray-900 font-medium px-6 py-3 whitespace-nowrap">
+									{data.name}
+								</td>
+								<td class="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
+									{data.totalPoints}
+								</td>
+								<td class="flex mt-2 justify-center">
+									<!-- svelte-ignore a11y-click-events-have-key-events -->
+									<img
+										src="minus.png"
+										class="btn btn-sm px-1 bg-transparent hover:bg-transparent border-none"
+										alt="..."
+										on:click={() => changeDocumentID('minus', data.id)}
+									/>
+									<!-- svelte-ignore a11y-click-events-have-key-events -->
+									<img
+										src="add.png"
+										class="btn btn-sm px-1 bg-transparent hover:bg-transparent border-none"
+										alt="..."
+										on:click={() => changeDocumentID('add', data.id)}
+									/>
+								</td>
+							</tr>
+						{/each}
 					</tbody>
 				</table>
 			</div>
@@ -416,6 +775,7 @@
 					<p class="font-medium text-lg text-center" id="randomizerName">STUDENT NAME</p>
 					<div class="divider" />
 					<button
+						on:click={getRandomName}
 						class="start-button btn mt-10 w-1/2 rounded-3xl bg-[#EF5051] hover:bg-red-600 border-none"
 						>START</button
 					>
@@ -429,7 +789,7 @@
 			<div class="flex flex-row mt-2">
 				<h1 class="pl-5 pt-2 font-medium text-md text-gray-700">Group Creator</h1>
 			</div>
-			
+
 			<!--GRP CREATOR MODAL-->
 			<label
 				for="GroupCreator"
@@ -463,7 +823,7 @@
 						>Create</button
 					>
 
-					<div class="divider"></div>
+					<div class="divider" />
 					<div class="relative overflow-y-auto shadow-sm rounded-xl mx-5 my-7 max-h-80">
 						<table class="w-full text-sm text-gray-500 dark:text-gray-400">
 							<thead
@@ -472,89 +832,102 @@
 								<tr>
 									<th scope="col" class="px-6 py-4 text-center">Group #</th>
 									<th scope="col" class="px-6 py-4 text-center">Members</th>
-								
 								</tr>
 							</thead>
 							<tbody>
 								<tr
 									class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
 								>
-									<th scope="row" class="px-6 py-2 font-medium text-gray-900 dark:text-white text-center">
+									<th
+										scope="row"
+										class="px-6 py-2 font-medium text-gray-900 dark:text-white text-center"
+									>
 										1
 									</th>
-									<td class="px-6 py-2 text-center"> 
-										Luis Santiago <br>
-										Kyle Dela Pena <br>
-										Ace Dela Cuesta <br>
+									<td class="px-6 py-2 text-center">
+										Luis Santiago <br />
+										Kyle Dela Pena <br />
+										Ace Dela Cuesta <br />
 									</td>
 								</tr>
 
 								<tr
 									class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
 								>
-									<th scope="row" class="px-6 py-2 font-medium text-gray-900 dark:text-white text-center">
+									<th
+										scope="row"
+										class="px-6 py-2 font-medium text-gray-900 dark:text-white text-center"
+									>
 										1
 									</th>
-									<td class="px-6 py-2 text-center"> 
-										Luis Santiago <br>
-										Kyle Dela Pena <br>
-										Ace Dela Cuesta <br>
+									<td class="px-6 py-2 text-center">
+										Luis Santiago <br />
+										Kyle Dela Pena <br />
+										Ace Dela Cuesta <br />
 									</td>
 								</tr>
-
 
 								<tr
 									class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
 								>
-									<th scope="row" class="px-6 py-2 font-medium text-gray-900 dark:text-white text-center">
+									<th
+										scope="row"
+										class="px-6 py-2 font-medium text-gray-900 dark:text-white text-center"
+									>
 										1
 									</th>
-									<td class="px-6 py-2 text-center"> 
-										Luis Santiago <br>
-										Kyle Dela Pena <br>
-										Ace Dela Cuesta <br>
+									<td class="px-6 py-2 text-center">
+										Luis Santiago <br />
+										Kyle Dela Pena <br />
+										Ace Dela Cuesta <br />
 									</td>
 								</tr>
-
 
 								<tr
 									class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
 								>
-									<th scope="row" class="px-6 py-2 font-medium text-gray-900 dark:text-white text-center">
+									<th
+										scope="row"
+										class="px-6 py-2 font-medium text-gray-900 dark:text-white text-center"
+									>
 										1
 									</th>
-									<td class="px-6 py-2 text-center"> 
-										Luis Santiago <br>
-										Kyle Dela Pena <br>
-										Ace Dela Cuesta <br>
+									<td class="px-6 py-2 text-center">
+										Luis Santiago <br />
+										Kyle Dela Pena <br />
+										Ace Dela Cuesta <br />
 									</td>
 								</tr>
-
 
 								<tr
 									class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
 								>
-									<th scope="row" class="px-6 py-2 font-medium text-gray-900 dark:text-white text-center">
+									<th
+										scope="row"
+										class="px-6 py-2 font-medium text-gray-900 dark:text-white text-center"
+									>
 										1
 									</th>
-									<td class="px-6 py-2 text-center"> 
-										Luis Santiago <br>
-										Kyle Dela Pena <br>
-										Ace Dela Cuesta <br>
+									<td class="px-6 py-2 text-center">
+										Luis Santiago <br />
+										Kyle Dela Pena <br />
+										Ace Dela Cuesta <br />
 									</td>
 								</tr>
-
 
 								<tr
 									class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
 								>
-									<th scope="row" class="px-6 py-2 font-medium text-gray-900 dark:text-white text-center">
+									<th
+										scope="row"
+										class="px-6 py-2 font-medium text-gray-900 dark:text-white text-center"
+									>
 										1
 									</th>
-									<td class="px-6 py-2 text-center"> 
-										Luis Santiago <br>
-										Kyle Dela Pena <br>
-										Ace Dela Cuesta <br>
+									<td class="px-6 py-2 text-center">
+										Luis Santiago <br />
+										Kyle Dela Pena <br />
+										Ace Dela Cuesta <br />
 									</td>
 								</tr>
 							</tbody>
@@ -582,12 +955,15 @@
 				<div class="modal-box relative h-5/6 max-w-6xl">
 					<label for="Jamboard" class="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
 					<h3 class="mt-5 text-xl font-bold text-center">Jamboard</h3>
-					<iframe title="Jamboard" class="mt-14 w-full h-4/5 moutline-dashed" src="https://www.web-whiteboard.io/"></iframe>
+					<iframe
+						title="Jamboard"
+						class="mt-14 w-full h-4/5 moutline-dashed"
+						src="https://www.web-whiteboard.io/"
+					/>
 				</div>
 			</div>
 		</div>
 		<!--END JAM MODAL-->
-		
 
 		<!--TO BE FOLLOWED-->
 		<div class="w-2/5 pb-5 bg-white bg-opacity-75 rounded-3xl text-center shadow-lg mr-2">

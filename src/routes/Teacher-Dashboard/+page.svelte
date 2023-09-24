@@ -310,59 +310,57 @@
 
 	async function getRandomName() {
 		if (isRolling) return; // Prevent multiple clicks while rolling
-		const collectionRef = collection(firestore, 'Subject');
-		const queryRef = query(collectionRef, where('teacherID', '==', userUID));
-		const querySnapshot = await getDocs(queryRef);
+		const collectionRef = collection(firestore, 'Subject', selecTSub, 'Attendance');
+		const queryRef = query(collectionRef, where('status', '==', 'Present'));
 
-		const docsArray = querySnapshot.docs.map((doc) => ({
-			id: doc.id,
-			data: doc.data()
-		}));
+		return onSnapshot(queryRef, async (randomDocSnapshot) => {
+			docsArray = randomDocSnapshot.docs.map((doc) => ({
+				id: doc.id,
+				...doc.data()
+			}));
 
-		const studentsArray = docsArray.length > 0 ? docsArray[0].data.students : [];
+			console.log(docsArray);
 
-		if (studentsArray.length > 0) {
-			try {
-				studentNames = await getStudentNames(studentsArray);
+			const presentStudentIds = docsArray.map((doc) => doc.id);
+			console.log("HAAAAA");
 
-				// Start the rolling effect
-				startRolling();
-			} catch (error) {
-				console.error('Error fetching student data:', error);
+			if (presentStudentIds.length > 0) {
+				console.log('Present student IDs:', presentStudentIds);
+				// You can perform further actions with these IDs if needed
+			} else {
+				console.log('No students with status "Present"');
 			}
-		} else {
-			console.log('No students available');
-		}
+		});
 	}
 
 	function startRolling() {
-    isRolling = true;
-    const randomizerNameElement = document.getElementById('randomizerName');
-    const iterations = 10;
-    const delay = 100;
+		isRolling = true;
+		const randomizerNameElement = document.getElementById('randomizerName');
+		const iterations = 10;
+		const delay = 100;
 
-    function updateRandomName(iteration) {
-        let randomIndex;
-        do {
-            randomIndex = Math.floor(Math.random() * studentNames.length);
-        } while (randomIndex === previousStudentIndex); // Ensure a different student is selected
+		function updateRandomName(iteration) {
+			let randomIndex;
+			do {
+				randomIndex = Math.floor(Math.random() * studentNames.length);
+			} while (randomIndex === previousStudentIndex); // Ensure a different student is selected
 
-        randomizerNameElement.textContent = studentNames[randomIndex];
-        previousStudentIndex = randomIndex;
+			randomizerNameElement.textContent = studentNames[randomIndex];
+			previousStudentIndex = randomIndex;
 
-        if (iteration < iterations) {
-            setTimeout(() => updateRandomName(iteration + 1), delay);
-        } else {
-            // Stop rolling and set the final name to a random student
-            isRolling = false;
-            const finalRandomIndex = Math.floor(Math.random() * studentNames.length);
-            randomizerNameElement.textContent = studentNames[finalRandomIndex];
-        }
-    }
+			if (iteration < iterations) {
+				setTimeout(() => updateRandomName(iteration + 1), delay);
+			} else {
+				// Stop rolling and set the final name to a random student
+				isRolling = false;
+				const finalRandomIndex = Math.floor(Math.random() * studentNames.length);
+				randomizerNameElement.textContent = studentNames[finalRandomIndex];
+			}
+		}
 
-    // Start the recursive rolling effect
-    updateRandomName(0);
-}
+		// Start the recursive rolling effect
+		updateRandomName(0);
+	}
 
 	async function getStudentNames(studentIDs) {
 		const studentNames = [];
