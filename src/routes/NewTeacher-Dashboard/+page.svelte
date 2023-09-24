@@ -1,16 +1,3 @@
-<style>
-/* Style for the toggle when it's checked (toggled) */
-.toggle-success:checked {
-    background-color: #10B981; /* Green color */
-}
-
-/* Default style for the toggle when it's not checked (not toggled) */
-.toggle-success {
-    background-color: #EF4444; /* Red color */
-}
-</style>
-
-
 <body class=" bg-gray-50 min-h-screen">
 	<header class="text-gray-600 body-font">
 		<!-- svelte-ignore a11y-missing-attribute -->
@@ -63,7 +50,7 @@
 			</div>
 			<div class="mx-auto flex row-auto">
 				<div
-					class="containter h-8 mt-7 mx-2 border border-gray-200 rounded-3xl w-48 flex justify-center items-center"
+					class="container h-8 my-6 mx-2 border border-gray-200 rounded-3xl w-48 flex justify-center items-center"
 				>
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
@@ -93,7 +80,7 @@
 					<a class="font-semibold text-sm text-green-500"> On</a>
 				</div>
 				<div
-					class="containter h-8 mt-7 mx-2 border border-gray-200 rounded-3xl w-48 flex justify-center items-center"
+					class="container h-8 my-6 mx-2 border border-gray-200 rounded-3xl w-48 flex justify-center items-center"
 				>
 					<!-- svelte-ignore a11y-missing-attribute -->
 					<svg
@@ -140,13 +127,56 @@
 		</div>
 	</header>
 
-	<div class="flex flex-row card mx-10 mt-10">
+	<div class="flex flex-row card mx-10 my-auto">
 		<!--ATTENDANCE-->
 		<div class="w-3/5 bg-white bg-opacity-75 rounded-3xl text-center shadow-lg mr-2">
-			<div class="flex flex-row mt-2">
-				<h1 class="pl-5 pt-2 font-medium text-md text-gray-700">Attendance</h1>
-			</div>
+			<div class="flex flex-row justify-between mt-2">
+				<h1 class="pl-5 pt-2 mr-4 font-medium text-md text-gray-700">Attendance</h1>
+				<!--EXPORT ATT-->
+				<label for="AttendanceSettings" class="mr-8 mt-2 rounded-3xl cursor-pointer">
+					<svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" id="download">
+						<path
+							fill="#3D3D3D"
+							d="M12 4a1 1 0 0 0-1 1v9.529l-4.218-4.223a1.043 1.043 0 0 0-1.476 0 1.046 1.046 0 0 0 0 1.478l5.904 5.91c.217.217.506.319.79.305.284.014.573-.088.79-.305l5.904-5.91a1.046 1.046 0 0 0 0-1.478 1.043 1.043 0 0 0-1.476 0L13 14.529V5a1 1 0 0 0-1-1zM5 21a1 1 0 0 1 1-1h12a1 1 0 1 1 0 2H6a1 1 0 0 1-1-1z"
+							class="fill-current text-gray-600 hover:text-green-500"
+						/>
+					</svg>
+				</label>
 
+				<input type="checkbox" id="AttendanceSettings" class="modal-toggle" />
+				<div class="modal">
+					<div class="modal-box relative h-96">
+						<label for="AttendanceSettings" class="btn btn-sm btn-circle absolute right-2 top-2"
+							>✕</label
+						>
+						<h3 class="text-xl font-bold text-center">Export Attendance</h3>
+
+						<p class="mt-8 mb-2 font-medium">Export All Records:</p>
+						<button class="btn btn-info rounded-3xl text-white w-48">Export All</button>
+						<div class="divider" />
+						<p class="mt-5 mb-2 font-medium">Export Selected Record:</p>
+						<div class="my-2">
+							<select
+								class="w-48 border-gray-200 h-6 font-medium text-sm text-center mr-3 border border-gray focus:none rounded-3xl shadow-sm"
+							>
+								<option disabled selected class="rounded-3xl">Select Date</option>
+								<option class="rounded-3xl">Today</option>
+								<option class="rounded-3xl">September 14, 2023</option>s
+							</select>
+						</div>
+						<button class="btn btn-success mt-1 rounded-3xl text-white w-48">Export Selected</button
+						>
+					</div>
+				</div>
+			</div>
+			<!--END EXPORT ATT-->
+			<select
+				class="justify-end border-gray-200 w-56 h-6 font-medium text-sm text-center mr-3 border border-gray focus:none rounded-3xl shadow-sm"
+			>
+				<option disabled selected class="rounded-3xl">Select Date</option>
+				<option class="rounded-3xl">Today</option>
+				<option class="rounded-3xl">September 14, 2023</option>
+			</select>
 			<div class="relative overflow-y-auto shadow-sm rounded-xl mx-5 my-5 h-96 max-h-96">
 				<table class="w-full text-sm text-gray-500 dark:text-gray-400">
 					<thead
@@ -211,9 +241,7 @@
 							<td class="px-6 py-2 text-center">7BQ1D8L0</td>
 							<td class="px-6 py-2 text-center"> 7:00 AM </td>
 							<td class="px-6 py-2">
-								<span class="bg-yellow-500 text-white py-1 px-5 rounded-full text-xs"
-									>Late</span
-								>
+								<span class="bg-yellow-500 text-white py-1 px-5 rounded-full text-xs">Late</span>
 							</td>
 							<td class="px-6 py-2">
 								<input type="checkbox" class="toggle toggle-success h-6 pt-2" checked />
@@ -300,7 +328,7 @@
 								>
 							</td>
 							<td class="px-6 py-2">
-								<input type="checkbox" class="toggle toggle-success  h-6 pt-2" checked />
+								<input type="checkbox" class="toggle toggle-success h-6 pt-2" checked />
 							</td>
 							<td class="px-6 py-2 text-right">
 								<input type="checkbox" checked="" class="checkbox checkbox-warning" />
@@ -317,7 +345,7 @@
 				<h1 class="pl-5 pt-2 font-medium text-md text-gray-700">Recitation Points</h1>
 			</div>
 
-			<div class="relative overflow-y-auto shadow-sm rounded-xl mx-5 my-5  max-h-80">
+			<div class="relative overflow-y-auto shadow-sm rounded-xl mx-5 my-5 max-h-80">
 				<table class="w-full text-sm text-gray-500 dark:text-gray-400">
 					<thead
 						class="text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 sticky top-0"
@@ -367,38 +395,217 @@
 	</div>
 
 	<!--ACTIONS-->
-	<div class="flex flex-row card mx-10 mt-7">
-
+	<div class="flex flex-row card mx-10 my-auto py-4">
 		<!--RANDOMIZER-->
-		<div class="w-2/5 bg-white bg-opacity-75 rounded-3xl text-center shadow-lg mr-2 my-2">
+		<div class="w-2/5 pb-5 bg-white bg-opacity-75 rounded-3xl text-center shadow-lg mr-2">
 			<div class="flex flex-row mt-2">
 				<h1 class="pl-5 pt-2 font-medium text-md text-gray-700">Randomizer</h1>
 			</div>
-			<button class="my-10 h-24 w-56 btn btn-lg rounded-3xl bg-red-500 border-0 hover:bg-red-700">Randomizer</button>
+			<!--RAN MODAL-->
+			<label
+				for="randomizer"
+				class="my-10 btn h-24 w-56 bg-[#EF5051] border-transparent hover:bg-red-600 hover:border-none text-xl rounded-3xl"
+				>Randomizer</label
+			>
+			<input type="checkbox" id="randomizer" class="modal-toggle" />
+			<div class="modal">
+				<div class="modal-box relative outline-dashed h-96">
+					<label for="randomizer" class="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
+					<h3 class="text-xl font-bold text-center">Randomizer</h3>
+					<div class="divider mt-14" />
+					<p class="font-medium text-lg text-center" id="randomizerName">STUDENT NAME</p>
+					<div class="divider" />
+					<button
+						class="start-button btn mt-10 w-1/2 rounded-3xl bg-[#EF5051] hover:bg-red-600 border-none"
+						>START</button
+					>
+				</div>
+			</div>
 		</div>
+		<!--END RAN MODAL-->
 
 		<!--GROUP CREATOR-->
-		<div class="w-2/5 bg-white bg-opacity-75 pb-12 rounded-3xl text-center shadow-lg mr-2">
+		<div class="w-2/5 pb-5 bg-white bg-opacity-75 rounded-3xl text-center shadow-lg mr-2">
 			<div class="flex flex-row mt-2">
-				<h1 class="pl-5 pt-2 font-medium text-md text-gray-700">Create Group</h1>
+				<h1 class="pl-5 pt-2 font-medium text-md text-gray-700">Group Creator</h1>
 			</div>
-			<button class="my-10 h-24 w-56 btn btn-lg rounded-3xl bg-green-500 border-0 hover:bg-green-700">Create Group</button>
+			
+			<!--GRP CREATOR MODAL-->
+			<label
+				for="GroupCreator"
+				class="my-10 btn h-24 w-56 bg-green-500 border-transparent hover:bg-green-700 hover:border-none text-xl rounded-3xl"
+				>Create Group</label
+			>
+			<input type="checkbox" id="GroupCreator" class="modal-toggle" />
+			<div class="modal">
+				<div class="modal-box relative h-4/6">
+					<label for="GroupCreator" class="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
+					<h3 class="text-xl font-bold text-center">Group Creator</h3>
+					<p class="mt-7 mb-2 font-medium">Group By</p>
+					<div class="mt-3 mb-1">
+						<select
+							class="w-1/2 border-gray-200 h-6 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
+						>
+							<option disabled selected class="rounded-3xl">Select</option>
+							<option class="rounded-3xl">2 Members Each</option>
+							<option class="rounded-3xl">3 Members Each</option>
+							<option class="rounded-3xl">4 Members Each</option>
+							<option class="rounded-3xl">5 Members Each</option>
+							<option class="rounded-3xl">6 Members Each</option>
+							<option class="rounded-3xl">7 Members Each</option>
+							<option class="rounded-3xl">8 Members Each</option>
+							<option class="rounded-3xl">9 Members Each</option>
+							<option class="rounded-3xl">10 Members Each</option>
+						</select>
+					</div>
+					<button
+						class="start-button btn mt-4 w-1/2 rounded-3xl bg-green-500 hover:bg-green-700 border-none"
+						>Create</button
+					>
+
+					<div class="divider"></div>
+					<div class="relative overflow-y-auto shadow-sm rounded-xl mx-5 my-7 max-h-80">
+						<table class="w-full text-sm text-gray-500 dark:text-gray-400">
+							<thead
+								class="text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 sticky top-0"
+							>
+								<tr>
+									<th scope="col" class="px-6 py-4 text-center">Group #</th>
+									<th scope="col" class="px-6 py-4 text-center">Members</th>
+								
+								</tr>
+							</thead>
+							<tbody>
+								<tr
+									class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+								>
+									<th scope="row" class="px-6 py-2 font-medium text-gray-900 dark:text-white text-center">
+										1
+									</th>
+									<td class="px-6 py-2 text-center"> 
+										Luis Santiago <br>
+										Kyle Dela Pena <br>
+										Ace Dela Cuesta <br>
+									</td>
+								</tr>
+
+								<tr
+									class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+								>
+									<th scope="row" class="px-6 py-2 font-medium text-gray-900 dark:text-white text-center">
+										1
+									</th>
+									<td class="px-6 py-2 text-center"> 
+										Luis Santiago <br>
+										Kyle Dela Pena <br>
+										Ace Dela Cuesta <br>
+									</td>
+								</tr>
+
+
+								<tr
+									class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+								>
+									<th scope="row" class="px-6 py-2 font-medium text-gray-900 dark:text-white text-center">
+										1
+									</th>
+									<td class="px-6 py-2 text-center"> 
+										Luis Santiago <br>
+										Kyle Dela Pena <br>
+										Ace Dela Cuesta <br>
+									</td>
+								</tr>
+
+
+								<tr
+									class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+								>
+									<th scope="row" class="px-6 py-2 font-medium text-gray-900 dark:text-white text-center">
+										1
+									</th>
+									<td class="px-6 py-2 text-center"> 
+										Luis Santiago <br>
+										Kyle Dela Pena <br>
+										Ace Dela Cuesta <br>
+									</td>
+								</tr>
+
+
+								<tr
+									class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+								>
+									<th scope="row" class="px-6 py-2 font-medium text-gray-900 dark:text-white text-center">
+										1
+									</th>
+									<td class="px-6 py-2 text-center"> 
+										Luis Santiago <br>
+										Kyle Dela Pena <br>
+										Ace Dela Cuesta <br>
+									</td>
+								</tr>
+
+
+								<tr
+									class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+								>
+									<th scope="row" class="px-6 py-2 font-medium text-gray-900 dark:text-white text-center">
+										1
+									</th>
+									<td class="px-6 py-2 text-center"> 
+										Luis Santiago <br>
+										Kyle Dela Pena <br>
+										Ace Dela Cuesta <br>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+			<!--GRP CREATOR MODAL-->
 		</div>
 
 		<!--JAMBOARD-->
-		<div class="w-2/5 bg-white bg-opacity-75 pb-12 rounded-3xl text-center shadow-lg mr-2">
+		<div class="w-2/5 pb-5 bg-white bg-opacity-75 rounded-3xl text-center shadow-lg mr-2">
 			<div class="flex flex-row mt-2">
 				<h1 class="pl-5 pt-2 font-medium text-md text-gray-700">Jamboard</h1>
 			</div>
 
-			<button class="my-10 h-24 w-56 btn btn-lg rounded-3xl bg-violet-500 border-0 hover:bg-violet-700">Open</button>
+			<!--JAM MODAL-->
+			<label
+				for="Jamboard"
+				class="my-10 btn h-24 w-56 bg-purple-500 hover:bg-purple-700 border-transparent hover:border-none text-xl rounded-3xl"
+				>Jamboard</label
+			>
+			<input type="checkbox" id="Jamboard" class="modal-toggle" />
+			<div class="modal">
+				<div class="modal-box relative h-5/6 max-w-6xl">
+					<label for="Jamboard" class="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
+					<h3 class="mt-5 text-xl font-bold text-center">Jamboard</h3>
+					<iframe title="Jamboard" class="mt-14 w-full h-4/5 moutline-dashed" src="https://www.web-whiteboard.io/"></iframe>
+				</div>
+			</div>
 		</div>
+		<!--END JAM MODAL-->
+		
 
 		<!--TO BE FOLLOWED-->
-		<div class="w-2/5 bg-white bg-opacity-75 pb-12 rounded-3xl text-center shadow-lg mr-2">
+		<div class="w-2/5 pb-5 bg-white bg-opacity-75 rounded-3xl text-center shadow-lg mr-2">
 			<div class="flex flex-row mt-2">
 				<h1 class="pl-5 pt-2 font-medium text-md text-gray-700">To be followed</h1>
 			</div>
 		</div>
 	</div>
 </body>
+
+<style>
+	/* Style for the toggle when it's checked (toggled) */
+	.toggle-success:checked {
+		background-color: #10b981; /* Green color */
+	}
+
+	/* Default style for the toggle when it's not checked (not toggled) */
+	.toggle-success {
+		background-color: #ef4444; /* Red color */
+	}
+</style>
