@@ -695,8 +695,15 @@
 			<div class="flex flex-row mt-2">
 				<h1 class="pl-5 pt-2 font-medium text-md text-gray-700">Recitation Points</h1>
 			</div>
-
-			<div class="relative overflow-y-auto shadow-sm rounded-xl mx-5 my-5 max-h-80">
+			<select
+				class="mt-2 border-gray-200 w-56 h-6 font-medium text-sm text-center mr-3 border border-gray focus:none rounded-3xl shadow-sm"
+			>
+				<option disabled selected hidden class="rounded-3xl">Select Interval</option>
+				<option class="rounded-xl">Daily</option>
+				<option class="rounded-xl">Weekly</option>
+				<option class="rounded-xl">Monthly</option>
+			</select>
+			<div class="relative overflow-y-auto shadow-sm rounded-xl mx-5 my-4 max-h-80">
 				<table class="w-full text-sm text-gray-500 dark:text-gray-400">
 					<thead
 						class="text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 sticky top-0"
@@ -750,6 +757,19 @@
 			<div class="flex flex-row mt-2">
 				<h1 class="pl-5 pt-2 font-medium text-md text-gray-700">To Do</h1>
 			</div>
+			<div class="flex flex-row items-center mt-2 justify-center">
+				<input
+					class="pl-4 border border-r-0 rounded-l-3xl focus:ring-0 text-sm block bg-white w-64 h-7 border-slate-300 shadow-sm focus:outline-none"
+					placeholder="Add To Do"
+					type="text"
+					name="search"
+				/>
+				<button
+					class="add-button w-12 h-7 border border-slate-300 rounded-r-3xl bg-blue-500 hover:bg-blue-700 border-none transform transition-transform focus:scale-100 active:scale-95" 
+				>
+				<svg width="20px" height="20px" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" fill="none" class="ml-3"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path fill="#f2f2f2" fill-rule="evenodd" d="M9 17a1 1 0 102 0v-6h6a1 1 0 100-2h-6V3a1 1 0 10-2 0v6H3a1 1 0 000 2h6v6z"></path> </g></svg>
+				</button>
+			</div>
 		</div>
 	</div>
 
@@ -768,7 +788,7 @@
 			>
 			<input type="checkbox" id="randomizer" class="modal-toggle" />
 			<div class="modal">
-				<div class="modal-box relative outline-dashed h-96">
+				<div class="modal-box relative h-96">
 					<label for="randomizer" class="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
 					<h3 class="text-xl font-bold text-center">Randomizer</h3>
 					<div class="divider mt-14" />
@@ -957,7 +977,7 @@
 					<h3 class="mt-5 text-xl font-bold text-center">Jamboard</h3>
 					<iframe
 						title="Jamboard"
-						class="mt-14 w-full h-4/5 moutline-dashed"
+						class="mt-14 w-full h-4/5"
 						src="https://www.web-whiteboard.io/"
 					/>
 				</div>
