@@ -818,7 +818,7 @@
 			>
 			<input type="checkbox" id="GroupCreator" class="modal-toggle" />
 			<div class="modal">
-				<div class="modal-box relative h-4/6">
+				<div class="modal-box relative h-auto">
 					<label for="GroupCreator" class="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
 					<h3 class="text-xl font-bold text-center">Group Creator</h3>
 					<p class="mt-7 mb-2 font-medium">Group By</p>
