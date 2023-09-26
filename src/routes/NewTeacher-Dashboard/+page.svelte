@@ -570,7 +570,10 @@
 		<!--ATTENDANCE-->
 		<div class="w-3/5 bg-white bg-opacity-75 rounded-3xl text-center shadow-lg mr-2">
 			<div class="flex flex-row justify-between mt-2">
-				<h1 class="pl-5 pt-2 mr-4 font-medium text-md text-gray-700">Attendance</h1>
+				<div class="flex flex-row">
+					<img src="addclass.png" class="h-8 pl-6 mt-2" alt="..." />
+					<h1 class="pt-2 pl-1 mt-1 font-medium text-md text-gray-700">Attendance</h1>
+				</div>
 				<!--EXPORT ATT-->
 				<label for="AttendanceSettings" class="mr-8 mt-2 rounded-3xl cursor-pointer">
 					<svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" id="download">
@@ -690,10 +693,11 @@
 			</div>
 		</div>
 
-		<!--RECITATION POINTS-->
+		<!--POINTS-->
 		<div class="w-2/5 bg-white bg-opacity-75 pb-12 rounded-3xl text-center shadow-lg mr-2">
 			<div class="flex flex-row mt-2">
-				<h1 class="pl-5 pt-2 font-medium text-md text-gray-700">Recitation Points</h1>
+				<img src="leaderboard.png" class="h-8 pl-6 pr-1 mt-1" alt="..." />
+				<h1 class="pl-1 pt-2 font-medium text-md text-gray-700">Points</h1>
 			</div>
 			<select
 				class="mt-2 border-gray-200 w-56 h-6 font-medium text-sm text-center mr-3 border border-gray focus:none rounded-3xl shadow-sm"
@@ -755,7 +759,8 @@
 		<!--TO DO-->
 		<div class="w-2/5 bg-white bg-opacity-75 pb-12 rounded-3xl text-center shadow-lg">
 			<div class="flex flex-row mt-2">
-				<h1 class="pl-5 pt-2 font-medium text-md text-gray-700">To Do</h1>
+				<img src="todo.png" class="h-7 pl-6 mt-2" alt="..." />
+				<h1 class="pl-1 pt-2 font-medium text-md text-gray-700">To Do</h1>
 			</div>
 			<div class="flex flex-row items-center mt-2 justify-center">
 				<input
@@ -765,11 +770,61 @@
 					name="search"
 				/>
 				<button
-					class="add-button w-12 h-7 border border-slate-300 rounded-r-3xl bg-blue-500 hover:bg-blue-700 border-none transform transition-transform focus:scale-100 active:scale-95" 
+					class="add-button w-12 h-7 border border-slate-300 rounded-r-3xl bg-blue-500 hover:bg-blue-700 border-none transform transition-transform focus:scale-100 active:scale-95"
 				>
-				<svg width="20px" height="20px" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" fill="none" class="ml-3"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path fill="#f2f2f2" fill-rule="evenodd" d="M9 17a1 1 0 102 0v-6h6a1 1 0 100-2h-6V3a1 1 0 10-2 0v6H3a1 1 0 000 2h6v6z"></path> </g></svg>
+					<svg
+						width="20px"
+						height="20px"
+						viewBox="0 0 20 20"
+						xmlns="http://www.w3.org/2000/svg"
+						fill="none"
+						class="ml-3"
+						><g id="SVGRepo_bgCarrier" stroke-width="0" /><g
+							id="SVGRepo_tracerCarrier"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+						/><g id="SVGRepo_iconCarrier">
+							<path
+								fill="#f2f2f2"
+								fill-rule="evenodd"
+								d="M9 17a1 1 0 102 0v-6h6a1 1 0 100-2h-6V3a1 1 0 10-2 0v6H3a1 1 0 000 2h6v6z"
+							/>
+						</g></svg
+					>
 				</button>
 			</div>
+			<div class="divider mb-1" />
+
+			<!--TO DO LIST-->
+			<div class="mt-2 flex flex-row justify-between w-full items-center px-7 border-b pb-1">
+				<h1 class="font-medium text-sm">· Present Lesson 1</h1>
+
+				<div class="flex items-center">
+					<select
+						class=" border-gray-200 w-32 h-6 mr-1 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
+					>
+						<option disabled selected hidden class="rounded-3xl">Share</option>
+						<option class="rounded-xl">Only Me</option>
+						<option class="rounded-xl">Subject Class</option>
+					</select>
+
+					<button>
+						<img
+							src="done.png"
+							class="h-7 transform transition-transform focus:scale-100 active:scale-90"
+							alt="..."
+						/>
+					</button>
+					<button>
+						<img
+							src="delete.png"
+							class="h-7 transform transition-transform focus:scale-100 active:scale-90"
+							alt="..."
+						/>
+					</button>
+				</div>
+			</div>
+
 		</div>
 	</div>
 
@@ -778,7 +833,8 @@
 		<!--RANDOMIZER-->
 		<div class="w-2/5 pb-5 bg-white bg-opacity-75 rounded-3xl text-center shadow-lg mr-2">
 			<div class="flex flex-row mt-2">
-				<h1 class="pl-5 pt-2 font-medium text-md text-gray-700">Randomizer</h1>
+				<img src="randomizer.png" class="h-8 mt-2 pl-6" alt="..." />
+				<h1 class="pl-1 pt-2 font-medium text-md text-gray-700">Randomizer</h1>
 			</div>
 			<!--RAN MODAL-->
 			<label
@@ -807,7 +863,8 @@
 		<!--GROUP CREATOR-->
 		<div class="w-2/5 pb-5 bg-white bg-opacity-75 rounded-3xl text-center shadow-lg mr-2">
 			<div class="flex flex-row mt-2">
-				<h1 class="pl-5 pt-2 font-medium text-md text-gray-700">Group Creator</h1>
+				<img src="group.png" class="h-7 mt-1 pl-6" alt="..." />
+				<h1 class="pl-2 pt-2 font-medium text-md text-gray-700">Group Creator</h1>
 			</div>
 
 			<!--GRP CREATOR MODAL-->
@@ -961,7 +1018,8 @@
 		<!--JAMBOARD-->
 		<div class="w-2/5 pb-5 bg-white bg-opacity-75 rounded-3xl text-center shadow-lg mr-2">
 			<div class="flex flex-row mt-2">
-				<h1 class="pl-5 pt-2 font-medium text-md text-gray-700">Jamboard</h1>
+				<img src="jamboard.png" class="h-7 mt-1 pl-6" alt="..." />
+				<h1 class="pl-1 pt-2 font-medium text-md text-gray-700">Jamboard</h1>
 			</div>
 
 			<!--JAM MODAL-->
@@ -985,10 +1043,24 @@
 		</div>
 		<!--END JAM MODAL-->
 
-		<!--TO BE FOLLOWED-->
+		<!--LESSON PLAN-->
 		<div class="w-2/5 pb-5 bg-white bg-opacity-75 rounded-3xl text-center shadow-lg mr-2">
 			<div class="flex flex-row mt-2">
-				<h1 class="pl-5 pt-2 font-medium text-md text-gray-700">To be followed</h1>
+				<img src="lessonplan.png" class="h-7 mt-1 pl-6" alt="..." />
+				<h1 class="pl-1 pt-2 font-medium text-md text-gray-700">Lesson Plan</h1>
+			</div>
+
+			<label
+				for="lessonplan"
+				class="my-10 btn h-24 w-56 bg-blue-500 border-transparent hover:bg-blue-700 hover:border-none text-xl rounded-3xl"
+				>Open</label
+			>
+			<input type="checkbox" id="lessonplan" class="modal-toggle" />
+			<div class="modal">
+				<div class="modal-box relative h-5/6 max-w-6xl">
+					<label for="lessonplan" class="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
+					<h3 class="text-xl font-bold text-center">Lesson Plan</h3>
+				</div>
 			</div>
 		</div>
 	</div>
