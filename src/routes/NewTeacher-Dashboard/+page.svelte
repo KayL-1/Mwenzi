@@ -504,20 +504,20 @@
 					</div>
 
 					<div
-						class="container h-8 my-6 mx-2 pr-3 pl-1 border border-gray-200 rounded-3xl w-auto flex flex-row justify-center items-center"
+						class="container h-8 my-6 pr-3 pl-1 border border-gray-200 rounded-3xl w-auto flex flex-row justify-center items-center"
 					>
 						<!-- svelte-ignore a11y-missing-attribute -->
-						<a class="font-medium text-sm p-2">BOYS: </a>
+						<a class="font-medium text-sm p-2">Boys: </a>
 						<a class="font-semibold text-sm text-green-500"> 19</a>
 						<a class="font-semibold text-sm mx-1"> | </a>
 						<a class="font-semibold text-sm text-red-500">1</a>
 					</div>
 
 					<div
-						class="container h-8 my-6 mx-2 pr-3 pl-1 border border-gray-200 rounded-3xl w-auto flex flex-row justify-center items-center"
+						class="container h-8 my-6 ml-2 pr-3 pl-1 border border-gray-200 rounded-3xl w-auto flex flex-row justify-center items-center"
 					>
 						<!-- svelte-ignore a11y-missing-attribute -->
-						<a class="font-medium text-sm p-2">GIRLS: </a>
+						<a class="font-medium text-sm p-2">Girls: </a>
 						<a class="font-semibold text-sm text-green-500"> 20</a>
 						<a class="font-semibold text-sm mx-1"> | </a>
 						<a class="font-semibold text-sm text-red-500">0</a>
@@ -870,7 +870,7 @@
 	</div>
 
 	<!--ACTIONS-->
-	<div class="flex flex-row card mx-10 my-auto py-4">
+	<div class="flex flex-row card mx-10 my-auto pt-3">
 		<!--RANDOMIZER-->
 		<div class="w-2/5 pb-5 bg-white bg-opacity-75 rounded-3xl text-center shadow-lg mr-2">
 			<div class="flex flex-row mt-2">
@@ -1085,7 +1085,7 @@
 		<!--END JAM MODAL-->
 
 		<!--LESSON PLAN-->
-		<div class="w-2/5 pb-5 bg-white bg-opacity-75 rounded-3xl text-center shadow-lg mr-2">
+		<div class="w-2/5 pb-5 bg-white bg-opacity-75 rounded-3xl text-center shadow-lg mr-1">
 			<div class="flex flex-row mt-2">
 				<img src="lessonplan.png" class="h-7 mt-1 pl-6" alt="..." />
 				<h1 class="pl-1 pt-2 font-medium text-md text-gray-700">Lesson Plan</h1>
