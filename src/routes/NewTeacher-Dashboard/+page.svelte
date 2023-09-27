@@ -560,7 +560,7 @@
 							/></g
 						></svg
 					>
-					<a class="font-medium text-sm p-2">September 21, 2023 </a>
+					<a class="font-medium text-sm p-2">{currentDatee}</a>
 				</div>
 			</div>
 		</div>
@@ -669,6 +669,7 @@
 											checked
 											on:click={() => changeStatus('Absent', data.id)}
 										/>
+										
 									{:else}
 										<input
 											type="checkbox"
