@@ -442,6 +442,7 @@
 				<!-- svelte-ignore a11y-missing-attribute -->
 				<img src="Mwenzi.png" class="h-14 pb-2" alt="..." />
 			</nav>
+
 			<a
 				class="flex order-first lg:order-none lg:w-1/5 title-font font-medium items-center text-gray-900 lg:items-center lg:justify-center mb-4 md:mb-0"
 			>
@@ -489,10 +490,8 @@
 			</div>
 
 			<div class="flex justify-between w-full">
-
 				<!--ATTENDANCE SUMMARY-->
 				<div class="flex flex-row">
-
 					<div
 						class="container h-8 my-6 mx-2 pr-3 pl-1 border border-gray-200 rounded-3xl w-auto flex flex-row justify-center items-center"
 					>
@@ -522,14 +521,86 @@
 						<a class="font-semibold text-sm mx-1"> | </a>
 						<a class="font-semibold text-sm text-red-500">0</a>
 					</div>
-		
 				</div>
-				<!--END RFID STATUS, DATE-->
+				<!--END SUMMARY ATTENDANCE -->
 
-				<!--RFID STATUS, DATE-->
+				<!--RFID STATUS, DATE, SUBJECT TIME -->
 				<div class="flex flex-row">
 					<div
-						class="container h-8 my-6 mx-2 border border-gray-200 rounded-3xl w-48 flex justify-center items-center"
+						class="container h-8 my-6 mx-1 px-2 border border-gray-200 rounded-3xl w-2/5 flex justify-center items-center"
+					>
+						<svg
+							viewBox="0 0 24 24"
+							fill="#ADADAD"
+							width="20"
+							height="20"
+							xmlns="http://www.w3.org/2000/svg"
+							><g id="SVGRepo_bgCarrier" stroke-width="0" /><g
+								id="SVGRepo_tracerCarrier"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+							/><g id="SVGRepo_iconCarrier">
+								<path
+									d="M23 12C23 18.0751 18.0751 23 12 23C5.92487 23 1 18.0751 1 12C1 5.92487 5.92487 1 12 1C18.0751 1 23 5.92487 23 12ZM3.00683 12C3.00683 16.9668 7.03321 20.9932 12 20.9932C16.9668 20.9932 20.9932 16.9668 20.9932 12C20.9932 7.03321 16.9668 3.00683 12 3.00683C7.03321 3.00683 3.00683 7.03321 3.00683 12Z"
+									fill="#ADADAD"
+								/>
+								<path
+									d="M12 5C11.4477 5 11 5.44771 11 6V12.4667C11 12.4667 11 12.7274 11.1267 12.9235C11.2115 13.0898 11.3437 13.2343 11.5174 13.3346L16.1372 16.0019C16.6155 16.278 17.2271 16.1141 17.5032 15.6358C17.7793 15.1575 17.6155 14.5459 17.1372 14.2698L13 11.8812V6C13 5.44772 12.5523 5 12 5Z"
+									fill="#ADADAD"
+								/>
+							</g></svg
+						>
+						<!-- svelte-ignore a11y-missing-attribute -->
+						<a class="font-medium text-sm p-2"> Subject Time: </a>
+						<a class="font-semibold text-sm"> 8:00 AM - 10:00 AM</a>
+					</div>
+
+					<div
+						class="container h-8 my-6 mx-1 border border-gray-200 rounded-3xl w-48 flex justify-center items-center"
+					>
+						<!-- svelte-ignore a11y-missing-attribute -->
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="20"
+							height="20"
+							viewBox="0 0 24 24"
+							id="calendar"
+							><g
+								fill="none"
+								fill-rule="evenodd"
+								stroke="#ADADAD"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="1.5"
+								><line x1=".093" x2="17.917" y1="7.404" y2="7.404" /><line
+									x1="13.442"
+									x2="13.451"
+									y1="11.31"
+									y2="11.31"
+								/><line x1="9.005" x2="9.014" y1="11.31" y2="11.31" /><line
+									x1="4.558"
+									x2="4.567"
+									y1="11.31"
+									y2="11.31"
+								/><line x1="13.442" x2="13.451" y1="15.196" y2="15.196" /><line
+									x1="9.005"
+									x2="9.014"
+									y1="15.196"
+									y2="15.196"
+								/><line x1="4.558" x2="4.567" y1="15.196" y2="15.196" /><line
+									x1="13.044"
+									x2="13.044"
+									y2="3.291"
+								/><line x1="4.966" x2="4.966" y2="3.291" /><path
+									d="M13.2382655,1.57919622 L4.77096342,1.57919622 C1.83427331,1.57919622 0,3.21513002 0,6.22222222 L0,15.2718676 C0,18.3262411 1.83427331,20 4.77096342,20 L13.2290015,20 C16.1749556,20 18,18.3546099 18,15.3475177 L18,6.22222222 C18.0092289,3.21513002 16.1842196,1.57919622 13.2382655,1.57919622 Z"
+								/></g
+							></svg
+						>
+						<a class="font-medium text-sm p-2">{currentDatee}</a>
+					</div>
+
+					<div
+						class="container h-8 my-6 mx-1 border border-gray-200 rounded-3xl w-48 flex justify-center items-center"
 					>
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
@@ -558,52 +629,8 @@
 						<a class="font-medium text-sm p-2"> RFID Status: </a>
 						<a class="font-semibold text-sm text-green-500"> On</a>
 					</div>
-					<div
-						class="container h-8 my-6 mx-2 border border-gray-200 rounded-3xl w-48 flex justify-center items-center"
-					>
-						<!-- svelte-ignore a11y-missing-attribute -->
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							width="20"
-							height="20"
-							viewBox="0 0 24 24"
-							id="calendar"
-							><g
-								fill="none"
-								fill-rule="evenodd"
-								stroke="#A3A3A3"
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								stroke-width="1.5"
-								transform="translate(3 2)"
-								><line x1=".093" x2="17.917" y1="7.404" y2="7.404" /><line
-									x1="13.442"
-									x2="13.451"
-									y1="11.31"
-									y2="11.31"
-								/><line x1="9.005" x2="9.014" y1="11.31" y2="11.31" /><line
-									x1="4.558"
-									x2="4.567"
-									y1="11.31"
-									y2="11.31"
-								/><line x1="13.442" x2="13.451" y1="15.196" y2="15.196" /><line
-									x1="9.005"
-									x2="9.014"
-									y1="15.196"
-									y2="15.196"
-								/><line x1="4.558" x2="4.567" y1="15.196" y2="15.196" /><line
-									x1="13.044"
-									x2="13.044"
-									y2="3.291"
-								/><line x1="4.966" x2="4.966" y2="3.291" /><path
-									d="M13.2382655,1.57919622 L4.77096342,1.57919622 C1.83427331,1.57919622 0,3.21513002 0,6.22222222 L0,15.2718676 C0,18.3262411 1.83427331,20 4.77096342,20 L13.2290015,20 C16.1749556,20 18,18.3546099 18,15.3475177 L18,6.22222222 C18.0092289,3.21513002 16.1842196,1.57919622 13.2382655,1.57919622 Z"
-								/></g
-							></svg
-						>
-						<a class="font-medium text-sm p-2">{currentDatee}</a>
-					</div>
 				</div>
-				<!--END RFID STATUS, DATE-->
+				<!--END RFID STATUS, DATE, SUBJECT TIME -->
 			</div>
 		</div>
 	</header>
@@ -654,12 +681,14 @@
 				</div>
 			</div>
 			<!--END EXPORT ATT-->
+
 			<select
 				class="justify-end border-gray-200 w-56 h-6 font-medium text-sm text-center mr-3 border border-gray focus:none rounded-3xl shadow-sm"
 			>
 				<option disabled selected hidden class="rounded-3xl">Select Date</option>
 				<option class="rounded-xl" value={currentDatee}>Today</option>
 			</select>
+
 			<div class="relative overflow-y-auto shadow-sm rounded-xl mx-5 my-5 h-96 max-h-96">
 				<table class="w-full text-sm text-gray-500 dark:text-gray-400">
 					<thead
@@ -1098,9 +1127,230 @@
 			>
 			<input type="checkbox" id="lessonplan" class="modal-toggle" />
 			<div class="modal">
-				<div class="modal-box relative h-5/6 max-w-6xl">
+				<div class="modal-box relative h-5/6 max-w-4xl">
 					<label for="lessonplan" class="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
 					<h3 class="text-xl font-bold text-center">Lesson Plan</h3>
+
+					<div
+						class="w-full flex flex-col mx-auto
+					 py-3 px-4 outline rounded-3xl outline-gray-50 mt-5 overflow-y-auto"
+					>
+						<div class="mx-auto w-4/5 mt-5">
+
+							<h1 class="text-left font-medium mt-5">Week 1</h1>
+							<div class="divider my-0"></div>
+							<h1 class="text-left my-1 ml-5">Day 1</h1>
+							<div class="flex flex-row items-center space-x-2">
+								<input
+									type="text"
+									placeholder="www.googledrive.com/lesson1/"
+									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5" disabled
+								/>
+								<input type="checkbox" checked="checked" class="checkbox" />
+							</div>
+
+							<h1 class="text-left my-1 ml-5">Day 2</h1>
+							<div class="flex flex-row items-center space-x-2">
+								<input
+									type="text"
+									placeholder="www.googledrive.com/lesson1/"
+									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5" disabled
+								/>
+								<input type="checkbox" checked="checked" class="checkbox" />
+							</div>
+
+							<h1 class="text-left my-1 ml-5">Day 3</h1>
+							<div class="flex flex-row items-center space-x-2">
+								<input
+									type="text"
+									placeholder="www.googledrive.com/lesson1/"
+									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5"
+								/>
+								<input type="checkbox" checked="" class="checkbox" />
+							</div>
+
+							<h1 class="text-left my-1 ml-5">Day 4</h1>
+							<div class="flex flex-row items-center space-x-2">
+								<input
+									type="text"
+									placeholder="www.googledrive.com/lesson1/"
+									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5"
+								/>
+								<input type="checkbox" checked="" class="checkbox" />
+							</div>
+							
+							<h1 class="text-left my-1 ml-5">Day 5</h1>
+							<div class="flex flex-row items-center space-x-2">
+								<input
+									type="text"
+									placeholder="www.googledrive.com/lesson1/"
+									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5"
+								/>
+								<input type="checkbox" checked="" class="checkbox" />
+							</div>
+
+							
+							<h1 class="text-left font-medium mt-5">Week 2</h1>
+							<div class="divider my-0"></div>
+							<h1 class="text-left my-1 ml-5">Day 1</h1>
+							<div class="flex flex-row items-center space-x-2">
+								<input
+									type="text"
+									placeholder="www.googledrive.com/lesson1/"
+									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5"
+								/>
+								<input type="checkbox" checked="" class="checkbox" />
+							</div>
+
+							<h1 class="text-left my-1 ml-5">Day 2</h1>
+							<div class="flex flex-row items-center space-x-2">
+								<input
+									type="text"
+									placeholder="www.googledrive.com/lesson1/"
+									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5"
+								/>
+								<input type="checkbox" checked="" class="checkbox" />
+							</div>
+
+							<h1 class="text-left my-1 ml-5">Day 3</h1>
+							<div class="flex flex-row items-center space-x-2">
+								<input
+									type="text"
+									placeholder="www.googledrive.com/lesson1/"
+									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5"
+								/>
+								<input type="checkbox" checked="" class="checkbox" />
+							</div>
+
+							<h1 class="text-left my-1 ml-5">Day 4</h1>
+							<div class="flex flex-row items-center space-x-2">
+								<input
+									type="text"
+									placeholder="www.googledrive.com/lesson1/"
+									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5"
+								/>
+								<input type="checkbox" checked="" class="checkbox" />
+							</div>
+							
+							<h1 class="text-left my-1 ml-5">Day 5</h1>
+							<div class="flex flex-row items-center space-x-2">
+								<input
+									type="text"
+									placeholder="www.googledrive.com/lesson1/"
+									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5"
+								/>
+								<input type="checkbox" checked="" class="checkbox" />
+							</div>
+
+
+
+							<h1 class="text-left font-medium mt-5">Week 3</h1>
+							<div class="divider my-0"></div>
+							<h1 class="text-left my-1 ml-5">Day 1</h1>
+							<div class="flex flex-row items-center space-x-2">
+								<input
+									type="text"
+									placeholder="www.googledrive.com/lesson1/"
+									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5"
+								/>
+								<input type="checkbox" checked="" class="checkbox" />
+							</div>
+
+							<h1 class="text-left my-1 ml-5">Day 2</h1>
+							<div class="flex flex-row items-center space-x-2">
+								<input
+									type="text"
+									placeholder="www.googledrive.com/lesson1/"
+									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5"
+								/>
+								<input type="checkbox" checked="" class="checkbox" />
+							</div>
+
+							<h1 class="text-left my-1 ml-5">Day 3</h1>
+							<div class="flex flex-row items-center space-x-2">
+								<input
+									type="text"
+									placeholder="www.googledrive.com/lesson1/"
+									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5"
+								/>
+								<input type="checkbox" checked="" class="checkbox" />
+							</div>
+
+							<h1 class="text-left my-1 ml-5">Day 4</h1>
+							<div class="flex flex-row items-center space-x-2">
+								<input
+									type="text"
+									placeholder="www.googledrive.com/lesson1/"
+									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5"
+								/>
+								<input type="checkbox" checked="" class="checkbox" />
+							</div>
+							
+							<h1 class="text-left my-1 ml-5">Day 5</h1>
+							<div class="flex flex-row items-center space-x-2">
+								<input
+									type="text"
+									placeholder="www.googledrive.com/lesson1/"
+									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5"
+								/>
+								<input type="checkbox" checked="" class="checkbox" />
+							</div>
+
+
+							<h1 class="text-left font-medium mt-5">Week 4</h1>
+							<div class="divider my-0"></div>
+							<h1 class="text-left my-1 ml-5">Day 1</h1>
+							<div class="flex flex-row items-center space-x-2">
+								<input
+									type="text"
+									placeholder="www.googledrive.com/lesson1/"
+									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5"
+								/>
+								<input type="checkbox" checked="" class="checkbox" />
+							</div>
+
+							<h1 class="text-left my-1 ml-5">Day 2</h1>
+							<div class="flex flex-row items-center space-x-2">
+								<input
+									type="text"
+									placeholder="www.googledrive.com/lesson1/"
+									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5"
+								/>
+								<input type="checkbox" checked="" class="checkbox" />
+							</div>
+
+							<h1 class="text-left my-1 ml-5">Day 3</h1>
+							<div class="flex flex-row items-center space-x-2">
+								<input
+									type="text"
+									placeholder="www.googledrive.com/lesson1/"
+									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5"
+								/>
+								<input type="checkbox" checked="" class="checkbox" />
+							</div>
+
+							<h1 class="text-left my-1 ml-5">Day 4</h1>
+							<div class="flex flex-row items-center space-x-2">
+								<input
+									type="text"
+									placeholder="www.googledrive.com/lesson1/"
+									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5"
+								/>
+								<input type="checkbox" checked="" class="checkbox" />
+							</div>
+							
+							<h1 class="text-left my-1 ml-5">Day 5</h1>
+							<div class="flex flex-row items-center space-x-2">
+								<input
+									type="text"
+									placeholder="www.googledrive.com/lesson1/"
+									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5"
+								/>
+								<input type="checkbox" checked="" class="checkbox" />
+							</div>
+							
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
