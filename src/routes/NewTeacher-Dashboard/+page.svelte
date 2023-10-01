@@ -432,6 +432,8 @@
 		}
 		return studentNames;
 	}
+
+
 </script>
 
 <body class=" bg-gray-50 min-h-screen">
@@ -1129,226 +1131,270 @@
 			<div class="modal">
 				<div class="modal-box relative h-5/6 max-w-4xl">
 					<label for="lessonplan" class="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
-					<h3 class="text-xl font-bold text-center">Lesson Plan</h3>
+					
+					<div class="text-xl font-bold text-center w-full justify-between flex flex-row">
+						<button id="editButton" class="text-sm fo bg-blue-500 hover:bg-blue-600 text-white px-6 ml-1 rounded-3xl">
+							Edit</button
+						>
+						<p>
+							Lesson Plan
+						</p>
+
+						<span></span>
+					</div>
 
 					<div
 						class="w-full flex flex-col mx-auto
-					 py-3 px-4 outline rounded-3xl outline-gray-50 mt-5 overflow-y-auto"
+					 py-3 px-4 outline rounded-3xl outline-gray-50 mt-5"
 					>
 						<div class="mx-auto w-4/5 mt-5">
-
 							<h1 class="text-left font-medium mt-5">Week 1</h1>
-							<div class="divider my-0"></div>
+							<div class="divider my-0" />
 							<h1 class="text-left my-1 ml-5">Day 1</h1>
 							<div class="flex flex-row items-center space-x-2">
+								<a href="https://www.googledrive.com/lesson1/" target="_blank" rel="noopener noreferrer" class="w-full">
 								<input
 									type="text"
 									placeholder="www.googledrive.com/lesson1/"
-									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5" disabled
+									class="input input-bordered line-through w-full max-w-xl h-10 focus:border-none my-1 ml-5 cursor-pointer"
+									readonly
 								/>
 								<input type="checkbox" checked="checked" class="checkbox" />
 							</div>
 
 							<h1 class="text-left my-1 ml-5">Day 2</h1>
 							<div class="flex flex-row items-center space-x-2">
+								<a href="https://www.googledrive.com/lesson1/" target="_blank" rel="noopener noreferrer" class="w-full">
 								<input
 									type="text"
 									placeholder="www.googledrive.com/lesson1/"
-									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5" disabled
+									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5 cursor-pointer"
+									readonly
 								/>
-								<input type="checkbox" checked="checked" class="checkbox" />
+								<input type="checkbox" checked="" class="checkbox" />
 							</div>
 
 							<h1 class="text-left my-1 ml-5">Day 3</h1>
 							<div class="flex flex-row items-center space-x-2">
+								<a href="https://www.googledrive.com/lesson1/" target="_blank" rel="noopener noreferrer" class="w-full">
 								<input
 									type="text"
 									placeholder="www.googledrive.com/lesson1/"
-									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5"
+									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5 cursor-pointer"
+									readonly
 								/>
 								<input type="checkbox" checked="" class="checkbox" />
 							</div>
 
 							<h1 class="text-left my-1 ml-5">Day 4</h1>
 							<div class="flex flex-row items-center space-x-2">
+								<a href="https://www.googledrive.com/lesson1/" target="_blank" rel="noopener noreferrer" class="w-full">
 								<input
 									type="text"
 									placeholder="www.googledrive.com/lesson1/"
-									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5"
-								/>
-								<input type="checkbox" checked="" class="checkbox" />
-							</div>
-							
-							<h1 class="text-left my-1 ml-5">Day 5</h1>
-							<div class="flex flex-row items-center space-x-2">
-								<input
-									type="text"
-									placeholder="www.googledrive.com/lesson1/"
-									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5"
+									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5 cursor-pointer"
+									readonly
 								/>
 								<input type="checkbox" checked="" class="checkbox" />
 							</div>
 
-							
+							<h1 class="text-left my-1 ml-5">Day 5</h1>
+							<div class="flex flex-row items-center space-x-2">
+								<a href="https://www.googledrive.com/lesson1/" target="_blank" rel="noopener noreferrer" class="w-full">
+								<input
+									type="text"
+									placeholder="www.googledrive.com/lesson1/"
+									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5 cursor-pointer"
+									readonly
+								/>
+								<input type="checkbox" checked="" class="checkbox" />
+							</div>
+
 							<h1 class="text-left font-medium mt-5">Week 2</h1>
-							<div class="divider my-0"></div>
+							<div class="divider my-0" />
 							<h1 class="text-left my-1 ml-5">Day 1</h1>
 							<div class="flex flex-row items-center space-x-2">
+								<a href="https://www.googledrive.com/lesson1/" target="_blank" rel="noopener noreferrer" class="w-full">
 								<input
 									type="text"
 									placeholder="www.googledrive.com/lesson1/"
-									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5"
+									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5 cursor-pointer"
+									readonly
 								/>
 								<input type="checkbox" checked="" class="checkbox" />
 							</div>
 
 							<h1 class="text-left my-1 ml-5">Day 2</h1>
 							<div class="flex flex-row items-center space-x-2">
+								<a href="https://www.googledrive.com/lesson1/" target="_blank" rel="noopener noreferrer" class="w-full">
 								<input
 									type="text"
 									placeholder="www.googledrive.com/lesson1/"
-									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5"
+									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5 cursor-pointer"
+									readonly
 								/>
 								<input type="checkbox" checked="" class="checkbox" />
 							</div>
 
 							<h1 class="text-left my-1 ml-5">Day 3</h1>
 							<div class="flex flex-row items-center space-x-2">
+								<a href="https://www.googledrive.com/lesson1/" target="_blank" rel="noopener noreferrer" class="w-full">
 								<input
 									type="text"
 									placeholder="www.googledrive.com/lesson1/"
-									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5"
+									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5 cursor-pointer"
+									readonly
 								/>
 								<input type="checkbox" checked="" class="checkbox" />
 							</div>
 
 							<h1 class="text-left my-1 ml-5">Day 4</h1>
 							<div class="flex flex-row items-center space-x-2">
+								<a href="https://www.googledrive.com/lesson1/" target="_blank" rel="noopener noreferrer" class="w-full">
 								<input
 									type="text"
 									placeholder="www.googledrive.com/lesson1/"
-									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5"
+									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5 cursor-pointer"
+									readonly
 								/>
 								<input type="checkbox" checked="" class="checkbox" />
 							</div>
-							
+
 							<h1 class="text-left my-1 ml-5">Day 5</h1>
 							<div class="flex flex-row items-center space-x-2">
+								<a href="https://www.googledrive.com/lesson1/" target="_blank" rel="noopener noreferrer" class="w-full">
 								<input
 									type="text"
 									placeholder="www.googledrive.com/lesson1/"
-									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5"
+									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5 cursor-pointer"
+									readonly
 								/>
 								<input type="checkbox" checked="" class="checkbox" />
 							</div>
-
-
 
 							<h1 class="text-left font-medium mt-5">Week 3</h1>
-							<div class="divider my-0"></div>
+							<div class="divider my-0" />
 							<h1 class="text-left my-1 ml-5">Day 1</h1>
 							<div class="flex flex-row items-center space-x-2">
+								<a href="https://www.googledrive.com/lesson1/" target="_blank" rel="noopener noreferrer" class="w-full">
 								<input
 									type="text"
 									placeholder="www.googledrive.com/lesson1/"
-									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5"
+									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5 cursor-pointer"
+									readonly
 								/>
 								<input type="checkbox" checked="" class="checkbox" />
 							</div>
 
 							<h1 class="text-left my-1 ml-5">Day 2</h1>
 							<div class="flex flex-row items-center space-x-2">
+								<a href="https://www.googledrive.com/lesson1/" target="_blank" rel="noopener noreferrer" class="w-full">
 								<input
 									type="text"
 									placeholder="www.googledrive.com/lesson1/"
-									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5"
+									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5 cursor-pointer"
+									readonly
 								/>
 								<input type="checkbox" checked="" class="checkbox" />
 							</div>
 
 							<h1 class="text-left my-1 ml-5">Day 3</h1>
 							<div class="flex flex-row items-center space-x-2">
+								<a href="https://www.googledrive.com/lesson1/" target="_blank" rel="noopener noreferrer" class="w-full">
 								<input
 									type="text"
 									placeholder="www.googledrive.com/lesson1/"
-									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5"
+									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5 cursor-pointer"
+									readonly
 								/>
 								<input type="checkbox" checked="" class="checkbox" />
 							</div>
 
 							<h1 class="text-left my-1 ml-5">Day 4</h1>
 							<div class="flex flex-row items-center space-x-2">
+								<a href="https://www.googledrive.com/lesson1/" target="_blank" rel="noopener noreferrer" class="w-full">
 								<input
 									type="text"
 									placeholder="www.googledrive.com/lesson1/"
-									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5"
-								/>
-								<input type="checkbox" checked="" class="checkbox" />
-							</div>
-							
-							<h1 class="text-left my-1 ml-5">Day 5</h1>
-							<div class="flex flex-row items-center space-x-2">
-								<input
-									type="text"
-									placeholder="www.googledrive.com/lesson1/"
-									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5"
+									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5 cursor-pointer"
+									readonly
 								/>
 								<input type="checkbox" checked="" class="checkbox" />
 							</div>
 
+							<h1 class="text-left my-1 ml-5">Day 5</h1>
+							<div class="flex flex-row items-center space-x-2">
+								<a href="https://www.googledrive.com/lesson1/" target="_blank" rel="noopener noreferrer" class="w-full">
+								<input
+									type="text"
+									placeholder="www.googledrive.com/lesson1/"
+									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5 cursor-pointer"
+									readonly
+								/>
+								<input type="checkbox" checked="" class="checkbox" />
+							</div>
 
 							<h1 class="text-left font-medium mt-5">Week 4</h1>
-							<div class="divider my-0"></div>
+							<div class="divider my-0" />
 							<h1 class="text-left my-1 ml-5">Day 1</h1>
 							<div class="flex flex-row items-center space-x-2">
+								<a href="https://www.googledrive.com/lesson1/" target="_blank" rel="noopener noreferrer" class="w-full">
 								<input
 									type="text"
 									placeholder="www.googledrive.com/lesson1/"
-									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5"
+									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5 cursor-pointer"
+									readonly
 								/>
 								<input type="checkbox" checked="" class="checkbox" />
 							</div>
 
 							<h1 class="text-left my-1 ml-5">Day 2</h1>
 							<div class="flex flex-row items-center space-x-2">
+								<a href="https://www.googledrive.com/lesson1/" target="_blank" rel="noopener noreferrer" class="w-full">
 								<input
 									type="text"
 									placeholder="www.googledrive.com/lesson1/"
-									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5"
+									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5 cursor-pointer"
+									readonly
 								/>
 								<input type="checkbox" checked="" class="checkbox" />
 							</div>
 
 							<h1 class="text-left my-1 ml-5">Day 3</h1>
 							<div class="flex flex-row items-center space-x-2">
+								<a href="https://www.googledrive.com/lesson1/" target="_blank" rel="noopener noreferrer" class="w-full">
 								<input
 									type="text"
 									placeholder="www.googledrive.com/lesson1/"
-									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5"
+									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5 cursor-pointer"
+									readonly
 								/>
 								<input type="checkbox" checked="" class="checkbox" />
 							</div>
 
 							<h1 class="text-left my-1 ml-5">Day 4</h1>
 							<div class="flex flex-row items-center space-x-2">
+								<a href="https://www.googledrive.com/lesson1/" target="_blank" rel="noopener noreferrer" class="w-full">
 								<input
 									type="text"
 									placeholder="www.googledrive.com/lesson1/"
-									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5"
+									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5 cursor-pointer"
+									readonly
 								/>
 								<input type="checkbox" checked="" class="checkbox" />
 							</div>
-							
+
 							<h1 class="text-left my-1 ml-5">Day 5</h1>
 							<div class="flex flex-row items-center space-x-2">
+								<a href="https://www.googledrive.com/lesson1/" target="_blank" rel="noopener noreferrer" class="w-full">
 								<input
 									type="text"
 									placeholder="www.googledrive.com/lesson1/"
-									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5"
+									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5 cursor-pointer"
+									readonly
 								/>
 								<input type="checkbox" checked="" class="checkbox" />
 							</div>
-							
 						</div>
 					</div>
 				</div>
@@ -1367,4 +1413,6 @@
 	.toggle-success {
 		background-color: #ef4444; /* Red color */
 	}
+
+
 </style>
