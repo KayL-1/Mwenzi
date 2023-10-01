@@ -1,16 +1,15 @@
 <script>
 	// Function to handle changes in the selected option
 	function handleSelectChange(event) {
-	  const selectedOption = event.target.value;
-	  
-	  if (selectedOption === '/Class-Subject') {
-		window.location.href = selectedOption;
-	  }
+		const selectedOption = event.target.value;
+
+		if (selectedOption === '/NewAdmin-Dashboard') {
+			window.location.href = selectedOption;
+		}
 	}
-  </script>
+</script>
 
-
-<body class=" bg-gray-50 h-screen">
+<body class=" bg-gray-50 h-screen w-full">
 	<header class="text-gray-600 body-font">
 		<!-- svelte-ignore a11y-missing-attribute -->
 		<div class="mx-12 flex flex-wrap pt-5 flex-col md:flex-row items-center">
@@ -19,14 +18,21 @@
 				<img src="Mwenzi.png" class="h-14 pb-2" alt="..." />
 			</nav>
 
-			<a class="flex order-first lg:order-none lg:w-1/5 title-font font-medium items-center text-gray-900 lg:items-center lg:justify-center mb-4 md:mb-0">
-				<select class="select select-bordered focus:border-none border-gray-200 w-full h-5 max-w-xs rounded-3xl shadow-sm" on:change={handleSelectChange}>
-				  <option disabled selected hidden class="rounded-3xl" >Dashboard</option>
-				  <option value="/Class-Subject" id="Class-Subject" class="rounded-3xl">Class Subject</option>
-				  <option class="rounded-xl">Students</option>
-				  <option class="rounded-xl">Teachers</option>
+			<a
+				class="flex order-first lg:order-none lg:w-1/5 title-font font-medium items-center text-gray-900 lg:items-center lg:justify-center mb-4 md:mb-0"
+			>
+				<select
+					class="select select-bordered focus:border-none border-gray-200 w-full h-5 max-w-xs rounded-3xl shadow-sm"
+					on:change={handleSelectChange}
+				>
+					<option disabled selected hidden class="rounded-3xl">Class Subject</option>
+					<option value="/NewAdmin-Dashboard" id="NewAdmin-Dashboard" class="rounded-3xl"
+						>Dashboard</option
+					>
+					<option class="rounded-xl">Students</option>
+					<option class="rounded-xl">Teachers</option>
 				</select>
-			  </a>
+			</a>
 			<div class="lg:w-2/5 inline-flex lg:justify-end ml-5 lg:ml-0 ou">
 				<p class="font-medium text-md mr-5 mt-1">Hi, Mwenzi Admin</p>
 				<button class="dropdown dropdown-end">
@@ -114,9 +120,9 @@
 		</div>
 	</header>
 
-	<div class="flex flex-row card mx-10 h-3/4">
+	<div class="flex flex-row card h-3/4 w-full justify-center">
 		<!--ATTENDANCE-->
-		<div class="w-3/5 h-full bg-white bg-opacity-75 rounded-3xl pb-20 text-center shadow-lg mr-2">
+		<div class="w-4/5 h-full bg-white bg-opacity-75 rounded-3xl pb-20 text-center shadow-lg mr-2">
 			<div class="flex flex-row justify-between mt-2">
 				<div class="flex flex-row">
 					<img src="class.png" class="h-8 pl-6 mt-2" alt="..." />
@@ -142,82 +148,13 @@
 						>
 							<td class="text-center">Guyabano - Research</td>
 							<td class="px-6 py-2 text-center">40</td>
-							<td class="py-1 px-6 text-center">Ruffa May Monis</td>	
+							<td class="py-1 px-6 text-center">Ruffa May Monis</td>
 							<td>8:00 AM - 10:00 AM</td>
 						</tr>
-
-                        
 					</tbody>
 				</table>
 			</div>
 		</div>
 
-		<!--POINTS-->
-		<div class="w-2/5 h-full bg-white bg-opacity-75 pb-20 rounded-3xl text-center shadow-lg mr-2">
-			<div class="flex flex-row justify-between mt-2">
-				<div class="flex flex-row">
-					<img src="student.png" class="h-8 pl-6 mt-2" alt="..." />
-					<h1 class="pt-2 pl-1 mt-1 font-medium text-md text-gray-700">Student List</h1>
-				</div>
-			</div>
-
-			<div class="relative overflow-y-auto shadow-sm rounded-xl mx-5 my-5 h-full max-h-full">
-				<table class="w-full text-sm text-gray-500 dark:text-gray-400">
-					<thead
-						class="text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 sticky top-0"
-					>
-						<tr>
-							<th scope="col" class="px-6 py-4 text-center">Student name</th>
-							<th scope="col" class="px-6 py-4 text-center">RFID Tag</th>
-							<th scope="col" class="px-6 py-4 text-center">Student ID</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr
-							class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-						>
-							<td class="text-center">Juan Dela Cruz</td>
-							<td class="px-6 py-2 text-center">8e8bc9ab</td>
-							<td class="py-1 px-6 text-center">19-1064</td>	
-						</tr>
-
-                        
-					</tbody>
-				</table>
-			</div>
-		</div>
-
-		<!--TO DO-->
-		<div class="w-2/5 bg-white bg-opacity-75 pb-12 rounded-3xl text-center shadow-lg">
-			<div class="flex flex-row justify-between mt-2">
-				<div class="flex flex-row">
-					<img src="teacher.png" class="h-8 pl-6 mt-2" alt="..." />
-					<h1 class="pt-2 pl-1 mt-1 font-medium text-md text-gray-700">Teachers List</h1>
-				</div>
-			</div>
-
-			<div class="relative overflow-y-auto shadow-sm rounded-xl mx-5 my-5 h-full max-h-full">
-				<table class="w-full text-sm text-gray-500 dark:text-gray-400">
-					<thead
-						class="text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 sticky top-0"
-					>
-						<tr>
-							<th scope="col" class="px-6 py-4 text-center">Teacher name</th>
-							<th scope="col" class="px-6 py-4 text-center">Subject Class</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr
-							class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-						>
-							<td class="text-center">Ruffa May Monis</td>
-							<td class="px-6 py-2 text-center"> Guyabano - Research</td>
-						</tr>
-
-                        
-					</tbody>
-				</table>
-			</div>
-		</div>
 	</div>
 </body>
