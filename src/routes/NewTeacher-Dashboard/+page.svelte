@@ -9,7 +9,9 @@
 		collection,
 		getDoc,
 		onSnapshot,
-		updateDoc
+		updateDoc,
+		addDoc,
+		deleteDoc,
 	} from 'firebase/firestore';
 	import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 	import { goto } from '$app/navigation';
@@ -207,27 +209,6 @@
 				console.log('Error:', error);
 			});
 	}
-
-	async function change() {
-		console.log(selecTSub);
-		classCheck();
-		attendanceCheck();
-		recitationCheck();
-	}
-
-	onMount(() => {
-		const unsubscribe = userId.subscribe((value) => {
-			// Use the value of userId here
-			userUID = localStorage.getItem('userId');
-			// You can perform any other actions with the user ID
-			classCheck();
-			attendanceCheck();
-			return () => {
-				unsubscribe();
-			};
-		});
-	});
-	getDate();
 
 	async function changeDocumentID(action, documentID) {
 		const recitationCollectionReflllty = collection(
@@ -433,7 +414,245 @@
 		return studentNames;
 	}
 
+	async function groupStudents() {
+		console.log(selecTSub);
 
+		// Create a reference to the specific document within the 'Subject' collection
+		const docRef = doc(firestore, 'Subject', selecTSub);
+
+		try {
+			// Get the data for the specific document
+			const docSnapshot = await getDoc(docRef);
+
+			if (docSnapshot.exists()) {
+				// Assuming 'students' is the name of the field containing the student array
+				const studentIDs = docSnapshot.data().students;
+
+				if (studentIDs) {
+					// Get the selected group size from the select element with the 'groupSize' id
+					const selectedGroupSize = parseInt(document.getElementById('groupSize').value);
+
+					if (!isNaN(selectedGroupSize) && selectedGroupSize > 0) {
+						// Fetch student names based on their IDs
+						const studentNames = await fetchStudentNames(studentIDs);
+
+						// Create an array to store the grouped students
+						const groupedStudents = [];
+
+						// Iterate through the student names and group them
+						for (let i = 0; i < studentNames.length; i += selectedGroupSize) {
+							groupedStudents.push(studentNames.slice(i, i + selectedGroupSize));
+						}
+
+						// Display the grouped students in the HTML table
+						displayGroupedStudents(groupedStudents);
+					} else {
+						console.log('Please select a valid group size.');
+					}
+				} else {
+					console.log("No 'students' field found in the document.");
+				}
+			} else {
+				console.log('Document does not exist.');
+			}
+		} catch (error) {
+			console.error('Error fetching document:', error);
+		}
+	}
+
+	// Function to fetch student names based on their IDs
+	async function fetchStudentNames(studentIDs) {
+		const studentNames = [];
+
+		for (const studentID of studentIDs) {
+			try {
+				const queryRef = collection(firestore, 'users');
+				const querySnapshot = await getDocs(query(queryRef, where('studentRFID', '==', studentID)));
+
+				if (!querySnapshot.empty) {
+					const studentData = querySnapshot.docs[0].data();
+					if (studentData && studentData.Name) {
+						// Use "Name" here
+						studentNames.push(studentData.Name); // Use "Name" here
+					} else {
+						console.log('No valid Name found for student ID:', studentID);
+					}
+				} else {
+					console.log('No document found for student ID:', studentID);
+				}
+			} catch (error) {
+				console.error('Error fetching student data:', error);
+			}
+		}
+
+		return studentNames;
+	}
+
+	function displayGroupedStudents(groupedStudents) {
+		// Get a reference to the table body
+		const tableBody = document.getElementById('groupTableBody');
+
+		// Clear any existing rows in the table body
+		tableBody.innerHTML = '';
+
+		// Iterate through the grouped students and create rows for each group
+		groupedStudents.forEach((group, index) => {
+			// Create a new table row
+			const row = document.createElement('tr');
+
+			// Add inline style to add spacing between rows (adjust the margin value as needed)
+			row.style.marginBottom = '20px'; // You can adjust the spacing as needed
+
+			// Create a table cell for the group number
+			const groupNumberCell = document.createElement('th');
+			groupNumberCell.setAttribute('scope', 'row');
+			groupNumberCell.textContent = index + 2;
+
+			// Create a table cell for the group members
+			const groupMembersCell = document.createElement('td');
+			groupMembersCell.classList.add('text-center');
+
+			// Iterate through the group members and add them to the cell
+			group.forEach((member) => {
+				const memberElement = document.createElement('div');
+				memberElement.textContent = member;
+				groupMembersCell.appendChild(memberElement);
+			});
+
+			// Add the cells to the row
+			row.appendChild(groupNumberCell);
+			row.appendChild(groupMembersCell);
+
+			// Add the row to the table body
+			tableBody.appendChild(row);
+		});
+	}
+
+	let title = ''; // Declare a variable to hold the input value
+
+	function addNote() {
+		if (title.trim() !== '') {
+			const collectionRef = collection(firestore, 'Subject', selecTSub, 'Notes');
+
+			addDoc(collectionRef, { Title: title, Date: currentDatee, Status: 'Only Me' })
+				.then((docRef) => {
+					console.log('Document written with ID: ', docRef.id);
+				})
+				.catch((error) => {
+					console.error('Error writing document: ', error);
+				});
+
+			title = '';
+		} else {
+			alert('Please enter a title before adding notes.');
+		}
+	}
+
+	async function fetchAndDisplayNotes() {
+		const collectionRef = collection(firestore, 'Subject', selecTSub, 'Notes');
+
+		try {
+			const querySnapshot = await getDocs(collectionRef);
+
+			querySnapshot.forEach((doc) => {
+				const title1 = doc.data().Title;
+				let status = doc.data().Status;
+				const id = doc.id;
+				const noteElement = document.createElement('div');
+				noteElement.className =
+					'mt-2 flex flex-row justify-between w-full items-center px-7 border-b pb-1';
+				noteElement.innerHTML = `
+        <div class="mt-2 flex flex-row justify-between w-full items-center px-7 border-b pb-1">
+          <h1 class="font-medium text-sm">${title1}</h1>
+  
+          <div class="flex items-center">
+            <select
+              class="border-gray-200 w-32 h-6 mr-1 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
+            >
+              <option disabled hidden class="rounded-3xl">Share</option>
+              <option value="Only Me" ${status === 'Only Me' ? 'selected' : ''}>Only Me</option>
+              <option value="Subject Class" ${
+								status === 'Subject Class' ? 'selected' : ''
+							}>Subject Class</option>
+            </select>
+            <button class="update-status-button">
+              <img
+                src="done.png"
+                class="h-7 transform transition-transform focus:scale-100 active:scale-90"
+                alt="..."
+              />
+            </button>
+            <button class="delete-button">
+              <img
+                src="delete.png"
+                class="h-7 transform transition-transform focus:scale-100 active:scale-90"
+                alt="..."
+              />
+            </button>
+          </div>
+        </div>`;
+
+				const notesContainer = document.getElementById('notes-container');
+				notesContainer.appendChild(noteElement);
+
+				// Add event listener to the update-status-button
+				noteElement.querySelector('.update-status-button').addEventListener('click', async () => {
+					const selectElement = noteElement.querySelector('select');
+					const newStatus = selectElement.value;
+
+					try {
+						await updateDoc(doc.ref, { Status: newStatus });
+						status = newStatus;
+					} catch (error) {
+						console.error('Error updating document: ', error);
+					}
+				});
+
+				// Add event listener to the delete button
+				noteElement.querySelector('.delete-button').addEventListener('click', async () => {
+					try {
+						// Delete the document from Firestore
+						await deleteDoc(doc.ref);
+						// Remove the note element from the UI
+						noteElement.remove();
+					} catch (error) {
+						console.error('Error deleting document: ', error);
+					}
+				});
+			});
+		} catch (error) {
+			console.error('Error fetching documents: ', error);
+		}
+	}
+
+	function resetChanges() {
+		const notesContainer = document.getElementById('notes-container');
+		notesContainer.innerHTML = ''; // Clear all dynamically added notes
+	}
+
+	// Call the function to fetch and display notes
+	async function change() {
+		console.log(selecTSub);
+		classCheck();
+		attendanceCheck();
+		recitationCheck();
+		resetChanges();
+		fetchAndDisplayNotes();
+	}
+
+	onMount(() => {
+		const unsubscribe = userId.subscribe((value) => {
+			// Use the value of userId here
+			userUID = localStorage.getItem('userId');
+			// You can perform any other actions with the user ID
+			classCheck();
+			attendanceCheck();
+			return () => {
+				unsubscribe();
+			};
+		});
+	});
+	getDate();
 </script>
 
 <body class=" bg-gray-50 min-h-screen">
@@ -840,10 +1059,13 @@
 					class="pl-4 border border-r-0 rounded-l-3xl focus:ring-0 text-sm block bg-white w-64 h-7 border-slate-300 shadow-sm focus:outline-none"
 					placeholder="Add Notes"
 					type="text"
-					name="search"
+					name="search12"
+					bind:value={title}
 				/>
 				<button
+					id="addButton"
 					class="add-button w-12 h-7 border border-slate-300 rounded-r-3xl bg-blue-500 hover:bg-blue-700 border-none transform transition-transform focus:scale-100 active:scale-95"
+					on:click={addNote}
 				>
 					<svg
 						width="20px"
@@ -869,32 +1091,34 @@
 			<div class="divider mb-1" />
 
 			<!--TO DO LIST-->
-			<div class="mt-2 flex flex-row justify-between w-full items-center px-7 border-b pb-1">
-				<h1 class="font-medium text-sm">· Present Lesson 1</h1>
+			<div id="notes-container">
+				<div class="mt-2 flex flex-row justify-between w-full items-center px-7 border-b pb-1">
+					<h1 class="font-medium text-sm">· Present Lesson 1</h1>
 
-				<div class="flex items-center">
-					<select
-						class=" border-gray-200 w-32 h-6 mr-1 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
-					>
-						<option disabled selected hidden class="rounded-3xl">Share</option>
-						<option class="rounded-xl">Only Me</option>
-						<option class="rounded-xl">Subject Class</option>
-					</select>
+					<div class="flex items-center">
+						<select
+							class=" border-gray-200 w-32 h-6 mr-1 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
+						>
+							<option disabled selected hidden class="rounded-3xl">Share</option>
+							<option class="rounded-xl">Only Me</option>
+							<option class="rounded-xl">Subject Class</option>
+						</select>
 
-					<button>
-						<img
-							src="done.png"
-							class="h-7 transform transition-transform focus:scale-100 active:scale-90"
-							alt="..."
-						/>
-					</button>
-					<button>
-						<img
-							src="delete.png"
-							class="h-7 transform transition-transform focus:scale-100 active:scale-90"
-							alt="..."
-						/>
-					</button>
+						<button>
+							<img
+								src="done.png"
+								class="h-7 transform transition-transform focus:scale-100 active:scale-90"
+								alt="..."
+							/>
+						</button>
+						<button>
+							<img
+								src="delete.png"
+								class="h-7 transform transition-transform focus:scale-100 active:scale-90"
+								alt="..."
+							/>
+						</button>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -954,22 +1178,23 @@
 					<div class="mt-3 mb-1">
 						<select
 							class="w-1/2 border-gray-200 h-6 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
+							id="groupSize"
 						>
 							<option disabled selected class="rounded-3xl">Select</option>
-							<option class="rounded-3xl">2 Members Each</option>
-							<option class="rounded-3xl">3 Members Each</option>
-							<option class="rounded-3xl">4 Members Each</option>
-							<option class="rounded-3xl">5 Members Each</option>
-							<option class="rounded-3xl">6 Members Each</option>
-							<option class="rounded-3xl">7 Members Each</option>
-							<option class="rounded-3xl">8 Members Each</option>
-							<option class="rounded-3xl">9 Members Each</option>
-							<option class="rounded-3xl">10 Members Each</option>
+							<option class="rounded-3xl" value="2">2 Members Each</option>
+							<option class="rounded-3xl" value="3">3 Members Each</option>
+							<option class="rounded-3xl" value="4">4 Members Each</option>
+							<option class="rounded-3xl" value="5">5 Members Each</option>
+							<option class="rounded-3xl" value="6">6 Members Each</option>
+							<option class="rounded-3xl" value="7">7 Members Each</option>
+							<option class="rounded-3xl" value="8">8 Members Each</option>
+							<option class="rounded-3xl" value="9">9 Members Each</option>
+							<option class="rounded-3xl" value="10">10 Members Each</option>
 						</select>
 					</div>
 					<button
 						class="start-button btn mt-4 w-1/2 rounded-3xl bg-green-500 hover:bg-green-700 border-none"
-						>Create</button
+						on:click={groupStudents}>Create</button
 					>
 
 					<div class="divider" />
@@ -983,103 +1208,7 @@
 									<th scope="col" class="px-6 py-4 text-center">Members</th>
 								</tr>
 							</thead>
-							<tbody>
-								<tr
-									class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-								>
-									<th
-										scope="row"
-										class="px-6 py-2 font-medium text-gray-900 dark:text-white text-center"
-									>
-										1
-									</th>
-									<td class="px-6 py-2 text-center">
-										Luis Santiago <br />
-										Kyle Dela Pena <br />
-										Ace Dela Cuesta <br />
-									</td>
-								</tr>
-
-								<tr
-									class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-								>
-									<th
-										scope="row"
-										class="px-6 py-2 font-medium text-gray-900 dark:text-white text-center"
-									>
-										1
-									</th>
-									<td class="px-6 py-2 text-center">
-										Luis Santiago <br />
-										Kyle Dela Pena <br />
-										Ace Dela Cuesta <br />
-									</td>
-								</tr>
-
-								<tr
-									class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-								>
-									<th
-										scope="row"
-										class="px-6 py-2 font-medium text-gray-900 dark:text-white text-center"
-									>
-										1
-									</th>
-									<td class="px-6 py-2 text-center">
-										Luis Santiago <br />
-										Kyle Dela Pena <br />
-										Ace Dela Cuesta <br />
-									</td>
-								</tr>
-
-								<tr
-									class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-								>
-									<th
-										scope="row"
-										class="px-6 py-2 font-medium text-gray-900 dark:text-white text-center"
-									>
-										1
-									</th>
-									<td class="px-6 py-2 text-center">
-										Luis Santiago <br />
-										Kyle Dela Pena <br />
-										Ace Dela Cuesta <br />
-									</td>
-								</tr>
-
-								<tr
-									class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-								>
-									<th
-										scope="row"
-										class="px-6 py-2 font-medium text-gray-900 dark:text-white text-center"
-									>
-										1
-									</th>
-									<td class="px-6 py-2 text-center">
-										Luis Santiago <br />
-										Kyle Dela Pena <br />
-										Ace Dela Cuesta <br />
-									</td>
-								</tr>
-
-								<tr
-									class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-								>
-									<th
-										scope="row"
-										class="px-6 py-2 font-medium text-gray-900 dark:text-white text-center"
-									>
-										1
-									</th>
-									<td class="px-6 py-2 text-center">
-										Luis Santiago <br />
-										Kyle Dela Pena <br />
-										Ace Dela Cuesta <br />
-									</td>
-								</tr>
-							</tbody>
+							<tbody id="groupTableBody" />
 						</table>
 					</div>
 				</div>
@@ -1131,16 +1260,17 @@
 			<div class="modal">
 				<div class="modal-box relative h-5/6 max-w-4xl">
 					<label for="lessonplan" class="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
-					
+
 					<div class="text-xl font-bold text-center w-full justify-between flex flex-row">
-						<button id="editButton" class="text-sm fo bg-blue-500 hover:bg-blue-600 text-white px-6 ml-1 rounded-3xl">
+						<button
+							id="editButton"
+							class="text-sm fo bg-blue-500 hover:bg-blue-600 text-white px-6 ml-1 rounded-3xl"
+						>
 							Edit</button
 						>
-						<p>
-							Lesson Plan
-						</p>
+						<p>Lesson Plan</p>
 
-						<span></span>
+						<span />
 					</div>
 
 					<div
@@ -1152,248 +1282,368 @@
 							<div class="divider my-0" />
 							<h1 class="text-left my-1 ml-5">Day 1</h1>
 							<div class="flex flex-row items-center space-x-2">
-								<a href="https://www.googledrive.com/lesson1/" target="_blank" rel="noopener noreferrer" class="w-full">
-								<input
-									type="text"
-									placeholder="www.googledrive.com/lesson1/"
-									class="input input-bordered line-through w-full max-w-xl h-10 focus:border-none my-1 ml-5 cursor-pointer"
-									readonly
-								/>
-								<input type="checkbox" checked="checked" class="checkbox" />
+								<a
+									href="https://www.googledrive.com/lesson1/"
+									target="_blank"
+									rel="noopener noreferrer"
+									class="w-full"
+								>
+									<input
+										type="text"
+										placeholder="www.googledrive.com/lesson1/"
+										class="input input-bordered line-through w-full max-w-xl h-10 focus:border-none my-1 ml-5 cursor-pointer"
+										readonly
+									/>
+									<input type="checkbox" checked="checked" class="checkbox" />
+								</a>
 							</div>
 
 							<h1 class="text-left my-1 ml-5">Day 2</h1>
 							<div class="flex flex-row items-center space-x-2">
-								<a href="https://www.googledrive.com/lesson1/" target="_blank" rel="noopener noreferrer" class="w-full">
-								<input
-									type="text"
-									placeholder="www.googledrive.com/lesson1/"
-									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5 cursor-pointer"
-									readonly
-								/>
-								<input type="checkbox" checked="" class="checkbox" />
+								<a
+									href="https://www.googledrive.com/lesson1/"
+									target="_blank"
+									rel="noopener noreferrer"
+									class="w-full"
+								>
+									<input
+										type="text"
+										placeholder="www.googledrive.com/lesson1/"
+										class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5 cursor-pointer"
+										readonly
+									/>
+									<input type="checkbox" checked="" class="checkbox" />
+								</a>
 							</div>
 
 							<h1 class="text-left my-1 ml-5">Day 3</h1>
 							<div class="flex flex-row items-center space-x-2">
-								<a href="https://www.googledrive.com/lesson1/" target="_blank" rel="noopener noreferrer" class="w-full">
-								<input
-									type="text"
-									placeholder="www.googledrive.com/lesson1/"
-									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5 cursor-pointer"
-									readonly
-								/>
-								<input type="checkbox" checked="" class="checkbox" />
+								<a
+									href="https://www.googledrive.com/lesson1/"
+									target="_blank"
+									rel="noopener noreferrer"
+									class="w-full"
+								>
+									<input
+										type="text"
+										placeholder="www.googledrive.com/lesson1/"
+										class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5 cursor-pointer"
+										readonly
+									/>
+									<input type="checkbox" checked="" class="checkbox" />
+								</a>
 							</div>
 
 							<h1 class="text-left my-1 ml-5">Day 4</h1>
 							<div class="flex flex-row items-center space-x-2">
-								<a href="https://www.googledrive.com/lesson1/" target="_blank" rel="noopener noreferrer" class="w-full">
-								<input
-									type="text"
-									placeholder="www.googledrive.com/lesson1/"
-									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5 cursor-pointer"
-									readonly
-								/>
-								<input type="checkbox" checked="" class="checkbox" />
+								<a
+									href="https://www.googledrive.com/lesson1/"
+									target="_blank"
+									rel="noopener noreferrer"
+									class="w-full"
+								>
+									<input
+										type="text"
+										placeholder="www.googledrive.com/lesson1/"
+										class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5 cursor-pointer"
+										readonly
+									/>
+									<input type="checkbox" checked="" class="checkbox" />
+								</a>
 							</div>
 
 							<h1 class="text-left my-1 ml-5">Day 5</h1>
 							<div class="flex flex-row items-center space-x-2">
-								<a href="https://www.googledrive.com/lesson1/" target="_blank" rel="noopener noreferrer" class="w-full">
-								<input
-									type="text"
-									placeholder="www.googledrive.com/lesson1/"
-									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5 cursor-pointer"
-									readonly
-								/>
-								<input type="checkbox" checked="" class="checkbox" />
+								<a
+									href="https://www.googledrive.com/lesson1/"
+									target="_blank"
+									rel="noopener noreferrer"
+									class="w-full"
+								>
+									<input
+										type="text"
+										placeholder="www.googledrive.com/lesson1/"
+										class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5 cursor-pointer"
+										readonly
+									/>
+									<input type="checkbox" checked="" class="checkbox" />
+								</a>
 							</div>
 
 							<h1 class="text-left font-medium mt-5">Week 2</h1>
 							<div class="divider my-0" />
 							<h1 class="text-left my-1 ml-5">Day 1</h1>
 							<div class="flex flex-row items-center space-x-2">
-								<a href="https://www.googledrive.com/lesson1/" target="_blank" rel="noopener noreferrer" class="w-full">
-								<input
-									type="text"
-									placeholder="www.googledrive.com/lesson1/"
-									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5 cursor-pointer"
-									readonly
-								/>
-								<input type="checkbox" checked="" class="checkbox" />
+								<a
+									href="https://www.googledrive.com/lesson1/"
+									target="_blank"
+									rel="noopener noreferrer"
+									class="w-full"
+								>
+									<input
+										type="text"
+										placeholder="www.googledrive.com/lesson1/"
+										class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5 cursor-pointer"
+										readonly
+									/>
+									<input type="checkbox" checked="" class="checkbox" />
+								</a>
 							</div>
 
 							<h1 class="text-left my-1 ml-5">Day 2</h1>
 							<div class="flex flex-row items-center space-x-2">
-								<a href="https://www.googledrive.com/lesson1/" target="_blank" rel="noopener noreferrer" class="w-full">
-								<input
-									type="text"
-									placeholder="www.googledrive.com/lesson1/"
-									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5 cursor-pointer"
-									readonly
-								/>
-								<input type="checkbox" checked="" class="checkbox" />
+								<a
+									href="https://www.googledrive.com/lesson1/"
+									target="_blank"
+									rel="noopener noreferrer"
+									class="w-full"
+								>
+									<input
+										type="text"
+										placeholder="www.googledrive.com/lesson1/"
+										class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5 cursor-pointer"
+										readonly
+									/>
+									<input type="checkbox" checked="" class="checkbox" />
+								</a>
 							</div>
 
 							<h1 class="text-left my-1 ml-5">Day 3</h1>
 							<div class="flex flex-row items-center space-x-2">
-								<a href="https://www.googledrive.com/lesson1/" target="_blank" rel="noopener noreferrer" class="w-full">
-								<input
-									type="text"
-									placeholder="www.googledrive.com/lesson1/"
-									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5 cursor-pointer"
-									readonly
-								/>
-								<input type="checkbox" checked="" class="checkbox" />
+								<a
+									href="https://www.googledrive.com/lesson1/"
+									target="_blank"
+									rel="noopener noreferrer"
+									class="w-full"
+								>
+									<input
+										type="text"
+										placeholder="www.googledrive.com/lesson1/"
+										class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5 cursor-pointer"
+										readonly
+									/>
+									<input type="checkbox" checked="" class="checkbox" />
+								</a>
 							</div>
 
 							<h1 class="text-left my-1 ml-5">Day 4</h1>
 							<div class="flex flex-row items-center space-x-2">
-								<a href="https://www.googledrive.com/lesson1/" target="_blank" rel="noopener noreferrer" class="w-full">
-								<input
-									type="text"
-									placeholder="www.googledrive.com/lesson1/"
-									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5 cursor-pointer"
-									readonly
-								/>
-								<input type="checkbox" checked="" class="checkbox" />
+								<a
+									href="https://www.googledrive.com/lesson1/"
+									target="_blank"
+									rel="noopener noreferrer"
+									class="w-full"
+								>
+									<input
+										type="text"
+										placeholder="www.googledrive.com/lesson1/"
+										class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5 cursor-pointer"
+										readonly
+									/>
+									<input type="checkbox" checked="" class="checkbox" />
+								</a>
 							</div>
 
 							<h1 class="text-left my-1 ml-5">Day 5</h1>
 							<div class="flex flex-row items-center space-x-2">
-								<a href="https://www.googledrive.com/lesson1/" target="_blank" rel="noopener noreferrer" class="w-full">
-								<input
-									type="text"
-									placeholder="www.googledrive.com/lesson1/"
-									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5 cursor-pointer"
-									readonly
-								/>
-								<input type="checkbox" checked="" class="checkbox" />
+								<a
+									href="https://www.googledrive.com/lesson1/"
+									target="_blank"
+									rel="noopener noreferrer"
+									class="w-full"
+								>
+									<input
+										type="text"
+										placeholder="www.googledrive.com/lesson1/"
+										class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5 cursor-pointer"
+										readonly
+									/>
+									<input type="checkbox" checked="" class="checkbox" />
+								</a>
 							</div>
 
 							<h1 class="text-left font-medium mt-5">Week 3</h1>
 							<div class="divider my-0" />
 							<h1 class="text-left my-1 ml-5">Day 1</h1>
 							<div class="flex flex-row items-center space-x-2">
-								<a href="https://www.googledrive.com/lesson1/" target="_blank" rel="noopener noreferrer" class="w-full">
-								<input
-									type="text"
-									placeholder="www.googledrive.com/lesson1/"
-									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5 cursor-pointer"
-									readonly
-								/>
-								<input type="checkbox" checked="" class="checkbox" />
+								<a
+									href="https://www.googledrive.com/lesson1/"
+									target="_blank"
+									rel="noopener noreferrer"
+									class="w-full"
+								>
+									<input
+										type="text"
+										placeholder="www.googledrive.com/lesson1/"
+										class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5 cursor-pointer"
+										readonly
+									/>
+									<input type="checkbox" checked="" class="checkbox" />
+								</a>
 							</div>
 
 							<h1 class="text-left my-1 ml-5">Day 2</h1>
 							<div class="flex flex-row items-center space-x-2">
-								<a href="https://www.googledrive.com/lesson1/" target="_blank" rel="noopener noreferrer" class="w-full">
-								<input
-									type="text"
-									placeholder="www.googledrive.com/lesson1/"
-									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5 cursor-pointer"
-									readonly
-								/>
-								<input type="checkbox" checked="" class="checkbox" />
+								<a
+									href="https://www.googledrive.com/lesson1/"
+									target="_blank"
+									rel="noopener noreferrer"
+									class="w-full"
+								>
+									<input
+										type="text"
+										placeholder="www.googledrive.com/lesson1/"
+										class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5 cursor-pointer"
+										readonly
+									/>
+									<input type="checkbox" checked="" class="checkbox" />
+								</a>
 							</div>
 
 							<h1 class="text-left my-1 ml-5">Day 3</h1>
 							<div class="flex flex-row items-center space-x-2">
-								<a href="https://www.googledrive.com/lesson1/" target="_blank" rel="noopener noreferrer" class="w-full">
-								<input
-									type="text"
-									placeholder="www.googledrive.com/lesson1/"
-									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5 cursor-pointer"
-									readonly
-								/>
-								<input type="checkbox" checked="" class="checkbox" />
+								<a
+									href="https://www.googledrive.com/lesson1/"
+									target="_blank"
+									rel="noopener noreferrer"
+									class="w-full"
+								>
+									<input
+										type="text"
+										placeholder="www.googledrive.com/lesson1/"
+										class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5 cursor-pointer"
+										readonly
+									/>
+									<input type="checkbox" checked="" class="checkbox" />
+								</a>
 							</div>
 
 							<h1 class="text-left my-1 ml-5">Day 4</h1>
 							<div class="flex flex-row items-center space-x-2">
-								<a href="https://www.googledrive.com/lesson1/" target="_blank" rel="noopener noreferrer" class="w-full">
-								<input
-									type="text"
-									placeholder="www.googledrive.com/lesson1/"
-									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5 cursor-pointer"
-									readonly
-								/>
-								<input type="checkbox" checked="" class="checkbox" />
+								<a
+									href="https://www.googledrive.com/lesson1/"
+									target="_blank"
+									rel="noopener noreferrer"
+									class="w-full"
+								>
+									<input
+										type="text"
+										placeholder="www.googledrive.com/lesson1/"
+										class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5 cursor-pointer"
+										readonly
+									/>
+									<input type="checkbox" checked="" class="checkbox" />
+								</a>
 							</div>
 
 							<h1 class="text-left my-1 ml-5">Day 5</h1>
 							<div class="flex flex-row items-center space-x-2">
-								<a href="https://www.googledrive.com/lesson1/" target="_blank" rel="noopener noreferrer" class="w-full">
-								<input
-									type="text"
-									placeholder="www.googledrive.com/lesson1/"
-									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5 cursor-pointer"
-									readonly
-								/>
-								<input type="checkbox" checked="" class="checkbox" />
+								<a
+									href="https://www.googledrive.com/lesson1/"
+									target="_blank"
+									rel="noopener noreferrer"
+									class="w-full"
+								>
+									<input
+										type="text"
+										placeholder="www.googledrive.com/lesson1/"
+										class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5 cursor-pointer"
+										readonly
+									/>
+									<input type="checkbox" checked="" class="checkbox" />
+								</a>
 							</div>
 
 							<h1 class="text-left font-medium mt-5">Week 4</h1>
 							<div class="divider my-0" />
 							<h1 class="text-left my-1 ml-5">Day 1</h1>
 							<div class="flex flex-row items-center space-x-2">
-								<a href="https://www.googledrive.com/lesson1/" target="_blank" rel="noopener noreferrer" class="w-full">
-								<input
-									type="text"
-									placeholder="www.googledrive.com/lesson1/"
-									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5 cursor-pointer"
-									readonly
-								/>
-								<input type="checkbox" checked="" class="checkbox" />
+								<a
+									href="https://www.googledrive.com/lesson1/"
+									target="_blank"
+									rel="noopener noreferrer"
+									class="w-full"
+								>
+									<input
+										type="text"
+										placeholder="www.googledrive.com/lesson1/"
+										class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5 cursor-pointer"
+										readonly
+									/>
+									<input type="checkbox" checked="" class="checkbox" />
+								</a>
 							</div>
 
 							<h1 class="text-left my-1 ml-5">Day 2</h1>
 							<div class="flex flex-row items-center space-x-2">
-								<a href="https://www.googledrive.com/lesson1/" target="_blank" rel="noopener noreferrer" class="w-full">
-								<input
-									type="text"
-									placeholder="www.googledrive.com/lesson1/"
-									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5 cursor-pointer"
-									readonly
-								/>
-								<input type="checkbox" checked="" class="checkbox" />
+								<a
+									href="https://www.googledrive.com/lesson1/"
+									target="_blank"
+									rel="noopener noreferrer"
+									class="w-full"
+								>
+									<input
+										type="text"
+										placeholder="www.googledrive.com/lesson1/"
+										class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5 cursor-pointer"
+										readonly
+									/>
+									<input type="checkbox" checked="" class="checkbox" />
+								</a>
 							</div>
 
 							<h1 class="text-left my-1 ml-5">Day 3</h1>
 							<div class="flex flex-row items-center space-x-2">
-								<a href="https://www.googledrive.com/lesson1/" target="_blank" rel="noopener noreferrer" class="w-full">
-								<input
-									type="text"
-									placeholder="www.googledrive.com/lesson1/"
-									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5 cursor-pointer"
-									readonly
-								/>
-								<input type="checkbox" checked="" class="checkbox" />
+								<a
+									href="https://www.googledrive.com/lesson1/"
+									target="_blank"
+									rel="noopener noreferrer"
+									class="w-full"
+								>
+									<input
+										type="text"
+										placeholder="www.googledrive.com/lesson1/"
+										class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5 cursor-pointer"
+										readonly
+									/>
+									<input type="checkbox" checked="" class="checkbox" />
+								</a>
 							</div>
 
 							<h1 class="text-left my-1 ml-5">Day 4</h1>
 							<div class="flex flex-row items-center space-x-2">
-								<a href="https://www.googledrive.com/lesson1/" target="_blank" rel="noopener noreferrer" class="w-full">
-								<input
-									type="text"
-									placeholder="www.googledrive.com/lesson1/"
-									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5 cursor-pointer"
-									readonly
-								/>
-								<input type="checkbox" checked="" class="checkbox" />
+								<a
+									href="https://www.googledrive.com/lesson1/"
+									target="_blank"
+									rel="noopener noreferrer"
+									class="w-full"
+								>
+									<input
+										type="text"
+										placeholder="www.googledrive.com/lesson1/"
+										class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5 cursor-pointer"
+										readonly
+									/>
+									<input type="checkbox" checked="" class="checkbox" />
+								</a>
 							</div>
 
 							<h1 class="text-left my-1 ml-5">Day 5</h1>
 							<div class="flex flex-row items-center space-x-2">
-								<a href="https://www.googledrive.com/lesson1/" target="_blank" rel="noopener noreferrer" class="w-full">
-								<input
-									type="text"
-									placeholder="www.googledrive.com/lesson1/"
-									class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5 cursor-pointer"
-									readonly
-								/>
-								<input type="checkbox" checked="" class="checkbox" />
+								<a
+									href="https://www.googledrive.com/lesson1/"
+									target="_blank"
+									rel="noopener noreferrer"
+									class="w-full"
+								>
+									<input
+										type="text"
+										placeholder="www.googledrive.com/lesson1/"
+										class="input input-bordered w-full max-w-xl h-10 focus:border-none my-1 ml-5 cursor-pointer"
+										readonly
+									/>
+									<input type="checkbox" checked="" class="checkbox" />
+								</a>
 							</div>
 						</div>
 					</div>
@@ -1413,6 +1663,4 @@
 	.toggle-success {
 		background-color: #ef4444; /* Red color */
 	}
-
-
 </style>
