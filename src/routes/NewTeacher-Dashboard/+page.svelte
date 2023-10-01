@@ -833,12 +833,12 @@
 		<div class="w-2/5 bg-white bg-opacity-75 pb-12 rounded-3xl text-center shadow-lg">
 			<div class="flex flex-row mt-2">
 				<img src="todo.png" class="h-7 pl-6 mt-2" alt="..." />
-				<h1 class="pl-1 pt-2 font-medium text-md text-gray-700">To Do</h1>
+				<h1 class="pl-1 pt-2 font-medium text-md text-gray-700">Notes</h1>
 			</div>
 			<div class="flex flex-row items-center mt-2 justify-center">
 				<input
 					class="pl-4 border border-r-0 rounded-l-3xl focus:ring-0 text-sm block bg-white w-64 h-7 border-slate-300 shadow-sm focus:outline-none"
-					placeholder="Add To Do"
+					placeholder="Add Notes"
 					type="text"
 					name="search"
 				/>
