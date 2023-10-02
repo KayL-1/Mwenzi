@@ -11,7 +11,7 @@
 		onSnapshot,
 		updateDoc,
 		addDoc,
-		deleteDoc,
+		deleteDoc
 	} from 'firebase/firestore';
 	import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 	import { goto } from '$app/navigation';
@@ -505,12 +505,13 @@
 
 			// Create a table cell for the group number
 			const groupNumberCell = document.createElement('th');
+			groupNumberCell.classList.add('text-center', 'border-b', 'py-2');
 			groupNumberCell.setAttribute('scope', 'row');
 			groupNumberCell.textContent = index + 2;
 
 			// Create a table cell for the group members
 			const groupMembersCell = document.createElement('td');
-			groupMembersCell.classList.add('text-center');
+			groupMembersCell.classList.add('text-center', 'border-b', 'py-1');
 
 			// Iterate through the group members and add them to the cell
 			group.forEach((member) => {
@@ -562,7 +563,7 @@
 				noteElement.className =
 					'mt-2 flex flex-row justify-between w-full items-center px-7 border-b pb-1';
 				noteElement.innerHTML = `
-        <div class="mt-2 flex flex-row justify-between w-full items-center px-7 border-b pb-1">
+        <div class="mt-2 flex flex-row justify-between w-full items-center px-7 pb-1">
           <h1 class="font-medium text-sm">${title1}</h1>
   
           <div class="flex items-center">
@@ -924,6 +925,7 @@
 							<th scope="col" class="px-6 py-4 text-right">Late</th>
 						</tr>
 					</thead>
+
 					<tbody>
 						{#each attendance as data}
 							<tr
@@ -933,7 +935,11 @@
 									scope="row"
 									class="px-6 py-2 font-medium text-gray-900 dark:text-white text-left"
 								>
-									<span>{data.name}</span>
+									<!--LABEL FOR MEDIC MODAL -->
+									<label for="MedicalRecords" class="cursor-pointer">
+										<span>{data.name}</span>
+									</label>
+									<!--END LABEL FOR MEDIC MODAL -->
 								</th>
 								<td class="px-6 py-2 text-center"><p>{data.id}</p></td>
 								<td class="px-6 py-2 text-center">{data.time}</td>
@@ -979,6 +985,81 @@
 									/>
 								</td>
 							</tr>
+
+							<!--MEDIC MODAL-->
+							<input type="checkbox" id="MedicalRecords" class="modal-toggle" />
+							<div class="modal">
+								<div class="modal-box relative h-2/4 max-w-xl">
+									<label for="MedicalRecords" class="btn btn-sm btn-circle absolute right-2 top-2"
+										>✕</label
+									>
+
+									<div class="text-xl font-bold text-center w-full justify-center flex flex-row mb-5">
+										<p>Medical Information</p>
+										<span />
+									</div>
+
+									<div
+										class="w-full flex flex-col mx-auto py-3 px-4 outline rounded-3xl outline-gray-50 mt-7"
+									>
+										<div class="justify-end flex mt-2">
+											<button
+												id="editButton"
+												class="text-sm font-medium bg-blue-500 hover:bg-blue-600 text-white px-6 ml-1 rounded-3xl transform transition-transform focus:scale-100 active:scale-95"
+											>
+												Edit</button
+											>
+											<button
+												id="saveButton"
+												class="text-sm font-medium bg-green-500 hover:bg-green-600 text-white px-6 ml-1 rounded-3xl transform transition-transform focus:scale-100 active:scale-95"
+											>
+												Save</button
+											>
+										</div>
+
+										<div class="mx-auto w-full">
+											<div class="flex flex-row justify-between mt-5 mx-2">
+											<h1 class="text-left font-medium text-lg mt-3">Ace Dela Cuesta</h1>
+											<h1 class="text-left font-medium text-lg mt-3">19-1064</h1>
+										</div>
+											<div class="divider mt-0" />
+											<h1 class="text-left my-2 mx-5">Blood Type:
+												<input
+												class="mt-1 border rounded-3xl px-2 focus:ring-0 text-sm block bg-white w-full h-7 border-slate-300 shadow-sm focus:outline-none"
+												placeholder="B+"
+												type="text"
+												readonly>
+											</h1>
+
+											<h1 class="text-left my-2 mx-5">Allergic Foods:
+												<input
+												class="mt-1 border rounded-3xl px-2 focus:ring-0 text-sm block bg-white w-full h-7 border-slate-300 shadow-sm focus:outline-none"
+												placeholder="Seafoods"
+												type="text"
+												readonly>
+											</h1>
+
+											<h1 class="text-left my-2 mx-5">Medical Condition/s:
+												<input
+												class="mt-1 border rounded-3xl px-2 focus:ring-0 text-sm block bg-white w-full h-7 border-slate-300 shadow-sm focus:outline-none"
+												placeholder="Asthma"
+												type="text"
+												readonly>
+											</h1>
+
+											<h1 class="text-left my-2 mx-5">Other:
+												<input
+												class="mt-1 border rounded-3xl px-2 focus:ring-0 text-sm block bg-white w-full h-7 border-slate-300 shadow-sm focus:outline-none"
+												placeholder=""
+												type="text"
+												readonly>
+											</h1>
+										
+										</div>
+									</div>
+								</div>
+							</div>
+							<!--END MEDIC MODAL-->
 						{/each}
 					</tbody>
 				</table>
@@ -1050,9 +1131,58 @@
 
 		<!--TO DO-->
 		<div class="w-2/5 bg-white bg-opacity-75 pb-12 rounded-3xl text-center shadow-lg">
-			<div class="flex flex-row mt-2">
-				<img src="todo.png" class="h-7 pl-6 mt-2" alt="..." />
-				<h1 class="pl-1 pt-2 font-medium text-md text-gray-700">Notes</h1>
+			<div class="flex flex-row justify-between mt-2">
+				<div class="flex flex-row">
+					<img src="todo.png" class="h-7 pl-6 mt-2" alt="..." />
+					<h1 class="pl-1 pt-2 font-medium text-md text-gray-700">Notes</h1>
+				</div>
+				<!--NOTE ARCHIVES -->
+				<label for="NotesArchives" class="mr-8 mt-2 rounded-3xl cursor-pointer">
+					<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="26"
+						><g id="SVGRepo_bgCarrier" stroke-width="0" /><g
+							id="SVGRepo_tracerCarrier"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+						/><g id="SVGRepo_iconCarrier"
+							><path
+								d="M8.707 6.707a1 1 0 0 0-1.414-1.414L4 8.586 2.707 7.293a1 1 0 0 0-1.414 1.414l2 2a1 1 0 0 0 1.414 0l4-4ZM12 7a1 1 0 1 0 0 2h10a1 1 0 1 0 0-2H12ZM8.707 13.293a1 1 0 0 1 0 1.414l-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 1 1 1.414-1.414L4 16.586l3.293-3.293a1 1 0 0 1 1.414 0ZM12 15a1 1 0 1 0 0 2h10a1 1 0 1 0 0-2H12Z"
+								fill="#currentColor"
+								class="fill-current text-gray-600 hover:text-blue-500"
+							/></g
+						></svg
+					>
+				</label>
+
+				<input type="checkbox" id="NotesArchives" class="modal-toggle" />
+				<div class="modal">
+					<div class="modal-box relative h-4/6 max-w-3xl text-left">
+						<label for="NotesArchives" class="btn btn-sm btn-circle absolute right-2 top-2">✕</label
+						>
+						<h3 class="text-xl font-bold text-center">Note Archives</h3>
+
+						<div class="mx-auto w-4/5 mt-5">
+							<!--NOTES DAY-->
+							<div class="divider mb-0" />
+							<h1 class="text-left font-medium">2023-10-02</h1>
+							<div class="divider my-0" />
+							<!--NOTES ONLY-->
+							<div class="flex flex-row">
+								<img src="done.png" class="h-7" alt="..." />
+								<h1 class="text-left my-1 ml-5">Present Lesson 1</h1>
+							</div>
+							<!--END NOTES ONLY-->
+
+							<!--NOTES ONLY-->
+							<div class="flex flex-row">
+								<img src="done.png" class="h-7" alt="..." />
+								<h1 class="text-left my-1 ml-5">Present Lesson 2</h1>
+							</div>
+							<!--END NOTES ONLY-->
+
+							<!--END NOTES DAY-->
+						</div>
+					</div>
+				</div>
 			</div>
 			<div class="flex flex-row items-center mt-2 justify-center">
 				<input
@@ -1135,7 +1265,7 @@
 			<!--RAN MODAL-->
 			<label
 				for="randomizer"
-				class="my-10 btn h-24 w-56 bg-[#EF5051] border-transparent hover:bg-red-600 hover:border-none text-xl rounded-3xl"
+				class="my-10 btn h-24 w-56 bg-[#EF5051] border-transparent hover:bg-red-600 hover:border-none text-lg rounded-3xl"
 				>Randomizer</label
 			>
 			<input type="checkbox" id="randomizer" class="modal-toggle" />
@@ -1166,7 +1296,7 @@
 			<!--GRP CREATOR MODAL-->
 			<label
 				for="GroupCreator"
-				class="my-10 btn h-24 w-56 bg-green-500 border-transparent hover:bg-green-700 hover:border-none text-xl rounded-3xl"
+				class="my-10 btn h-24 w-56 bg-green-500 border-transparent hover:bg-green-700 hover:border-none text-lg rounded-3xl"
 				>Create Group</label
 			>
 			<input type="checkbox" id="GroupCreator" class="modal-toggle" />
@@ -1193,7 +1323,7 @@
 						</select>
 					</div>
 					<button
-						class="start-button btn mt-4 w-1/2 rounded-3xl bg-green-500 hover:bg-green-700 border-none"
+						class="start-button btn mt-4 w-1/2 rounded-3xl bg-green-500 hover:bg-green-700 border-none transform transition-transform focus:scale-100 active:scale-95"
 						on:click={groupStudents}>Create</button
 					>
 
@@ -1226,7 +1356,7 @@
 			<!--JAM MODAL-->
 			<label
 				for="Jamboard"
-				class="my-10 btn h-24 w-56 bg-purple-500 hover:bg-purple-700 border-transparent hover:border-none text-xl rounded-3xl"
+				class="my-10 btn h-24 w-56 bg-purple-500 hover:bg-purple-700 border-transparent hover:border-none text-lg rounded-3xl"
 				>Jamboard</label
 			>
 			<input type="checkbox" id="Jamboard" class="modal-toggle" />
@@ -1253,7 +1383,7 @@
 
 			<label
 				for="lessonplan"
-				class="my-10 btn h-24 w-56 bg-blue-500 border-transparent hover:bg-blue-700 hover:border-none text-xl rounded-3xl"
+				class="my-10 btn h-24 w-56 bg-blue-500 border-transparent hover:bg-blue-700 hover:border-none text-lg rounded-3xl"
 				>Open</label
 			>
 			<input type="checkbox" id="lessonplan" class="modal-toggle" />
@@ -1261,15 +1391,8 @@
 				<div class="modal-box relative h-5/6 max-w-4xl">
 					<label for="lessonplan" class="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
 
-					<div class="text-xl font-bold text-center w-full justify-between flex flex-row">
-						<button
-							id="editButton"
-							class="text-sm fo bg-blue-500 hover:bg-blue-600 text-white px-6 ml-1 rounded-3xl"
-						>
-							Edit</button
-						>
+					<div class="text-xl font-bold text-center w-full justify-center flex flex-row">
 						<p>Lesson Plan</p>
-
 						<span />
 					</div>
 
@@ -1277,10 +1400,24 @@
 						class="w-full flex flex-col mx-auto
 					 py-3 px-4 outline rounded-3xl outline-gray-50 mt-5"
 					>
+						<div class="justify-end flex">
+							<button
+								id="editButton"
+								class="text-sm font-medium bg-blue-500 hover:bg-blue-600 text-white px-6 ml-1 rounded-3xl"
+							>
+								Edit</button
+							>
+							<button
+								id="saveButton"
+								class="text-sm font-medium bg-green-500 hover:bg-green-600 text-white px-6 ml-1 rounded-3xl"
+							>
+								Save</button
+							>
+						</div>
 						<div class="mx-auto w-4/5 mt-5">
-							<h1 class="text-left font-medium mt-5">Week 1</h1>
+							<h1 class="text-left font-medium mt-3">Week 1</h1>
 							<div class="divider my-0" />
-							<h1 class="text-left my-1 ml-5">Day 1</h1>
+							<h1 class="text-left my-1 ml-5 text-normal">Day 1</h1>
 							<div class="flex flex-row items-center space-x-2">
 								<a
 									href="https://www.googledrive.com/lesson1/"
@@ -1298,7 +1435,7 @@
 								</a>
 							</div>
 
-							<h1 class="text-left my-1 ml-5">Day 2</h1>
+							<h1 class="text-left my-1 ml-5 ">Day 2</h1>
 							<div class="flex flex-row items-center space-x-2">
 								<a
 									href="https://www.googledrive.com/lesson1/"

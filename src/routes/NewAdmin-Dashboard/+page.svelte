@@ -6,6 +6,14 @@
 	  if (selectedOption === '/Class-Subject') {
 		window.location.href = selectedOption;
 	  }
+
+	  if (selectedOption === '/Student-List') {
+		window.location.href = selectedOption;
+	  }
+
+	  if (selectedOption === '/Teacher-List') {
+		window.location.href = selectedOption;
+	  }
 	}
   </script>
 
@@ -22,9 +30,9 @@
 			<a class="flex order-first lg:order-none lg:w-1/5 title-font font-medium items-center text-gray-900 lg:items-center lg:justify-center mb-4 md:mb-0">
 				<select class="select select-bordered focus:border-none border-gray-200 w-full h-5 max-w-xs rounded-3xl shadow-sm" on:change={handleSelectChange}>
 				  <option disabled selected hidden class="rounded-3xl" >Dashboard</option>
-				  <option value="/Class-Subject" id="Class-Subject" class="rounded-3xl">Class Subject</option>
-				  <option class="rounded-xl">Students</option>
-				  <option class="rounded-xl">Teachers</option>
+				  <option value="/Class-Subject" id="Class-Subject" class="rounded-3xl">Class - Subject</option>
+				  <option value="/Student-List" id="Student-List" class="rounded-xl">Students</option>
+				  <option value="/Teacher-List"  id="Teacher-List">Teachers</option>
 				</select>
 			  </a>
 			<div class="lg:w-2/5 inline-flex lg:justify-end ml-5 lg:ml-0 ou">
@@ -120,7 +128,7 @@
 			<div class="flex flex-row justify-between mt-2">
 				<div class="flex flex-row">
 					<img src="class.png" class="h-8 pl-6 mt-2" alt="..." />
-					<h1 class="pt-2 pl-1 mt-1 font-medium text-md text-gray-700">Class Subject List</h1>
+					<h1 class="pt-2 pl-1 mt-1 font-medium text-md text-gray-700">Class - Subject List</h1>
 				</div>
 			</div>
 
@@ -130,7 +138,7 @@
 						class="text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 sticky top-0"
 					>
 						<tr>
-							<th scope="col" class="px-6 py-4 text-center">Subject Class Name</th>
+							<th scope="col" class="px-6 py-4 text-center">Class - Subject </th>
 							<th scope="col" class="px-6 py-4 text-center">Total Students</th>
 							<th scope="col" class="px-6 py-4 text-center">Teacher</th>
 							<th scope="col" class="px-6 py-4 text-center">Time</th>
