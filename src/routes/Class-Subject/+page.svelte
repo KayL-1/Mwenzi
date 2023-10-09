@@ -1,4 +1,25 @@
 <script>
+	import { auth, database } from '$lib/firebase';
+	import {
+		doc,
+		setDoc,
+		query,
+		where,
+		getDocs,
+		collection,
+		getDoc,
+		onSnapshot,
+		updateDoc,
+		addDoc,
+		deleteDoc
+	} from 'firebase/firestore';
+	import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
+	import { goto } from '$app/navigation';
+	import { firebase, firestore, functions } from '$lib/firebase';
+	import { getDatabase, ref, onValue, get, child } from 'firebase/database';
+	import { userId } from '../../lib/userStorage';
+	import { onMount } from 'svelte';
+
 	// Function to handle changes in the selected option
 	function handleSelectChange(event) {
 		const selectedOption = event.target.value;
@@ -74,10 +95,8 @@
 			</div>
 
 			<div class="flex justify-between w-full">
-			
 				<!--ADD CLASS, DELETE CLASS, DATE  -->
 				<div class="flex flex-row w-full justify-end mb-7 mt-5">
-					
 					<div
 						class="container h-8 mx-1 border border-gray-200 rounded-3xl w-48 flex justify-center items-center"
 					>
@@ -129,103 +148,100 @@
 	</header>
 
 	<div class="flex flex-row card h-3/4 w-full px-10 justify-center">
-		
 		<!--CLASS LISTS-->
-		<div class="w-1/2 h-full bg-white bg-opacity-75 rounded-3xl pb-20 text-center shadow-lg mr-2 ">
-			<div class="flex flex-row justify-between mt-2 ">
-				
+		<div class="w-1/2 h-full bg-white bg-opacity-75 rounded-3xl pb-20 text-center shadow-lg mr-2">
+			<div class="flex flex-row justify-between mt-2">
 				<div class="flex flex-row">
 					<img src="class.png" class="h-8 pl-6 mt-2" alt="..." />
 					<h1 class="pt-2 pl-1 mt-1 font-medium text-md text-gray-700">Class List</h1>
 				</div>
-					
-					<div class="flex flex-row">
-						<!--ADD CLASS-->
-						<label
-							for="AddClass"
-							class="text-sm cursor-pointer px-4 h-8 mt-2 mr-1 bg-blue-500 hover:bg-blue-700 flex items-center text-white font-medium rounded-3xl transform transition-transform focus:scale-100 active:scale-95"
-						>
-							Add Class</label
-						>
-						<input type="checkbox" id="AddClass" class="modal-toggle" />
-						<div class="modal">
-							<div class="modal-box relative h-72 max-w-xl">
-								<label for="AddClass" class="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
-								<div class="text-xl font-bold text-center w-full justify-center flex flex-row mb-5">
-									<p>Add Class</p>
-								</div>
 
-								<div
-									class="w-full flex flex-col mx-auto py-3 px-4 outline rounded-3xl outline-gray-50 mt-7"
-								>
-									<div class="mx-auto w-full">
-										<h1 class="text-left my-2 mx-5">
-											Class Name
-											<input
-												class="mt-2 border rounded-3xl px-2 focus:ring-0 text-sm block bg-white w-full h-7 border-slate-300 shadow-sm focus:outline-none"
-												placeholder="Class Name"
-												type="text"
-											/>
-										</h1>
+				<div class="flex flex-row">
+					<!--ADD CLASS-->
+					<label
+						for="AddClass"
+						class="text-sm cursor-pointer px-4 h-8 mt-2 mr-1 bg-blue-500 hover:bg-blue-700 flex items-center text-white font-medium rounded-3xl transform transition-transform focus:scale-100 active:scale-95"
+					>
+						Add Class</label
+					>
+					<input type="checkbox" id="AddClass" class="modal-toggle" />
+					<div class="modal">
+						<div class="modal-box relative h-72 max-w-xl">
+							<label for="AddClass" class="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
+							<div class="text-xl font-bold text-center w-full justify-center flex flex-row mb-5">
+								<p>Add Class</p>
+							</div>
 
-										<div class="justify-end flex mt-5 mb-3">
-											<button
-												id="add"
-												class="py-2 text-sm font-medium bg-blue-500 hover:bg-blue-600 text-white px-6 ml-1 rounded-3xl transform transition-transform focus:scale-100 active:scale-95"
-											>
-												Add</button
-											>
-										</div>
+							<div
+								class="w-full flex flex-col mx-auto py-3 px-4 outline rounded-3xl outline-gray-50 mt-7"
+							>
+								<div class="mx-auto w-full">
+									<h1 class="text-left my-2 mx-5">
+										Class Name
+										<input
+											class="mt-2 border rounded-3xl px-2 focus:ring-0 text-sm block bg-white w-full h-7 border-slate-300 shadow-sm focus:outline-none"
+											placeholder="Class Name"
+											type="text"
+										/>
+									</h1>
+
+									<div class="justify-end flex mt-5 mb-3">
+										<button
+											id="add"
+											class="py-2 text-sm font-medium bg-blue-500 hover:bg-blue-600 text-white px-6 ml-1 rounded-3xl transform transition-transform focus:scale-100 active:scale-95"
+										>
+											Add</button
+										>
 									</div>
 								</div>
 							</div>
 						</div>
-						<!--END ADD CLASS-->
+					</div>
+					<!--END ADD CLASS-->
 
-						<label
-							for="DeleteClass"
-							class="cursor-pointer px-4 h-8 mt-2 mr-6 bg-red-500 hover:bg-red-700 flex text-sm items-center text-white font-medium rounded-3xl transform transition-transform focus:scale-100 active:scale-95"
-						>
-							Delete Class</label
-						>
-						<input type="checkbox" id="DeleteClass" class="modal-toggle" />
-						<div class="modal">
-							<div class="modal-box relative h-72 max-w-xl">
-								<label for="DeleteClass" class="btn btn-sm btn-circle absolute right-2 top-2"
-									>✕</label
-								>
-								<div class="text-xl font-bold text-center w-full justify-center flex flex-row mb-5">
-									<p>Delete Class</p>
-									<span />
-								</div>
+					<label
+						for="DeleteClass"
+						class="cursor-pointer px-4 h-8 mt-2 mr-6 bg-red-500 hover:bg-red-700 flex text-sm items-center text-white font-medium rounded-3xl transform transition-transform focus:scale-100 active:scale-95"
+					>
+						Delete Class</label
+					>
+					<input type="checkbox" id="DeleteClass" class="modal-toggle" />
+					<div class="modal">
+						<div class="modal-box relative h-72 max-w-xl">
+							<label for="DeleteClass" class="btn btn-sm btn-circle absolute right-2 top-2">✕</label
+							>
+							<div class="text-xl font-bold text-center w-full justify-center flex flex-row mb-5">
+								<p>Delete Class</p>
+								<span />
+							</div>
 
-								<div
-									class="w-full flex flex-col mx-auto py-3 px-4 outline rounded-3xl outline-gray-50 mt-7"
-								>
-									<div class="mx-auto w-full">
-										<h1 class="text-left my-2 mx-5">
-											Select Class Name:
+							<div
+								class="w-full flex flex-col mx-auto py-3 px-4 outline rounded-3xl outline-gray-50 mt-7"
+							>
+								<div class="mx-auto w-full">
+									<h1 class="text-left my-2 mx-5">
+										Select Class Name:
 
-											<select
-												class="select select-sm select-bordered focus:border-none border-gray-200 w-full h-5 rounded-3xl shadow-sm mt-2"
-											>
-												<option disabled selected hidden class="rounded-3xl">Select Class</option>
-												<option class="rounded-3xl"/>
-											</select>
-										</h1>
+										<select
+											class="select select-sm select-bordered focus:border-none border-gray-200 w-full h-5 rounded-3xl shadow-sm mt-2"
+										>
+											<option disabled selected hidden class="rounded-3xl">Select Class</option>
+											<option class="rounded-3xl" />
+										</select>
+									</h1>
 
-										<div class="justify-end flex mt-5 mb-3">
-											<button
-												id="delete"
-												class="py-2 text-sm font-medium bg-red-500 hover:bg-red-600 text-white px-6 ml-1 rounded-3xl transform transition-transform focus:scale-100 active:scale-95"
-											>
-												Delete</button
-											>
-										</div>
+									<div class="justify-end flex mt-5 mb-3">
+										<button
+											id="delete"
+											class="py-2 text-sm font-medium bg-red-500 hover:bg-red-600 text-white px-6 ml-1 rounded-3xl transform transition-transform focus:scale-100 active:scale-95"
+										>
+											Delete</button
+										>
 									</div>
 								</div>
 							</div>
 						</div>
+					</div>
 				</div>
 			</div>
 
@@ -245,11 +261,11 @@
 							class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
 						>
 							<td class="text-center"> Guyabano </td>
-							<td class="px-6 py-2 ">
+							<td class="px-6 py-2">
 								<!--FOR MODAL-->
 								<label for="ClassSubjectStudentLists" class="cursor-pointer">40</label></td
 							>
-							<td class="text-center"></td>
+							<td class="text-center" />
 						</tr>
 						<!-- MODAL-->
 						<input type="checkbox" id="ClassSubjectStudentLists" class="modal-toggle" />
@@ -292,7 +308,6 @@
 		</div>
 		<!--END CLASS LIST-->
 
-
 		<!-- SUBJECT LIST-->
 		<div class="w-1/2 h-full bg-white bg-opacity-75 rounded-3xl pb-20 text-center shadow-lg mr-2">
 			<div class="flex flex-row justify-between mt-2">
@@ -321,7 +336,6 @@
 								class="w-full flex flex-col mx-auto py-3 px-4 outline rounded-3xl outline-gray-50 mt-7"
 							>
 								<div class="mx-auto w-full">
-
 									<h1 class="text-left my-2 mx-5">
 										Subject Name
 										<input
@@ -333,37 +347,38 @@
 
 									<h1 class="text-left my-2 mx-5">
 										Teacher
-										<select class="mt-2 select select-bordered select-sm w-full focus:border-none rounded-3xl">
+										<select
+											class="mt-2 select select-bordered select-sm w-full focus:border-none rounded-3xl"
+										>
 											<option disabled selected>Add to Teacher</option>
-											
-										  </select>
+										</select>
 									</h1>
 
 									<h1 class="text-left my-2 mx-5">
 										Class
-										<select class="mt-2 select select-bordered select-sm w-full focus:border-none rounded-3xl">
+										<select
+											class="mt-2 select select-bordered select-sm w-full focus:border-none rounded-3xl"
+										>
 											<option disabled selected>Add to Class</option>
-											
-										  </select>
+										</select>
 									</h1>
 
 									<h1 class="text-left my-2 mx-5">
 										Time
 										<div class="flex flex-row">
-										<input
-											class="mt-2 border rounded-3xl px-2 focus:ring-0 text-sm block bg-white w-1/2 h-7 border-slate-300 shadow-sm focus:outline-none"
-											placeholder="Start"
-											type="time"
-										/>
-										<p class="items-center flex text-lg font-medium px-2">-</p>
-										<input
-											class="mt-2 border rounded-3xl px-2 focus:ring-0 text-sm block bg-white w-1/2 h-7 border-slate-300 shadow-sm focus:outline-none"
-											placeholder="End"
-											type="time"
-										/>
+											<input
+												class="mt-2 border rounded-3xl px-2 focus:ring-0 text-sm block bg-white w-1/2 h-7 border-slate-300 shadow-sm focus:outline-none"
+												placeholder="Start"
+												type="time"
+											/>
+											<p class="items-center flex text-lg font-medium px-2">-</p>
+											<input
+												class="mt-2 border rounded-3xl px-2 focus:ring-0 text-sm block bg-white w-1/2 h-7 border-slate-300 shadow-sm focus:outline-none"
+												placeholder="End"
+												type="time"
+											/>
 										</div>
 									</h1>
-
 
 									<div class="justify-end flex mt-5 mb-3">
 										<button
@@ -427,7 +442,7 @@
 							</div>
 						</div>
 					</div>
-			</div>
+				</div>
 			</div>
 
 			<div class="relative overflow-y-auto shadow-sm rounded-xl mx-5 my-5 h-full max-h-5/6">
@@ -446,10 +461,10 @@
 					<tbody>
 						<tr
 							class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-						>	
-						<td class="text-center">Research</td>
+						>
+							<td class="text-center">Research</td>
 							<td class="text-center">Guyabano</td>
-							<td class="px-6 py-2 ">
+							<td class="px-6 py-2">
 								<!--FOR MODAL-->
 								<label for="ClassSubjectStudentLists" class="cursor-pointer">35</label></td
 							>
@@ -496,7 +511,5 @@
 			</div>
 		</div>
 		<!-- END SUBJECT LIST-->
-
-
 	</div>
 </body>

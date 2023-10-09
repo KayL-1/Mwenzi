@@ -23,7 +23,7 @@
 			.then(async (userCredential) => {
 				const userID = userCredential.user.uid;
 				const docSnap = await getDoc(doc(firestore, 'users', userID));
-
+				console.log(userID);
 				if (docSnap.exists()) {
 					const userData = docSnap.data();
 					console.log('Document data:', userData);

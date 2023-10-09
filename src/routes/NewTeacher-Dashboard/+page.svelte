@@ -326,20 +326,20 @@
 		const queryRef = query(collectionRef, where('status', '==', 'Present'));
 
 		return onSnapshot(queryRef, async (randomDocSnapshot) => {
-			docsArray = randomDocSnapshot.docs.map((doc) => ({
+			const docsArrayx = randomDocSnapshot.docs.map((doc) => ({
 				id: doc.id,
 				...doc.data()
 			}));
 
-			console.log(docsArray);
+			console.log(docsArrayx);
 
-			const presentStudentIds = docsArray.map((doc) => doc.id);
+			const presentStudentIds = docsArrayx.map((doc) => doc.id);
 			console.log(presentStudentIds);
 
 			if (presentStudentIds.length > 0) {
 				console.log('Present student IDs:', presentStudentIds);
 				// You can perform further actions with these IDs if needed
-				const randomStudentName = getRandomStudentName(docsArray);
+				const randomStudentName = getRandomStudentName(docsArrayx);
 				updateRandomizerName(randomStudentName);
 			} else {
 				console.log('No students with status "Present"');
