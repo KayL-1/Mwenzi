@@ -1,4 +1,24 @@
 <script>
+	import { auth, database } from '$lib/firebase';
+	import {
+		doc,
+		setDoc,
+		query,
+		where,
+		getDocs,
+		collection,
+		getDoc,
+		onSnapshot,
+		updateDoc,
+		addDoc,
+		deleteDoc
+	} from 'firebase/firestore';
+	import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
+	import { goto } from '$app/navigation';
+	import { firebase, firestore, functions } from '$lib/firebase';
+	import { getDatabase, ref, onValue, get, child } from 'firebase/database';
+	import { userId } from '../../lib/userStorage';
+	import { onMount } from 'svelte';
 	// Function to handle changes in the selected option
 	function handleSelectChange(event) {
 		const selectedOption = event.target.value;
@@ -9,10 +29,25 @@
 		if (selectedOption === '/Class-Subject') {
 			window.location.href = selectedOption;
 		}
-        if (selectedOption === '/Teacher-List') {
+		if (selectedOption === '/Teacher-List') {
 			window.location.href = selectedOption;
 		}
 	}
+
+	let students = [];
+
+	async function studentCheck() {
+		const collectionRef = collection(firestore, 'users');
+		const filter = query(collectionRef, where('userRole', '==', 'student'));
+		const querySnapshot = await getDocs(filter);
+
+		students = querySnapshot.docs.map((doc) => ({
+			id: doc.id,
+			data: doc.data()
+		}));
+	}
+
+	studentCheck();
 </script>
 
 <body class=" bg-gray-50 h-screen w-full">
@@ -321,20 +356,21 @@
 						</tr>
 					</thead>
 					<tbody>
-						<tr
-							class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-						>
-							<td class="text-center"
-								><!--FOR MODAL--><label for="StudentInformation" class="cursor-pointer"
-									>Ace Dela Cuesta</label
-								>
-							</td>
+						{#each students as item1 (item1.id)}
+							<tr
+								class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+							>
+								<td class="text-center"
+									><!--FOR MODAL--><label for="StudentInformation" class="cursor-pointer"
+										>{item1.data.Name}</label
+									>
+								</td>
 
-							<td class="px-6 py-2"> acedelacuesta@gmail.com</td>
-							<td class="px-6 py-2">19-1064</td>
-							<td class="px-6 py-2">4e2abbab</td>
-						</tr>
-
+								<td class="px-6 py-2">{item1.data.email}</td>
+								<td class="px-6 py-2">{item1.data.studentID}</td>
+								<td class="px-6 py-2">{item1.data.studentRFID}</td>
+							</tr>
+						{/each}
 						<!--MEDIC MODAL-->
 						<input type="checkbox" id="StudentInformation" class="modal-toggle" />
 						<div class="modal">
@@ -386,7 +422,7 @@
 												readonly
 											/>
 										</h1>
-                                        
+
 										<h1 class="text-left my-2 mx-5">
 											Student RFID
 											<div class="flex flex-row items-center">
@@ -399,7 +435,7 @@
 													class="mt-2 border rounded-3xl px-2 py-1 focus:ring-0 text-sm block bg-white w-full h-7 border-slate-300 shadow-sm focus:outline-none"
 													placeholder="4e2abbab"
 													type="text"
-                                                    readonly
+													readonly
 												/>
 											</div>
 										</h1>

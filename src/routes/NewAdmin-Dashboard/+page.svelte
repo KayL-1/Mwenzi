@@ -48,12 +48,11 @@
 			id: doc.id,
 			data: doc.data()
 		}));
-
 	}
 
 	async function studentCheck() {
 		const collectionRef = collection(firestore, 'users');
-		const filter = query(collectionRef, where('userRole', '==', "student"));
+		const filter = query(collectionRef, where('userRole', '==', 'student'));
 		const querySnapshot = await getDocs(filter);
 
 		students = querySnapshot.docs.map((doc) => ({
@@ -64,7 +63,7 @@
 
 	async function teacherCheck() {
 		const collectionRef = collection(firestore, 'users');
-		const filter = query(collectionRef, where('userRole', '==', "teacher"));
+		const filter = query(collectionRef, where('userRole', '==', 'teacher'));
 		const querySnapshot = await getDocs(filter);
 
 		teachers = querySnapshot.docs.map((doc) => ({
@@ -231,7 +230,9 @@
 								class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
 							>
 								<td class="text-center">{item1.id}</td>
-								<td class="px-6 py-2 text-center">{item1.data.students.length}</td>
+								<td class="px-6 py-2 text-center">
+									{item1.data.students ? item1.data.students.length : 'N/A'}</td
+								>
 								{#await getTeacherName(item1.data.teacherID) then teacherName}
 									<td class="py-1 px-6 text-center">{teacherName}</td>
 								{:catch error}
@@ -267,13 +268,13 @@
 					</thead>
 					<tbody>
 						{#each students as item1 (item1.id)}
-						<tr
-							class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-						>
-							<td class="text-center">{item1.data.Name}</td>
-							<td class="px-6 py-2 text-center">{item1.data.studentRFID}</td>
-							<td class="py-1 px-6 text-center">{item1.data.studentID}</td>
-						</tr>
+							<tr
+								class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+							>
+								<td class="text-center">{item1.data.Name}</td>
+								<td class="px-6 py-2 text-center">{item1.data.studentRFID}</td>
+								<td class="py-1 px-6 text-center">{item1.data.studentID}</td>
+							</tr>
 						{/each}
 					</tbody>
 				</table>
@@ -301,12 +302,12 @@
 					</thead>
 					<tbody>
 						{#each teachers as item1}
-						<tr
-							class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-						>
-							<td class="text-center">{item1.data.Name}</td>
-							<td class="px-6 py-2 text-center">{item1.data.email}</td>
-						</tr>
+							<tr
+								class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+							>
+								<td class="text-center">{item1.data.Name}</td>
+								<td class="px-6 py-2 text-center">{item1.data.email}</td>
+							</tr>
 						{/each}
 					</tbody>
 				</table>
