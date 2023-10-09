@@ -195,7 +195,7 @@
 						>Dashboard</option
 					>
 					<option value="/Student-List" id="Student-List" class="rounded-xl">Students</option>
-					<option class="rounded-xl">Teachers</option>
+					<option value="/Teacher-List" id="Teacher-List" class="rounded-xl">Teachers</option>
 				</select>
 			</a>
 			<div class="lg:w-2/5 inline-flex lg:justify-end ml-5 lg:ml-0 ou">

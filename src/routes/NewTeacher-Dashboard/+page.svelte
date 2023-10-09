@@ -723,26 +723,6 @@
 						<a class="font-medium text-sm p-2">Total Absent: </a>
 						<a class="font-semibold text-sm text-red-500"> 1</a>
 					</div>
-
-					<div
-						class="container h-8 my-6 pr-3 pl-1 border border-gray-200 rounded-3xl w-auto flex flex-row justify-center items-center"
-					>
-						<!-- svelte-ignore a11y-missing-attribute -->
-						<a class="font-medium text-sm p-2">Boys: </a>
-						<a class="font-semibold text-sm text-green-500"> 19</a>
-						<a class="font-semibold text-sm mx-1"> | </a>
-						<a class="font-semibold text-sm text-red-500">1</a>
-					</div>
-
-					<div
-						class="container h-8 my-6 ml-2 pr-3 pl-1 border border-gray-200 rounded-3xl w-auto flex flex-row justify-center items-center"
-					>
-						<!-- svelte-ignore a11y-missing-attribute -->
-						<a class="font-medium text-sm p-2">Girls: </a>
-						<a class="font-semibold text-sm text-green-500"> 20</a>
-						<a class="font-semibold text-sm mx-1"> | </a>
-						<a class="font-semibold text-sm text-red-500">0</a>
-					</div>
 				</div>
 				<!--END SUMMARY ATTENDANCE -->
 
