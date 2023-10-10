@@ -166,7 +166,6 @@
 							<th scope="col" class="px-6 py-4 text-center">RFID Tag</th>
 							<th scope="col" class="px-6 py-4 text-center">Time</th>
 							<th scope="col" class="px-6 py-4 text-center">Status</th>
-							<th scope="col" class="px-6 py-4 text-center">Manual Edit</th>
 							<th scope="col" class="px-6 py-4 text-right">Late</th>
 						</tr>
 					</thead>
@@ -181,20 +180,6 @@
 							<td class="px-6 py-2 text-center" />
 							<td class="py-1 px-6 text-center">
 								<span class="bg-green-500 text-white py-1 px-3 rounded-full text-xs">Present</span>
-							</td>
-
-							<td class="py-1 px-6 text-center">
-								<span class="bg-orange-500 text-white py-1 px-3 rounded-full text-xs">Late</span>
-							</td>
-
-							<td class="py-1 px-6 text-center">
-								<span class="bg-red-500 text-white py-1 px-3 rounded-full text-xs">Absent</span>
-							</td>
-
-							<td class="px-6 py-2">
-								<input type="checkbox" class="toggle toggle-success h-6 pt-2" checked />
-
-								<input type="checkbox" class="toggle toggle-success h-6 pt-2" />
 							</td>
 
 							<td class="px-6 py-2 text-right">
@@ -229,7 +214,7 @@
 							<th scope="col" class="px-6 py-4 text-left"> Rank </th>
 							<th scope="col" class="px-6 py-4 text-left"> Name </th>
 							<th scope="col" class="px-6 py-4 text-left"> Points </th>
-							<th scope="col" class="px-6 py-4 text-left"> Update Points </th>
+					
 						</tr>
 					</thead>
 					<tbody>
@@ -239,20 +224,7 @@
 							<td class="text-sm text-gray-500 font-medium px-6 py-4 whitespace-nowrap" />
 							<td class="text-md text-gray-900 font-medium px-6 py-3 whitespace-nowrap" />
 							<td class="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap" />
-							<td class="flex mt-2 justify-center">
-								<!-- svelte-ignore a11y-click-events-have-key-events -->
-								<img
-									src="minus.png"
-									class="btn btn-sm px-1 bg-transparent hover:bg-transparent border-none"
-									alt="..."
-								/>
-								<!-- svelte-ignore a11y-click-events-have-key-events -->
-								<img
-									src="add.png"
-									class="btn btn-sm px-1 bg-transparent hover:bg-transparent border-none"
-									alt="..."
-								/>
-							</td>
+						
 						</tr>
 					</tbody>
 				</table>

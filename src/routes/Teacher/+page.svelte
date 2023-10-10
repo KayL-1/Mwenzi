@@ -59,7 +59,7 @@
 	});
 </script>
 
-<div class="flex items-center justify-center min-h-screen bg-gray-100">
+<div class="pb-5 flex items-center justify-center min-h-screen bg-gray-100">
 	<div class="container mx-auto">
 		<div class="max-w-md mx-auto">
 			<div class="text-center">
@@ -85,7 +85,7 @@
 							class="w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-3xl focus:outline-none"
 						/>
 					</div>
-					<div class="mb-6">
+					<div class="mb-5">
 						<label for="password" class="block mb-2 text-md font-medium text-gray">Password</label>
 						<input
 							bind:value={password}
@@ -95,12 +95,14 @@
 							placeholder="Password"
 							class="w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-3xl focus:outline-none"
 						/>
+						
 					</div>
 					<button
 						on:click={login}
-						class=" w-full px-3 py-4 text-white bg-[#2ea44f] focus:outline-none font-medium rounded-3xl hover:bg-[#1e7d3f] duration-300 hover:scale-105"
+						class=" w-full px-3 py-4 mt-1 text-white bg-[#2ea44f] focus:outline-none font-medium rounded-3xl hover:bg-[#1e7d3f] duration-300 hover:scale-105"
 						>Log In</button
-					>
+					>	
+					<a href="#" class="mt-4 w-full justify-center text-indigo-600 font-medium flex"><span>Forgot your password? </span>
 				</form>
 			</div>
 		</div>
