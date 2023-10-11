@@ -1410,7 +1410,7 @@
 							
 							<div class="flex flex-row items-center outline-dashed justify-between">
 								<select
-								class=" border-gray-200 w-32 h-6 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
+								class=" border-gray-200 w-32 h-8 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
 							>
 								<option disabled selected hidden class="rounded-3xl">Share</option>
 								<option class="rounded-xl">Only Me</option>
