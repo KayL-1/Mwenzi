@@ -200,7 +200,7 @@
 			<select
 				class="mt-2 border-gray-200 w-56 h-6 font-medium text-sm text-center mr-3 border border-gray focus:none rounded-3xl shadow-sm"
 			>
-				<option disabled selected hidden class="rounded-3xl">Select Interval</option>
+				<option disabled selected hidden class="rounded-3xl">Sort by</option>
 				<option class="rounded-xl">Daily</option>
 				<option class="rounded-xl">Weekly</option>
 				<option class="rounded-xl">Monthly</option>
@@ -231,9 +231,12 @@
 			</div>
 		</div>
 
-		<!--TO DO-->
-		<div class="w-2/5 bg-white bg-opacity-75 pb-12 rounded-3xl text-center shadow-lg">
-			<div class="flex flex-row mt-2">
+		<!--NOTES AND MATERIAL -->
+		<div class="flex-row w-2/5">
+		<!--NOTES-->
+		<div class="h-2/4 pb-2">
+		<div class="w-full bg-white bg-opacity-75 rounded-3xl text-center shadow-lg h-full">
+			<div class="flex flex-row pt-2">	
 				<img src="todo.png" class="h-7 pl-6 mt-2" alt="..." />
 				<h1 class="pl-1 pt-2 font-medium text-md text-gray-700">Notes</h1>
 			</div>
@@ -278,23 +281,8 @@
 					<!-- svelte-ignore a11y-label-has-associated-control -->
 					<label
 						class=" border-gray-200 w-36 h-6 mr-1 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
-						>Notes from Teacher
+						>Note from Teacher
 					</label>
-
-					<button>
-						<img
-							src="done.png"
-							class="h-7 transform transition-transform focus:scale-100 active:scale-90"
-							alt="..."
-						/>
-					</button>
-					<button>
-						<img
-							src="delete.png"
-							class="h-7 transform transition-transform focus:scale-100 active:scale-90"
-							alt="..."
-						/>
-					</button>
 				</div>
 			</div>
 
@@ -303,7 +291,6 @@
 
 				<div class="flex items-center">
 					<!-- svelte-ignore a11y-label-has-associated-control -->
-
 					<button>
 						<img
 							src="done.png"
@@ -321,5 +308,35 @@
 				</div>
 			</div>
 		</div>
+	</div>
+		<!--END NOTES-->
+		
+		<div class="w-full bg-white bg-opacity-75 rounded-3xl text-center shadow-lg h-1/2 ">
+			<div class="flex flex-row pt-2 ">	
+				<img src="todo.png" class="h-7 pl-6" alt="..." />
+				<h1 class="pl-1 font-medium text-md text-gray-700">Learning Materials</h1>
+			</div>
+			<div class="px-5">
+							<div class="divider my-0" />
+							<h1 class="text-left my-1 ml-5 text-normal"><span class="font-bold">Week 1 -</span> Day 1</h1>
+							
+							<div class="flex items-center ">
+								<a
+									href="https://www.googledrive.com/lesson1/"
+									target="_blank"
+									rel="noopener noreferrer"
+									class="w-full"
+								>
+									<input
+										type="text"
+										placeholder="www.googledrive.com/lesson1/"
+										class="input input-bordered w-11/12 focus:border-none cursor-pointer"
+										readonly
+									/>
+								</a>	
+							</div>
+						</div>
+		</div>
+	</div>
 	</div>
 </body>
