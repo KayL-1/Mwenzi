@@ -206,9 +206,18 @@
 		<!--ATTENDANCE-->
 		<div class="w-3/5 h-full bg-white bg-opacity-75 rounded-3xl pb-20 text-center shadow-lg mr-2">
 			<div class="flex flex-row justify-between mt-2">
-				<div class="flex flex-row">
+				<div class="flex flex-row justify-between w-full">
+					<div class="flex flex-row">
 					<img src="class.png" class="h-8 pl-6 mt-2" alt="..." />
 					<h1 class="pt-2 pl-1 mt-1 font-medium text-md text-gray-700">Class - Subject List</h1>
+					</div>
+					<select
+						class="mt-3 border-gray-200 w-40 h-6 font-medium text-sm text-center mr-6 border border-gray focus:none rounded-3xl shadow-sm"
+					>
+						<option disabled selected hidden class="rounded-3xl">Sort by</option>
+						<option class="rounded-xl">Teacher</option>
+						<option class="rounded-xl">Recently Added</option>
+					</select>
 				</div>
 			</div>
 
@@ -249,9 +258,18 @@
 		<!--POINTS-->
 		<div class="w-2/5 h-full bg-white bg-opacity-75 pb-20 rounded-3xl text-center shadow-lg mr-2">
 			<div class="flex flex-row justify-between mt-2">
-				<div class="flex flex-row">
-					<img src="student.png" class="h-8 pl-6 mt-2" alt="..." />
-					<h1 class="pt-2 pl-1 mt-1 font-medium text-md text-gray-700">Student List</h1>
+				<div class="flex flex-row justify-between w-full">
+					<div class="flex flex-row">
+						<img src="student.png" class="h-8 pl-6 mt-2" alt="..." />
+						<h1 class="pt-2 pl-1 mt-1 font-medium text-md text-gray-700">Student List</h1>
+					</div>
+					<select
+						class="mt-3 border-gray-200 w-40 h-6 font-medium text-sm text-center mr-6 border border-gray focus:none rounded-3xl shadow-sm"
+					>
+						<option disabled selected hidden class="rounded-3xl">Sort by</option>
+						<option class="rounded-xl">Grade</option>
+						<option class="rounded-xl">Recently Added</option>
+					</select>
 				</div>
 			</div>
 
@@ -261,6 +279,7 @@
 						class="text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 sticky top-0"
 					>
 						<tr>
+							<th scope="col" class="px-6 py-4 text-center">Grade Level</th>
 							<th scope="col" class="px-6 py-4 text-center">Student name</th>
 							<th scope="col" class="px-6 py-4 text-center">RFID Tag</th>
 							<th scope="col" class="px-6 py-4 text-center">Student ID</th>
@@ -271,6 +290,7 @@
 							<tr
 								class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
 							>
+								<td class="text-center">6</td>
 								<td class="text-center">{item1.data.Name}</td>
 								<td class="px-6 py-2 text-center">{item1.data.studentRFID}</td>
 								<td class="py-1 px-6 text-center">{item1.data.studentID}</td>
@@ -284,9 +304,19 @@
 		<!--TO DO-->
 		<div class="w-2/5 bg-white bg-opacity-75 pb-12 rounded-3xl text-center shadow-lg">
 			<div class="flex flex-row justify-between mt-2">
-				<div class="flex flex-row">
+				<div class="flex flex-row justify-between w-full">
+					<div class="flex flex-row">
 					<img src="teacher.png" class="h-8 pl-6 mt-2" alt="..." />
 					<h1 class="pt-2 pl-1 mt-1 font-medium text-md text-gray-700">Teachers List</h1>
+					</div>
+					<select
+						class="mt-3 border-gray-200 w-40 h-6 font-medium text-sm text-center mr-6 border border-gray focus:none rounded-3xl shadow-sm"
+					>
+						<option disabled selected hidden class="rounded-3xl">Sort by</option>
+						<option class="rounded-xl">Alphabetical</option>
+						<option class="rounded-xl">Recently Added</option>
+					</select>
+					
 				</div>
 			</div>
 

@@ -20,7 +20,6 @@
 	import { userId } from '../../lib/userStorage';
 	import { onMount } from 'svelte';
 	import toast, { Toaster } from 'svelte-french-toast';
-	
 
 	// Function to handle changes in the selected option
 	function handleSelectChange(event) {
@@ -147,7 +146,7 @@
 
 		const querySnapshot = await getDocs(classQuery);
 		const studentArray = await getStudentList(classSet);
-		const tempName = classSet + " - "+ subjectName;
+		const tempName = classSet + ' - ' + subjectName;
 		if (querySnapshot.empty) {
 			const docRef = doc(firestore, 'Subject', tempName);
 			const classData = {
@@ -302,14 +301,14 @@
 					>
 					<input type="checkbox" id="AddClass" class="modal-toggle" />
 					<div class="modal">
-						<div class="modal-box relative h-72 max-w-xl">
+						<div class="modal-box relative h-80 max-w-xl">
 							<label for="AddClass" class="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
-							<div class="text-xl font-bold text-center w-full justify-center flex flex-row mb-5">
+							<div class="text-xl font-bold text-center w-full justify-center flex flex-row">
 								<p>Add Class</p>
 							</div>
 
 							<div
-								class="w-full flex flex-col mx-auto py-3 px-4 outline rounded-3xl outline-gray-50 mt-7"
+								class="w-full flex flex-col mx-auto py-3 px-4 outline rounded-3xl outline-gray-50 mt-3"
 							>
 								<div class="mx-auto w-full">
 									<h1 class="text-left my-2 mx-5">
@@ -414,8 +413,8 @@
 								<td class="text-center">{item1.id}</td>
 								<td class="px-6 py-2">
 									<!--FOR MODAL-->
-									<label for="ClassSubjectStudentLists" class="cursor-pointer"
-										>  {item1.data.students ? item1.data.students.length : 'N/A'}</label
+									<label for="ClassSubjectStudentLists" class="cursor-pointer">
+										{item1.data.students ? item1.data.students.length : 'N/A'}</label
 									></td
 								>
 								<td class="text-center">{item1.data.grade}</td>
@@ -480,14 +479,14 @@
 					>
 					<input type="checkbox" id="AddSubject" class="modal-toggle" />
 					<div class="modal">
-						<div class="modal-box relative h-2/4 max-w-xl">
+						<div class="modal-box relative max-w-xl">
 							<label for="AddSubject" class="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
-							<div class="text-xl font-bold text-center w-full justify-center flex flex-row mb-5">
+							<div class="text-xl font-bold text-center w-full justify-center flex flex-row">
 								<p>Add Subject</p>
 							</div>
 
 							<div
-								class="w-full flex flex-col mx-auto py-3 px-4 outline rounded-3xl outline-gray-50 mt-7"
+								class="w-full flex flex-col mx-auto py-3 px-4 outline rounded-3xl outline-gray-50 mt-4"
 							>
 								<div class="mx-auto w-full">
 									<h1 class="text-left my-2 mx-5">
@@ -630,8 +629,8 @@
 							>
 								<td class="text-center">{item1.id}</td>
 								<td class="px-6 py-2">
-									<label for="ClassSubjectStudentLists" class="cursor-pointer"
-										>  {item1.data.students ? item1.data.students.length : 'N/A'}</label
+									<label for="ClassSubjectStudentLists" class="cursor-pointer">
+										{item1.data.students ? item1.data.students.length : 'N/A'}</label
 									></td
 								>
 								{#await getTeacherName(item1.data.teacherID) then teacherName}

@@ -86,17 +86,17 @@
 						>
 						<input type="checkbox" id="AddStudent" class="modal-toggle" />
 						<div class="modal">
-							<div class="modal-box relative h-3/5 max-w-xl">
+							<div class="modal-box relative max-w-xl">
 								<label for="AddStudent" class="btn btn-sm btn-circle absolute right-2 top-2"
 									>✕</label
 								>
-								<div class="text-xl font-bold text-center w-full justify-center flex flex-row mb-5">
+								<div class="text-xl font-bold text-center w-full justify-center flex flex-row">
 									<p>Add Teacher</p>
 									<span />
 								</div>
 
 								<div
-									class="w-full flex flex-col mx-auto py-3 px-4 outline rounded-3xl outline-gray-50 mt-7"
+									class="w-full flex flex-col mx-auto py-3 px-4 outline rounded-3xl outline-gray-50 mt-4"
 								>
 									<div class="mx-auto w-full">
 										<h1 class="text-left my-2 mx-5">
@@ -122,27 +122,6 @@
 												placeholder="Password"
 												type="text"
 											/>
-										</h1>
-
-										<h1 class="text-left mt-3 mb-2 mx-5">
-											Select Subject:
-
-											<select
-												class="select select-sm select-bordered focus:border-none border-gray-200 w-full h-5 rounded-3xl shadow-sm mt-2"
-											>
-												<option disabled selected hidden class="rounded-3xl">Select Class</option>
-												<option class="rounded-3xl" />
-											</select>
-										</h1>
-										<h1 class="text-left mt-3 mb-2 mx-5">
-											Select Class:
-
-											<select
-												class="select select-sm select-bordered focus:border-none border-gray-200 w-full h-5 rounded-3xl shadow-sm mt-2"
-											>
-												<option disabled selected hidden class="rounded-3xl">Select Class</option>
-												<option class="rounded-3xl" />
-											</select>
 										</h1>
 
 										<div class="justify-end flex mt-5 mb-3">
@@ -262,9 +241,19 @@
 		<!--CLASS SUBJECT LISTS-->
 		<div class="w-4/5 h-full bg-white bg-opacity-75 rounded-3xl pb-20 text-center shadow-lg mr-2">
 			<div class="flex flex-row justify-between mt-2">
-				<div class="flex flex-row">
+				<div class="flex flex-row justify-between w-full">
+					<div class="flex flex-row">
 					<img src="teacher.png" class="h-8 pl-6 mt-2" alt="..." />
 					<h1 class="pt-2 pl-1 mt-1 font-medium text-md text-gray-700">Teacher List</h1>
+					</div>
+					<select
+						class="mt-2 border-gray-200 w-56 h-6 font-medium text-sm text-center mr-6 border border-gray focus:none rounded-3xl shadow-sm"
+					>
+						<option disabled selected hidden class="rounded-3xl">Sort by</option>
+						<option class="rounded-xl">Class</option>
+						<option class="rounded-xl">Recently Added</option>
+						<option class="rounded-xl">Alphabetical</option>
+					</select>
 				</div>
 			</div>
 
@@ -292,13 +281,17 @@
 
 							<td class="px-6 py-2"> ruffamaymonis@gmail.com</td>
 							<td class="px-6 py-2">54231</td>
-							<td class="px-6 py-2">Guyabano - Research</td>
+							<td class="px-6 py-2"
+								>Guyabano - Research
+								<br />Rambutan - SYSAD
+								<br />Rambutan - IAS
+							</td>
 						</tr>
 
 						<!--MEDIC MODAL-->
 						<input type="checkbox" id="StudentInformation" class="modal-toggle" />
 						<div class="modal">
-							<div class="modal-box relative h-2/4 max-w-xl">
+							<div class="modal-box relative max-w-xl">
 								<label for="StudentInformation" class="btn btn-sm btn-circle absolute right-2 top-2"
 									>✕</label
 								>
@@ -312,7 +305,7 @@
 									class="w-full flex flex-col mx-auto py-3 px-4 outline rounded-3xl outline-gray-50 mt-7"
 								>
 									<div class="mx-auto w-full">
-										<div class="flex flex-row justify-between mt-5 mx-2">
+										<div class="flex flex-row justify-betweenmx-2">
 											<h1 class="text-left font-medium text-lg mt-3">Ruffa May Monis</h1>
 										</div>
 										<div class="divider mt-0" />
@@ -336,7 +329,7 @@
 											/>
 										</h1>
 
-                                        <h1 class="text-left my-2 mx-5">
+										<h1 class="text-left my-2 mx-5">
 											Password
 											<input
 												class="mt-1 border rounded-3xl px-2 focus:ring-0 text-sm block bg-white w-full h-7 border-slate-300 shadow-sm focus:outline-none"
@@ -345,18 +338,6 @@
 												readonly
 											/>
 										</h1>
-
-										<h1 class="text-left my-2 mx-5">
-											Subject Class
-											<input
-												class="mt-1 border rounded-3xl px-2 focus:ring-0 text-sm block bg-white w-full h-7 border-slate-300 shadow-sm focus:outline-none"
-												placeholder="Guyabano - Research"
-												type="text"
-												readonly
-											/>
-										</h1>
-
-										
 										<div class="justify-end flex mt-5">
 											<button
 												id="editButton"

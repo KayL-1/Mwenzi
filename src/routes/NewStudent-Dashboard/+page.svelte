@@ -236,10 +236,59 @@
 		<!--NOTES-->
 		<div class="h-2/4 pb-2">
 		<div class="w-full bg-white bg-opacity-75 rounded-3xl text-center shadow-lg h-full">
+			<div class="flex flex-row justify-between ">
 			<div class="flex flex-row pt-2">	
 				<img src="todo.png" class="h-7 pl-6 mt-2" alt="..." />
 				<h1 class="pl-1 pt-2 font-medium text-md text-gray-700">Notes</h1>
 			</div>
+			<!--NOTE ARCHIVES -->
+			<label for="NotesArchives" class="mr-8 mt-3 rounded-3xl cursor-pointer">
+				<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="26"
+					><g id="SVGRepo_bgCarrier" stroke-width="0" /><g
+						id="SVGRepo_tracerCarrier"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+					/><g id="SVGRepo_iconCarrier"
+						><path
+							d="M8.707 6.707a1 1 0 0 0-1.414-1.414L4 8.586 2.707 7.293a1 1 0 0 0-1.414 1.414l2 2a1 1 0 0 0 1.414 0l4-4ZM12 7a1 1 0 1 0 0 2h10a1 1 0 1 0 0-2H12ZM8.707 13.293a1 1 0 0 1 0 1.414l-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 1 1 1.414-1.414L4 16.586l3.293-3.293a1 1 0 0 1 1.414 0ZM12 15a1 1 0 1 0 0 2h10a1 1 0 1 0 0-2H12Z"
+							fill="#currentColor"
+							class="fill-current text-gray-600 hover:text-blue-500"
+						/></g
+					></svg
+				>
+			</label>
+			</div>
+			<input type="checkbox" id="NotesArchives" class="modal-toggle" />
+			<div class="modal">
+				<div class="modal-box relative h-4/6 max-w-3xl text-left">
+					<label for="NotesArchives" class="btn btn-sm btn-circle absolute right-2 top-2">✕</label
+					>
+					<h3 class="text-xl font-bold text-center">Note Archives</h3>
+
+					<div class="mx-auto w-4/5 mt-5">
+						<!--NOTES DAY-->
+						<div class="divider mb-0" />
+						<h1 class="text-left font-medium">2023-10-02</h1>
+						<div class="divider my-0" />
+						<!--NOTES ONLY-->
+						<div class="flex flex-row">
+							<img src="done.png" class="h-7" alt="..." />
+							<h1 class="text-left my-1 ml-5">Study Lesson 1</h1>
+						</div>
+						<!--END NOTES ONLY-->
+
+						<!--NOTES ONLY-->
+						<div class="flex flex-row">
+							<img src="done.png" class="h-7" alt="..." />
+							<h1 class="text-left my-1 ml-5">Study Lesson 2 - From teacher</h1>
+						</div>
+						<!--END NOTES ONLY-->
+
+						<!--END NOTES DAY-->
+					</div>
+				</div>
+			</div>
+	
 			<div class="flex flex-row items-center mt-2 justify-center">
 				<input
 					class="pl-4 border border-r-0 rounded-l-3xl focus:ring-0 text-sm block bg-white w-64 h-7 border-slate-300 shadow-sm focus:outline-none"
@@ -274,6 +323,7 @@
 			<div class="divider mb-1" />
 
 			<!--TO DO LIST-->
+			<div class="h-80 overflow-auto"> <!--OVERFLOW-->
 			<div class="mt-2 flex flex-row justify-between w-full items-center px-7 border-b pb-1">
 				<h1 class="font-medium text-sm">· Study Lesson 1</h1>
 
@@ -285,6 +335,7 @@
 					</label>
 				</div>
 			</div>
+			
 
 			<div class="mt-2 flex flex-row justify-between w-full items-center px-7 border-b pb-1">
 				<h1 class="font-medium text-sm">· Study Lesson 1</h1>
@@ -308,16 +359,19 @@
 				</div>
 			</div>
 		</div>
+		<!--OVERFLOW-->
+		</div>
 	</div>
 		<!--END NOTES-->
 		
 		<div class="w-full bg-white bg-opacity-75 rounded-3xl text-center shadow-lg h-1/2 ">
-			<div class="flex flex-row pt-2 ">	
+			<div class="flex flex-row pt-4 ">	
 				<img src="todo.png" class="h-7 pl-6" alt="..." />
 				<h1 class="pl-1 font-medium text-md text-gray-700">Learning Materials</h1>
 			</div>
 			<div class="px-5">
 							<div class="divider my-0" />
+							<div class="h-80 overflow-auto">
 							<h1 class="text-left my-1 ml-5 text-normal"><span class="font-bold">Week 1 -</span> Day 1</h1>
 							
 							<div class="flex items-center ">
@@ -335,6 +389,7 @@
 									/>
 								</a>	
 							</div>
+						</div>
 						</div>
 		</div>
 	</div>

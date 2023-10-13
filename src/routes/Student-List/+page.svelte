@@ -145,11 +145,11 @@
 											/>
 										</h1>
 										<h1 class="text-left my-2 mx-5">
-											Email
+											Birthdate
 											<input
 												class="mt-2 border rounded-3xl px-2 py-1 focus:ring-0 text-sm block bg-white w-full h-7 border-slate-300 shadow-sm focus:outline-none"
-												placeholder="Email"
-												type="email"
+												placeholder="Birthdate"
+												type="date"
 											/>
 										</h1>
 										<h1 class="text-left my-2 mx-5">
@@ -192,7 +192,7 @@
 												id="saveButton"
 												class="py-2 text-sm font-medium bg-green-500 hover:bg-green-600 text-white px-6 ml-1 rounded-3xl transform transition-transform focus:scale-100 active:scale-95"
 											>
-												Save</button
+												Add</button
 											>
 										</div>
 									</div>
@@ -225,7 +225,7 @@
 												id="saveButton"
 												class="py-2 text-sm font-medium bg-green-500 hover:bg-green-600 text-white px-6 ml-1 rounded-3xl transform transition-transform focus:scale-100 active:scale-95"
 											>
-												Save</button
+												Import</button
 											>
 										</div>
 									</div>
@@ -337,9 +337,18 @@
 		<!--CLASS SUBJECT LISTS-->
 		<div class="w-4/5 h-full bg-white bg-opacity-75 rounded-3xl pb-20 text-center shadow-lg mr-2">
 			<div class="flex flex-row justify-between mt-2">
-				<div class="flex flex-row">
-					<img src="student.png" class="h-8 pl-6 mt-2" alt="..." />
-					<h1 class="pt-2 pl-1 mt-1 font-medium text-md text-gray-700">Student List</h1>
+				<div class="flex flex-row justify-between w-full">
+					<div class="flex flex-row">
+						<img src="student.png" class="h-8 pl-6 mt-2" alt="..." />
+						<h1 class="pt-2 pl-1 mt-1 font-medium text-md text-gray-700">Student List</h1>
+					</div>
+					<select
+						class="mt-2 border-gray-200 w-56 h-6 font-medium text-sm text-center mr-6 border border-gray focus:none rounded-3xl shadow-sm"
+					>
+						<option disabled selected hidden class="rounded-3xl">Sort by</option>
+						<option class="rounded-xl">Class</option>
+						<option class="rounded-xl">Recently Added</option>
+					</select>
 				</div>
 			</div>
 
@@ -349,8 +358,9 @@
 						class="text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 sticky top-0"
 					>
 						<tr>
+							<th scope="col" class="px-6 py-4 text-center">Class</th>
 							<th scope="col" class="px-6 py-4 text-center">Student Name</th>
-							<th scope="col" class="px-6 py-4 text-center">Email</th>
+							<th scope="col" class="px-6 py-4 text-center">Birthdate</th>
 							<th scope="col" class="px-6 py-4 text-center">Student ID</th>
 							<th scope="col" class="px-6 py-4 text-center">RFID</th>
 						</tr>
@@ -360,13 +370,14 @@
 							<tr
 								class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
 							>
+								<td class="px-6 py-2">6 - Rambutan</td>
 								<td class="text-center"
 									><!--FOR MODAL--><label for="StudentInformation" class="cursor-pointer"
 										>{item1.data.Name}</label
 									>
 								</td>
 
-								<td class="px-6 py-2">{item1.data.email}</td>
+								<td class="px-6 py-2">01/01/2001</td>
 								<td class="px-6 py-2">{item1.data.studentID}</td>
 								<td class="px-6 py-2">{item1.data.studentRFID}</td>
 							</tr>
@@ -374,7 +385,7 @@
 						<!--MEDIC MODAL-->
 						<input type="checkbox" id="StudentInformation" class="modal-toggle" />
 						<div class="modal">
-							<div class="modal-box relative h-2/4 max-w-xl">
+							<div class="modal-box relative max-w-xl">
 								<label for="StudentInformation" class="btn btn-sm btn-circle absolute right-2 top-2"
 									>✕</label
 								>
@@ -385,12 +396,12 @@
 								</div>
 
 								<div
-									class="w-full flex flex-col mx-auto py-3 px-4 outline rounded-3xl outline-gray-50 mt-7"
+									class="w-full flex flex-col mx-auto py-3 px-4 outline rounded-3xl outline-gray-50"
 								>
 									<div class="mx-auto w-full">
 										<div class="flex flex-row justify-between mt-5 mx-2">
-											<h1 class="text-left font-medium text-lg mt-3">Ace Dela Cuesta</h1>
-											<h1 class="text-left font-medium text-lg mt-3">19-1064</h1>
+											<h1 class="text-left font-medium text-lg">Ace Dela Cuesta</h1>
+											<h1 class="text-left font-medium text-lg">19-1064</h1>
 										</div>
 										<div class="divider mt-0" />
 										<h1 class="text-left my-2 mx-5">
@@ -404,11 +415,11 @@
 										</h1>
 
 										<h1 class="text-left my-2 mx-5">
-											Email
+											Birthdate
 											<input
 												class="mt-1 border rounded-3xl px-2 focus:ring-0 text-sm block bg-white w-full h-7 border-slate-300 shadow-sm focus:outline-none"
-												placeholder="acedelacuesta@gmail.com"
-												type="text"
+												placeholder="01/01/2001"
+												type="date"
 												readonly
 											/>
 										</h1>
@@ -418,6 +429,16 @@
 											<input
 												class="mt-1 border rounded-3xl px-2 focus:ring-0 text-sm block bg-white w-full h-7 border-slate-300 shadow-sm focus:outline-none"
 												placeholder="19-1064"
+												type="text"
+												readonly
+											/>
+										</h1>
+
+										<h1 class="text-left my-2 mx-5">
+											Class
+											<input
+												class="mt-1 border rounded-3xl px-2 focus:ring-0 text-sm block bg-white w-full h-7 border-slate-300 shadow-sm focus:outline-none"
+												placeholder="6-Rambutan"
 												type="text"
 												readonly
 											/>
@@ -440,7 +461,7 @@
 											</div>
 										</h1>
 
-										<div class="justify-end flex mt-5">
+										<div class="justify-end flex mt-5 mb-2">
 											<button
 												id="editButton"
 												class="text-sm font-medium bg-blue-500 hover:bg-blue-600 text-white px-6 py-1 ml-1 rounded-3xl transform transition-transform focus:scale-100 active:scale-95"
