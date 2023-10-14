@@ -320,34 +320,60 @@
 	let studentNames = [];
 	let isRolling = false;
 	let previousStudentIndex = -1; // Initialize with an invalid index
+	const calledNames = [];
 	async function getRandomName() {
 		if (isRolling) return; // Prevent multiple clicks while rolling
-		const collectionRef = collection(firestore, 'Subject', selecTSub, 'Attendance');
-		const queryRef = query(collectionRef, where('status', '==', 'Present'));
+		const collectionRef = collection(firestore, 'Subject', `${selecTSub}`, 'Attendance');
+		const queryRef = doc(collectionRef, currentDatee);
 
-		return onSnapshot(queryRef, async (randomDocSnapshot) => {
-			const docsArrayx = randomDocSnapshot.docs.map((doc) => ({
-				id: doc.id,
-				...doc.data()
-			}));
+		try {
+			const querySnapshot = await getDoc(queryRef);
+			if (querySnapshot.exists()) {
+				const data = querySnapshot.data();
 
-			console.log(docsArrayx);
+				// Assuming 'data' is an object with map fields, iterate through the fields
+				const presentNames = [];
+				for (const field in data) {
+					if (data[field].status === 'Present' && !calledNames.includes(field)) {
+						// Do something with the map field where status is "Present"
+						console.log(`Field ${field} is Present`);
+						presentNames.push(field);
+					}
+				}
 
-			const presentStudentIds = docsArrayx.map((doc) => doc.id);
-			console.log(presentStudentIds);
+				if (presentNames.length > 0) {
+					const randomIndex = Math.floor(Math.random() * presentNames.length);
+					const randomStudentId = presentNames[randomIndex];
+					const randomStudentName = await getNameRecitation(randomStudentId);
 
-			if (presentStudentIds.length > 0) {
-				console.log('Present student IDs:', presentStudentIds);
-				// You can perform further actions with these IDs if needed
-				const randomStudentName = getRandomStudentName(docsArrayx);
-				updateRandomizerName(randomStudentName);
+					// Update the UI with the random student name
+					updateRandomizerName(randomStudentName);
+
+					// Add the called name to the list
+					calledNames.push(randomStudentId);
+				} else {
+					if (calledNames.length > 0) {
+						updateRandomizerName('All present students have been called');
+					} else {
+						updateRandomizerName('There are no currently Present students');
+					}
+				}
 			} else {
-				console.log('No students with status "Present"');
-				// Update the HTML element to display "No Currently Present"
-				updateRandomizerName('No Currently Present');
+				console.log('Document does not exist');
 			}
-		});
+		} catch (error) {
+			console.error('Error retrieving document:', error);
+		}
 	}
+
+	function resetRecitation() {
+		// Reset the list of called names
+		calledNames.length = 0;
+
+		// You can also update the UI to indicate that the list has been reset
+		updateRandomizerName('List of called students has been reset');
+	}
+
 	function updateRandomizerName(name) {
 		const randomizerNameElement = document.getElementById('randomizerName');
 		if (randomizerNameElement) {
@@ -355,63 +381,22 @@
 		}
 	}
 
-	// Helper function to get a random student name
-	function getRandomStudentName(studentArray) {
-		// Implement your logic to get a random student name from the studentArray
-		// For example, you can generate a random index and return the corresponding name
-		const randomIndex = Math.floor(Math.random() * studentArray.length);
-		return studentArray[randomIndex].name; // Replace with the correct property name for the student's name
-	}
-	function startRolling() {
-		isRolling = true;
-		const randomizerNameElement = document.getElementById('randomizerName');
-		const iterations = 10;
-		const delay = 100;
+	async function getNameRecitation(id) {
+		try {
+			const queryRef1 = collection(firestore, 'users');
+			const queryRef2 = query(queryRef1, where('studentRFID', '==', id));
+			const querySnapshot = await getDocs(queryRef2);
 
-		function updateRandomName(iteration) {
-			let randomIndex;
-			do {
-				randomIndex = Math.floor(Math.random() * studentNames.length);
-			} while (randomIndex === previousStudentIndex); // Ensure a different student is selected
-
-			randomizerNameElement.textContent = studentNames[randomIndex];
-			previousStudentIndex = randomIndex;
-
-			if (iteration < iterations) {
-				setTimeout(() => updateRandomName(iteration + 1), delay);
+			if (querySnapshot.docs.length > 0) {
+				const doc = querySnapshot.docs[0];
+				return doc.data().Name;
 			} else {
-				// Stop rolling and set the final name to a random student
-				isRolling = false;
-				const finalRandomIndex = Math.floor(Math.random() * studentNames.length);
-				randomizerNameElement.textContent = studentNames[finalRandomIndex];
+				return 'Student not found';
 			}
+		} catch (error) {
+			console.error('Error retrieving student name:', error);
+			throw error; // Re-throw the error to handle it in the calling function
 		}
-
-		// Start the recursive rolling effect
-		updateRandomName(0);
-	}
-
-	async function getStudentNames(studentIDs) {
-		const studentNames = [];
-
-		for (const studentID of studentIDs) {
-			try {
-				const queryRef1 = collection(firestore, 'users');
-				const queryRef2 = query(queryRef1, where('studentRFID', '==', studentID));
-				const studentDoc = await getDocs(queryRef2);
-				const studentArrays2 = studentDoc.docs.map((doc) => ({
-					id: doc.id,
-					data: doc.data()
-				}));
-
-				if (studentArrays2.length > 0) {
-					studentNames.push(studentArrays2[0].data.Name);
-				}
-			} catch (error) {
-				console.error('Error fetching student data:', error);
-			}
-		}
-		return studentNames;
 	}
 
 	async function groupStudents() {
@@ -974,9 +959,7 @@
 										>✕</label
 									>
 
-									<div
-										class="text-xl font-bold text-center w-full justify-center flex flex-row"
-									>
+									<div class="text-xl font-bold text-center w-full justify-center flex flex-row">
 										<p>Student Information</p>
 										<span />
 									</div>
@@ -1046,7 +1029,6 @@
 											Save</button
 										>
 									</div>
-
 								</div>
 							</div>
 							<!--END MEDIC MODAL-->
@@ -1271,6 +1253,12 @@
 						class="start-button btn mt-10 w-1/2 rounded-3xl bg-[#EF5051] hover:bg-red-600 border-none"
 						>START</button
 					>
+					<button
+						on:click={resetRecitation}
+						id="resetButton"
+						class="start-button btn mt-10 w-1/2 rounded-3xl bg-[#EF5051] hover:bg-red-600 border-none"
+						>Reset Called Students</button
+					>
 				</div>
 			</div>
 		</div>
@@ -1406,19 +1394,18 @@
 						</div>
 
 						<div class="mx-auto w-4/5 mt-5">
-
 							<!--WEEK-->
 							<h1 class="text-left font-medium mt-3">Week 1</h1>
 							<div class="divider my-0" />
 							<h1 class="text-left my-1 ml-5 text-normal">Day 1</h1>
 							<div class="flex items-center mt-1 pl-4">
 								<select
-								class=" border-gray-200 w-32 pl-1 h-8 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
-							>
-								<option disabled selected hidden class="rounded-3xl">Share</option>
-								<option class="rounded-xl">Only Me</option>
-								<option class="rounded-xl">Subject Class</option>
-							</select>
+									class=" border-gray-200 w-32 pl-1 h-8 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
+								>
+									<option disabled selected hidden class="rounded-3xl">Share</option>
+									<option class="rounded-xl">Only Me</option>
+									<option class="rounded-xl">Subject Class</option>
+								</select>
 								<a
 									href="https://www.googledrive.com/lesson1/"
 									target="_blank"
@@ -1431,20 +1418,19 @@
 										class="input input-bordered line-through w-11/12 focus:border-none cursor-pointer"
 										readonly
 									/>
-								</a>	
-									<input type="checkbox" checked="checked" class="checkbox h-8 w-8" />
-								
+								</a>
+								<input type="checkbox" checked="checked" class="checkbox h-8 w-8" />
 							</div>
 
 							<h1 class="text-left my-1 ml-5 text-normal">Day 2</h1>
 							<div class="flex items-center mt-1 pl-4">
 								<select
-								class=" border-gray-200 w-32 pl-1 h-8 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
-							>
-								<option disabled selected hidden class="rounded-3xl">Share</option>
-								<option class="rounded-xl">Only Me</option>
-								<option class="rounded-xl">Subject Class</option>
-							</select>
+									class=" border-gray-200 w-32 pl-1 h-8 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
+								>
+									<option disabled selected hidden class="rounded-3xl">Share</option>
+									<option class="rounded-xl">Only Me</option>
+									<option class="rounded-xl">Subject Class</option>
+								</select>
 								<a
 									href="https://www.googledrive.com/lesson1/"
 									target="_blank"
@@ -1457,20 +1443,19 @@
 										class="input input-bordered line-through w-11/12 focus:border-none cursor-pointer"
 										readonly
 									/>
-								</a>	
-									<input type="checkbox" checked="checked" class="checkbox h-8 w-8" />
-								
+								</a>
+								<input type="checkbox" checked="checked" class="checkbox h-8 w-8" />
 							</div>
 
 							<h1 class="text-left my-1 ml-5 text-normal">Day 3</h1>
 							<div class="flex items-center mt-1 pl-4">
 								<select
-								class=" border-gray-200 w-32 pl-1 h-8 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
-							>
-								<option disabled selected hidden class="rounded-3xl">Share</option>
-								<option class="rounded-xl">Only Me</option>
-								<option class="rounded-xl">Subject Class</option>
-							</select>
+									class=" border-gray-200 w-32 pl-1 h-8 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
+								>
+									<option disabled selected hidden class="rounded-3xl">Share</option>
+									<option class="rounded-xl">Only Me</option>
+									<option class="rounded-xl">Subject Class</option>
+								</select>
 								<a
 									href="https://www.googledrive.com/lesson1/"
 									target="_blank"
@@ -1483,20 +1468,19 @@
 										class="input input-bordered line-through w-11/12 focus:border-none cursor-pointer"
 										readonly
 									/>
-								</a>	
-									<input type="checkbox" checked="checked" class="checkbox h-8 w-8" />
-								
+								</a>
+								<input type="checkbox" checked="checked" class="checkbox h-8 w-8" />
 							</div>
 
 							<h1 class="text-left my-1 ml-5 text-normal">Day 4</h1>
 							<div class="flex items-center mt-1 pl-4">
 								<select
-								class=" border-gray-200 w-32 pl-1 h-8 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
-							>
-								<option disabled selected hidden class="rounded-3xl">Share</option>
-								<option class="rounded-xl">Only Me</option>
-								<option class="rounded-xl">Subject Class</option>
-							</select>
+									class=" border-gray-200 w-32 pl-1 h-8 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
+								>
+									<option disabled selected hidden class="rounded-3xl">Share</option>
+									<option class="rounded-xl">Only Me</option>
+									<option class="rounded-xl">Subject Class</option>
+								</select>
 								<a
 									href="https://www.googledrive.com/lesson1/"
 									target="_blank"
@@ -1509,20 +1493,19 @@
 										class="input input-bordered line-through w-11/12 focus:border-none cursor-pointer"
 										readonly
 									/>
-								</a>	
-									<input type="checkbox" checked="checked" class="checkbox h-8 w-8" />
-								
+								</a>
+								<input type="checkbox" checked="checked" class="checkbox h-8 w-8" />
 							</div>
 
 							<h1 class="text-left my-1 ml-5 text-normal">Day 5</h1>
 							<div class="flex items-center mt-1 pl-4">
 								<select
-								class=" border-gray-200 w-32 pl-1 h-8 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
-							>
-								<option disabled selected hidden class="rounded-3xl">Share</option>
-								<option class="rounded-xl">Only Me</option>
-								<option class="rounded-xl">Subject Class</option>
-							</select>
+									class=" border-gray-200 w-32 pl-1 h-8 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
+								>
+									<option disabled selected hidden class="rounded-3xl">Share</option>
+									<option class="rounded-xl">Only Me</option>
+									<option class="rounded-xl">Subject Class</option>
+								</select>
 								<a
 									href="https://www.googledrive.com/lesson1/"
 									target="_blank"
@@ -1535,142 +1518,8 @@
 										class="input input-bordered line-through w-11/12 focus:border-none cursor-pointer"
 										readonly
 									/>
-								</a>	
-									<input type="checkbox" checked="checked" class="checkbox h-8 w-8" />
-							</div>
-							<!--END WEEK-->
-							
-
-							<!--WEEK-->
-							<h1 class="text-left font-medium mt-3">Week 1</h1>
-							<div class="divider my-0" />
-							<h1 class="text-left my-1 ml-5 text-normal">Day 1</h1>
-							<div class="flex items-center mt-1 pl-4">
-								<select
-								class=" border-gray-200 w-32 pl-1 h-8 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
-							>
-								<option disabled selected hidden class="rounded-3xl">Share</option>
-								<option class="rounded-xl">Only Me</option>
-								<option class="rounded-xl">Subject Class</option>
-							</select>
-								<a
-									href="https://www.googledrive.com/lesson1/"
-									target="_blank"
-									rel="noopener noreferrer"
-									class="w-full"
-								>
-									<input
-										type="text"
-										placeholder="www.googledrive.com/lesson1/"
-										class="input input-bordered line-through w-11/12 focus:border-none cursor-pointer"
-										readonly
-									/>
-								</a>	
-									<input type="checkbox" checked="checked" class="checkbox h-8 w-8" />
-								
-							</div>
-
-							<h1 class="text-left my-1 ml-5 text-normal">Day 2</h1>
-							<div class="flex items-center mt-1 pl-4">
-								<select
-								class=" border-gray-200 w-32 pl-1 h-8 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
-							>
-								<option disabled selected hidden class="rounded-3xl">Share</option>
-								<option class="rounded-xl">Only Me</option>
-								<option class="rounded-xl">Subject Class</option>
-							</select>
-								<a
-									href="https://www.googledrive.com/lesson1/"
-									target="_blank"
-									rel="noopener noreferrer"
-									class="w-full"
-								>
-									<input
-										type="text"
-										placeholder="www.googledrive.com/lesson1/"
-										class="input input-bordered line-through w-11/12 focus:border-none cursor-pointer"
-										readonly
-									/>
-								</a>	
-									<input type="checkbox" checked="checked" class="checkbox h-8 w-8" />
-								
-							</div>
-
-							<h1 class="text-left my-1 ml-5 text-normal">Day 3</h1>
-							<div class="flex items-center mt-1 pl-4">
-								<select
-								class=" border-gray-200 w-32 pl-1 h-8 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
-							>
-								<option disabled selected hidden class="rounded-3xl">Share</option>
-								<option class="rounded-xl">Only Me</option>
-								<option class="rounded-xl">Subject Class</option>
-							</select>
-								<a
-									href="https://www.googledrive.com/lesson1/"
-									target="_blank"
-									rel="noopener noreferrer"
-									class="w-full"
-								>
-									<input
-										type="text"
-										placeholder="www.googledrive.com/lesson1/"
-										class="input input-bordered line-through w-11/12 focus:border-none cursor-pointer"
-										readonly
-									/>
-								</a>	
-									<input type="checkbox" checked="checked" class="checkbox h-8 w-8" />
-								
-							</div>
-
-							<h1 class="text-left my-1 ml-5 text-normal">Day 4</h1>
-							<div class="flex items-center mt-1 pl-4">
-								<select
-								class=" border-gray-200 w-32 pl-1 h-8 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
-							>
-								<option disabled selected hidden class="rounded-3xl">Share</option>
-								<option class="rounded-xl">Only Me</option>
-								<option class="rounded-xl">Subject Class</option>
-							</select>
-								<a
-									href="https://www.googledrive.com/lesson1/"
-									target="_blank"
-									rel="noopener noreferrer"
-									class="w-full"
-								>
-									<input
-										type="text"
-										placeholder="www.googledrive.com/lesson1/"
-										class="input input-bordered line-through w-11/12 focus:border-none cursor-pointer"
-										readonly
-									/>
-								</a>	
-									<input type="checkbox" checked="checked" class="checkbox h-8 w-8" />
-								
-							</div>
-
-							<h1 class="text-left my-1 ml-5 text-normal">Day 5</h1>
-							<div class="flex items-center mt-1 pl-4">
-								<select
-								class=" border-gray-200 w-32 pl-1 h-8 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
-							>
-								<option disabled selected hidden class="rounded-3xl">Share</option>
-								<option class="rounded-xl">Only Me</option>
-								<option class="rounded-xl">Subject Class</option>
-							</select>
-								<a
-									href="https://www.googledrive.com/lesson1/"
-									target="_blank"
-									rel="noopener noreferrer"
-									class="w-full"
-								>
-									<input
-										type="text"
-										placeholder="www.googledrive.com/lesson1/"
-										class="input input-bordered line-through w-11/12 focus:border-none cursor-pointer"
-										readonly
-									/>
-								</a>	
-									<input type="checkbox" checked="checked" class="checkbox h-8 w-8" />
+								</a>
+								<input type="checkbox" checked="checked" class="checkbox h-8 w-8" />
 							</div>
 							<!--END WEEK-->
 
@@ -1680,12 +1529,12 @@
 							<h1 class="text-left my-1 ml-5 text-normal">Day 1</h1>
 							<div class="flex items-center mt-1 pl-4">
 								<select
-								class=" border-gray-200 w-32 pl-1 h-8 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
-							>
-								<option disabled selected hidden class="rounded-3xl">Share</option>
-								<option class="rounded-xl">Only Me</option>
-								<option class="rounded-xl">Subject Class</option>
-							</select>
+									class=" border-gray-200 w-32 pl-1 h-8 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
+								>
+									<option disabled selected hidden class="rounded-3xl">Share</option>
+									<option class="rounded-xl">Only Me</option>
+									<option class="rounded-xl">Subject Class</option>
+								</select>
 								<a
 									href="https://www.googledrive.com/lesson1/"
 									target="_blank"
@@ -1698,20 +1547,19 @@
 										class="input input-bordered line-through w-11/12 focus:border-none cursor-pointer"
 										readonly
 									/>
-								</a>	
-									<input type="checkbox" checked="checked" class="checkbox h-8 w-8" />
-								
+								</a>
+								<input type="checkbox" checked="checked" class="checkbox h-8 w-8" />
 							</div>
 
 							<h1 class="text-left my-1 ml-5 text-normal">Day 2</h1>
 							<div class="flex items-center mt-1 pl-4">
 								<select
-								class=" border-gray-200 w-32 pl-1 h-8 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
-							>
-								<option disabled selected hidden class="rounded-3xl">Share</option>
-								<option class="rounded-xl">Only Me</option>
-								<option class="rounded-xl">Subject Class</option>
-							</select>
+									class=" border-gray-200 w-32 pl-1 h-8 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
+								>
+									<option disabled selected hidden class="rounded-3xl">Share</option>
+									<option class="rounded-xl">Only Me</option>
+									<option class="rounded-xl">Subject Class</option>
+								</select>
 								<a
 									href="https://www.googledrive.com/lesson1/"
 									target="_blank"
@@ -1724,20 +1572,19 @@
 										class="input input-bordered line-through w-11/12 focus:border-none cursor-pointer"
 										readonly
 									/>
-								</a>	
-									<input type="checkbox" checked="checked" class="checkbox h-8 w-8" />
-								
+								</a>
+								<input type="checkbox" checked="checked" class="checkbox h-8 w-8" />
 							</div>
 
 							<h1 class="text-left my-1 ml-5 text-normal">Day 3</h1>
 							<div class="flex items-center mt-1 pl-4">
 								<select
-								class=" border-gray-200 w-32 pl-1 h-8 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
-							>
-								<option disabled selected hidden class="rounded-3xl">Share</option>
-								<option class="rounded-xl">Only Me</option>
-								<option class="rounded-xl">Subject Class</option>
-							</select>
+									class=" border-gray-200 w-32 pl-1 h-8 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
+								>
+									<option disabled selected hidden class="rounded-3xl">Share</option>
+									<option class="rounded-xl">Only Me</option>
+									<option class="rounded-xl">Subject Class</option>
+								</select>
 								<a
 									href="https://www.googledrive.com/lesson1/"
 									target="_blank"
@@ -1750,20 +1597,19 @@
 										class="input input-bordered line-through w-11/12 focus:border-none cursor-pointer"
 										readonly
 									/>
-								</a>	
-									<input type="checkbox" checked="checked" class="checkbox h-8 w-8" />
-								
+								</a>
+								<input type="checkbox" checked="checked" class="checkbox h-8 w-8" />
 							</div>
 
 							<h1 class="text-left my-1 ml-5 text-normal">Day 4</h1>
 							<div class="flex items-center mt-1 pl-4">
 								<select
-								class=" border-gray-200 w-32 pl-1 h-8 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
-							>
-								<option disabled selected hidden class="rounded-3xl">Share</option>
-								<option class="rounded-xl">Only Me</option>
-								<option class="rounded-xl">Subject Class</option>
-							</select>
+									class=" border-gray-200 w-32 pl-1 h-8 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
+								>
+									<option disabled selected hidden class="rounded-3xl">Share</option>
+									<option class="rounded-xl">Only Me</option>
+									<option class="rounded-xl">Subject Class</option>
+								</select>
 								<a
 									href="https://www.googledrive.com/lesson1/"
 									target="_blank"
@@ -1776,20 +1622,19 @@
 										class="input input-bordered line-through w-11/12 focus:border-none cursor-pointer"
 										readonly
 									/>
-								</a>	
-									<input type="checkbox" checked="checked" class="checkbox h-8 w-8" />
-								
+								</a>
+								<input type="checkbox" checked="checked" class="checkbox h-8 w-8" />
 							</div>
 
 							<h1 class="text-left my-1 ml-5 text-normal">Day 5</h1>
 							<div class="flex items-center mt-1 pl-4">
 								<select
-								class=" border-gray-200 w-32 pl-1 h-8 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
-							>
-								<option disabled selected hidden class="rounded-3xl">Share</option>
-								<option class="rounded-xl">Only Me</option>
-								<option class="rounded-xl">Subject Class</option>
-							</select>
+									class=" border-gray-200 w-32 pl-1 h-8 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
+								>
+									<option disabled selected hidden class="rounded-3xl">Share</option>
+									<option class="rounded-xl">Only Me</option>
+									<option class="rounded-xl">Subject Class</option>
+								</select>
 								<a
 									href="https://www.googledrive.com/lesson1/"
 									target="_blank"
@@ -1802,12 +1647,139 @@
 										class="input input-bordered line-through w-11/12 focus:border-none cursor-pointer"
 										readonly
 									/>
-								</a>	
-									<input type="checkbox" checked="checked" class="checkbox h-8 w-8" />
+								</a>
+								<input type="checkbox" checked="checked" class="checkbox h-8 w-8" />
 							</div>
 							<!--END WEEK-->
 
+							<!--WEEK-->
+							<h1 class="text-left font-medium mt-3">Week 1</h1>
+							<div class="divider my-0" />
+							<h1 class="text-left my-1 ml-5 text-normal">Day 1</h1>
+							<div class="flex items-center mt-1 pl-4">
+								<select
+									class=" border-gray-200 w-32 pl-1 h-8 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
+								>
+									<option disabled selected hidden class="rounded-3xl">Share</option>
+									<option class="rounded-xl">Only Me</option>
+									<option class="rounded-xl">Subject Class</option>
+								</select>
+								<a
+									href="https://www.googledrive.com/lesson1/"
+									target="_blank"
+									rel="noopener noreferrer"
+									class="w-full"
+								>
+									<input
+										type="text"
+										placeholder="www.googledrive.com/lesson1/"
+										class="input input-bordered line-through w-11/12 focus:border-none cursor-pointer"
+										readonly
+									/>
+								</a>
+								<input type="checkbox" checked="checked" class="checkbox h-8 w-8" />
+							</div>
 
+							<h1 class="text-left my-1 ml-5 text-normal">Day 2</h1>
+							<div class="flex items-center mt-1 pl-4">
+								<select
+									class=" border-gray-200 w-32 pl-1 h-8 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
+								>
+									<option disabled selected hidden class="rounded-3xl">Share</option>
+									<option class="rounded-xl">Only Me</option>
+									<option class="rounded-xl">Subject Class</option>
+								</select>
+								<a
+									href="https://www.googledrive.com/lesson1/"
+									target="_blank"
+									rel="noopener noreferrer"
+									class="w-full"
+								>
+									<input
+										type="text"
+										placeholder="www.googledrive.com/lesson1/"
+										class="input input-bordered line-through w-11/12 focus:border-none cursor-pointer"
+										readonly
+									/>
+								</a>
+								<input type="checkbox" checked="checked" class="checkbox h-8 w-8" />
+							</div>
+
+							<h1 class="text-left my-1 ml-5 text-normal">Day 3</h1>
+							<div class="flex items-center mt-1 pl-4">
+								<select
+									class=" border-gray-200 w-32 pl-1 h-8 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
+								>
+									<option disabled selected hidden class="rounded-3xl">Share</option>
+									<option class="rounded-xl">Only Me</option>
+									<option class="rounded-xl">Subject Class</option>
+								</select>
+								<a
+									href="https://www.googledrive.com/lesson1/"
+									target="_blank"
+									rel="noopener noreferrer"
+									class="w-full"
+								>
+									<input
+										type="text"
+										placeholder="www.googledrive.com/lesson1/"
+										class="input input-bordered line-through w-11/12 focus:border-none cursor-pointer"
+										readonly
+									/>
+								</a>
+								<input type="checkbox" checked="checked" class="checkbox h-8 w-8" />
+							</div>
+
+							<h1 class="text-left my-1 ml-5 text-normal">Day 4</h1>
+							<div class="flex items-center mt-1 pl-4">
+								<select
+									class=" border-gray-200 w-32 pl-1 h-8 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
+								>
+									<option disabled selected hidden class="rounded-3xl">Share</option>
+									<option class="rounded-xl">Only Me</option>
+									<option class="rounded-xl">Subject Class</option>
+								</select>
+								<a
+									href="https://www.googledrive.com/lesson1/"
+									target="_blank"
+									rel="noopener noreferrer"
+									class="w-full"
+								>
+									<input
+										type="text"
+										placeholder="www.googledrive.com/lesson1/"
+										class="input input-bordered line-through w-11/12 focus:border-none cursor-pointer"
+										readonly
+									/>
+								</a>
+								<input type="checkbox" checked="checked" class="checkbox h-8 w-8" />
+							</div>
+
+							<h1 class="text-left my-1 ml-5 text-normal">Day 5</h1>
+							<div class="flex items-center mt-1 pl-4">
+								<select
+									class=" border-gray-200 w-32 pl-1 h-8 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
+								>
+									<option disabled selected hidden class="rounded-3xl">Share</option>
+									<option class="rounded-xl">Only Me</option>
+									<option class="rounded-xl">Subject Class</option>
+								</select>
+								<a
+									href="https://www.googledrive.com/lesson1/"
+									target="_blank"
+									rel="noopener noreferrer"
+									class="w-full"
+								>
+									<input
+										type="text"
+										placeholder="www.googledrive.com/lesson1/"
+										class="input input-bordered line-through w-11/12 focus:border-none cursor-pointer"
+										readonly
+									/>
+								</a>
+								<input type="checkbox" checked="checked" class="checkbox h-8 w-8" />
+							</div>
+							<!--END WEEK-->
 						</div>
 					</div>
 				</div>
