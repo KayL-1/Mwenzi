@@ -25,6 +25,7 @@
 	let selecTSub;
 	let subjects = [];
 	let recitation = [];
+	let notes = [];
 
 	let dateArray = {};
 	let dateArrayAsArray = [];
@@ -57,6 +58,26 @@
 
 		subjects = querySnapshot.docs.map((doc) => doc.id);
 	}
+
+	async function getNotes() {
+		const collectionRef = collection(firestore, 'Subject', selecTSub, 'Notes');
+		const querySnapshot = await getDocs(collectionRef);
+
+		querySnapshot.forEach((doc) => {
+			// Access the document ID
+			const docId = doc.id;
+			// Access the document data
+			const docData = doc.data();
+
+			// Push an object containing the ID and data to the 'notes' array
+			notes.push({ id: docId, data: docData });
+		});
+
+		notes.forEach(function (note) {
+			console.log(note.data.Date);
+		});
+	}
+
 	let presentCount = 0;
 	let absentCount = 0;
 	async function attendanceCheck() {
@@ -153,11 +174,47 @@
 		});
 		recitation = recitation;
 	}
+	async function fetchAndDisplayNotes() {
+		const collectionRef = collection(firestore, 'Subject', selecTSub, 'Notes');
+
+		try {
+			const querySnapshot = await getDocs(collectionRef);
+
+			querySnapshot.forEach((doc) => {
+				const title1 = doc.data().Title;
+				const status = doc.data().Status;
+				const date1 = doc.data().Date;
+				const id = doc.id;
+
+				// Check if the status is not "Only Me" before appending
+				if (status !== 'Only Me') {
+					const noteElement = document.createElement('div');
+					noteElement.className =
+						'mt-2 flex flex-row justify-between w-full items-center px-7 border-b pb-1';
+					noteElement.innerHTML = `
+        <div class="mt-2 flex flex-row justify-between w-full items-center px-7 pb-1">
+          <h1 class="font-medium text-sm">${title1}</h1>
+          <div class="flex items-center">
+            <label
+                class="border-gray-200 w-36 h-6 mr-1 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
+            >${date1}</label>
+          </div>
+        </div>`;
+
+					const notesContainer = document.getElementById('notes-container');
+					notesContainer.appendChild(noteElement);
+				}
+			});
+		} catch (error) {
+			console.error('Error fetching documents: ', error);
+		}
+	}
 
 	async function change() {
 		console.log(selecTSub);
 		attendanceCheck();
 		recitationCheck();
+		fetchAndDisplayNotes();
 	}
 
 	async function getuserName(id) {
@@ -529,7 +586,7 @@
 						</div>
 					</div>
 
-					<div class="flex flex-row items-center mt-2 justify-center">
+					<!-- <div class="flex flex-row items-center mt-2 justify-center">
 						<input
 							class="pl-4 border border-r-0 rounded-l-3xl focus:ring-0 text-sm block bg-white w-64 h-7 border-slate-300 shadow-sm focus:outline-none"
 							placeholder="Add Notes"
@@ -559,29 +616,31 @@
 								</g></svg
 							>
 						</button>
-					</div>
+					</div> -->
 					<div class="divider mb-1" />
 
 					<!--TO DO LIST-->
-					<div class="h-80 overflow-auto">
+					<div class="h-80 overflow-auto" id="notes-container">
 						<!--OVERFLOW-->
-						<div class="mt-2 flex flex-row justify-between w-full items-center px-7 border-b pb-1">
-							<h1 class="font-medium text-sm">· Study Lesson 1</h1>
+						<!-- {#each notes as note}
+							<div
+								class="mt-2 flex flex-row justify-between w-full items-center px-7 border-b pb-1"
+							>
+								<h1 class="font-medium text-sm">· {note.data.Title}</h1>
 
-							<div class="flex items-center">
-								<!-- svelte-ignore a11y-label-has-associated-control -->
-								<label
-									class=" border-gray-200 w-36 h-6 mr-1 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
-									>Note from Teacher
-								</label>
+								<div class="flex items-center">
+									<label
+										class="border-gray-200 w-36 h-6 mr-1 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
+										>{note.data.Date}
+									</label>
+								</div>
 							</div>
-						</div>
+						{/each} -->
 
-						<div class="mt-2 flex flex-row justify-between w-full items-center px-7 border-b pb-1">
+						<!-- <div class="mt-2 flex flex-row justify-between w-full items-center px-7 border-b pb-1">
 							<h1 class="font-medium text-sm">· Study Lesson 1</h1>
 
 							<div class="flex items-center">
-								<!-- svelte-ignore a11y-label-has-associated-control -->
 								<button>
 									<img
 										src="done.png"
@@ -597,7 +656,7 @@
 									/>
 								</button>
 							</div>
-						</div>
+						</div> -->
 					</div>
 					<!--OVERFLOW-->
 				</div>
