@@ -88,21 +88,6 @@
 	}
 
 	let studentList = [];
-
-	async function getStudentList(classID) {
-		const queryRef = collection(firestore, 'classes');
-		const querySnapshot = await getDocs(query(queryRef, where('className', '==', classID)));
-		if (querySnapshot.size === 1) {
-			const doc = querySnapshot.docs[0];
-			studentList = {
-				id: doc.id,
-				data: doc.data()
-			};
-		} else {
-			console.log('cant find');
-		}
-		return studentList.data.students;
-	}
 	// CREATION PART
 
 	let className;
@@ -110,10 +95,10 @@
 
 	async function createClass() {
 		const classQuery = query(collection(firestore, 'classes'), where('className', '==', className));
-
+		let classNewName = gradeLevel + ' - ' + className;
 		const querySnapshot = await getDocs(classQuery);
 		if (querySnapshot.empty) {
-			const docRef = doc(firestore, 'classes', className);
+			const docRef = doc(firestore, 'classes', classNewName);
 			const classData = {
 				className: className,
 				grade: gradeLevel,
@@ -136,34 +121,75 @@
 	let timeIn;
 	let timeOut;
 
-	async function createSubject() {
-		const timeSubject = timeIn + ' - ' + timeOut;
-
-		const classQuery = query(
-			collection(firestore, 'Subject'),
-			where('subjectName', '==', subjectName)
-		);
-
-		const querySnapshot = await getDocs(classQuery);
-		const studentArray = await getStudentList(classSet);
-		const tempName = classSet + ' - ' + subjectName;
-		if (querySnapshot.empty) {
-			const docRef = doc(firestore, 'Subject', tempName);
-			const classData = {
-				subjectName: subjectName,
-				className: classSet,
-				teacherID: teacherSet,
-				students: studentArray,
-				time: timeSubject
+	async function getStudentList(classID) {
+		const queryRef = collection(firestore, 'classes');
+		const querySnapshot = await getDocs(query(queryRef, where('className', '==', classID)));
+		if (querySnapshot.size === 1) {
+			const doc = querySnapshot.docs[0];
+			studentList = {
+				id: doc.id,
+				data: doc.data()
 			};
-			console.log(docRef, classData);
-			await setDoc(docRef, classData);
-			console.log('Class created successfully!');
-			toast.success('Class created successfully!');
-			location.reload();
 		} else {
-			console.log('A class with the same name already exists. Creation aborted.');
-			toast.error('A class with the same name already exists. Creation aborted.');
+			console.log('cant find');
+		}
+		return studentList.data.students;
+	}
+
+	async function createSubject() {
+		if (
+			subjectName === undefined ||
+			subjectName === null ||
+			teacherSet === undefined ||
+			teacherSet === null ||
+			classSet === undefined ||
+			classSet === null ||
+			timeIn === undefined ||
+			timeIn === null ||
+			timeOut === undefined ||
+			timeOut === null
+		) {
+			toast.error('At least one of the variables is null.');
+		} else {
+			const timeSubject = timeIn + ' - ' + timeOut;
+
+			const classQuery = query(
+				collection(firestore, 'Subject'),
+				where('subjectName', '==', subjectName)
+			);
+
+			const querySnapshot = await getDocs(classQuery);
+			const studentArray = await getStudentList(classSet);
+			const tempName = classSet + ' - ' + subjectName;
+			if (querySnapshot.empty) {
+				const docRef = doc(firestore, 'Subject', tempName);
+				const classData = {
+					subjectName: subjectName,
+					className: classSet,
+					teacherID: teacherSet,
+					students: studentArray,
+					timeIn: timeIn,
+					timeOut: timeOut
+				};
+				console.log(docRef, classData);
+				await setDoc(docRef, classData);
+
+				// Create a subcollection "Recitation" inside the "Subject" document
+				const recitationCollectionRef = collection(docRef, 'Recitation');
+
+				for (const student of studentArray) {
+					const recitationDocRef = doc(recitationCollectionRef, student);
+					await setDoc(recitationDocRef, {
+						totalPoints: 0 // Set the initial value of totalPoints to 0
+						// Add more fields as needed for each student in the Recitation document
+					});
+				}
+
+				toast.success('Subject created successfully!');
+			} else {
+				console.log('A class with the same name already exists. Creation aborted.');
+				toast.error('A class with the same name already exists. Creation aborted.');
+			}
 		}
 	}
 
@@ -171,6 +197,50 @@
 	subjectCheck();
 	classCheck();
 	getTeachers();
+
+	let studentClass = [];
+	let modalBody;
+
+	function clearModalBody() {
+		modalBody = document.getElementById('modalBody');
+		modalBody.innerHTML = '';
+	}
+	async function getStudentListClass(arrayStudent) {
+		modalBody = document.getElementById('modalBody');
+		for (const student1 of arrayStudent) {
+			const collectionRef = collection(firestore, 'users');
+			const filter = query(collectionRef, where('studentRFID', '==', student1));
+			const querySnapshot = await getDocs(filter);
+
+			// Loop through the documents in the querySnapshot
+			const studArray = querySnapshot.docs.map((doc) => ({
+				id: doc.id,
+				data: doc.data()
+			}));
+
+			studentClass.push(studArray);
+
+			studArray.forEach((student1x) => {
+				const tr = document.createElement('tr');
+				tr.className =
+					'bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover-bg-gray-600';
+
+				const td1 = document.createElement('td');
+				td1.className = 'px-6 py-2 text-center';
+				td1.textContent = student1x.data.Name;
+				tr.appendChild(td1);
+
+				const td2 = document.createElement('td');
+				td2.className = 'py-1 px-6 text-center';
+				td2.textContent = student1x.data.studentRFID;
+				tr.appendChild(td2);
+
+				modalBody.appendChild(tr);
+			});
+		}
+
+		console.log(studentClass);
+	}
 </script>
 
 <body class=" bg-gray-50 h-screen w-full">
@@ -413,7 +483,12 @@
 								<td class="text-center">{item1.id}</td>
 								<td class="px-6 py-2">
 									<!--FOR MODAL-->
-									<label for="ClassSubjectStudentLists" class="cursor-pointer">
+									<!-- svelte-ignore a11y-click-events-have-key-events -->
+									<label
+										on:click={async () => await getStudentListClass(item1.data.students)}
+										for="ClassSubjectStudentLists"
+										class="cursor-pointer"
+									>
 										{item1.data.students ? item1.data.students.length : 'N/A'}</label
 									></td
 								>
@@ -424,7 +499,9 @@
 						<input type="checkbox" id="ClassSubjectStudentLists" class="modal-toggle" />
 						<div class="modal">
 							<div class="modal-box relative h-2/5 max-w-xl">
+								<!-- svelte-ignore a11y-click-events-have-key-events -->
 								<label
+									on:click={clearModalBody}
 									for="ClassSubjectStudentLists"
 									class="btn btn-sm btn-circle absolute right-2 top-2">✕</label
 								>
@@ -443,14 +520,7 @@
 												<th scope="col" class="px-6 py-4 text-center">RFID</th>
 											</tr>
 										</thead>
-										<tbody>
-											<tr
-												class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-											>
-												<td class="px-6 py-2 text-center">Ace Dela Cuesta</td>
-												<td class="py-1 px-6 text-center">4e2abbab</td>
-											</tr>
-										</tbody>
+										<tbody id="modalBody" />
 									</table>
 								</div>
 							</div>
@@ -629,7 +699,12 @@
 							>
 								<td class="text-center">{item1.id}</td>
 								<td class="px-6 py-2">
-									<label for="ClassSubjectStudentLists" class="cursor-pointer">
+									<!-- svelte-ignore a11y-click-events-have-key-events -->
+									<label
+										for="ClassSubjectStudentLists"
+										class="cursor-pointer"
+										on:click={async () => await getStudentListClass(item1.data.students)}
+									>
 										{item1.data.students ? item1.data.students.length : 'N/A'}</label
 									></td
 								>
@@ -638,7 +713,13 @@
 								{:catch error}
 									<td class="py-1 px-6 text-center">Error fetching teacher name</td>
 								{/await}
-								<td class="text-center">8:00 AM - 10:00 AM</td>
+								<td class="text-center">
+									{#if item1.data.timeIn && item1.data.timeOut}
+										{item1.data.timeIn} - {item1.data.timeOut}
+									{:else}
+										N/A
+									{/if}</td
+								>
 							</tr>
 						{/each}
 						<!-- MODAL-->

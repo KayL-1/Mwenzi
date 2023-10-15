@@ -19,6 +19,7 @@
 	import { getDatabase, ref, onValue, get, child } from 'firebase/database';
 	import { userId } from '../../lib/userStorage';
 	import { onMount } from 'svelte';
+
 	// Function to handle changes in the selected option
 	function handleSelectChange(event) {
 		const selectedOption = event.target.value;
@@ -89,6 +90,7 @@
 	classCheck();
 	studentCheck();
 	teacherCheck();
+
 </script>
 
 <body class=" bg-gray-50 h-screen">
@@ -208,15 +210,16 @@
 			<div class="flex flex-row justify-between mt-2">
 				<div class="flex flex-row justify-between w-full">
 					<div class="flex flex-row">
-					<img src="class.png" class="h-8 pl-6 mt-2" alt="..." />
-					<h1 class="pt-2 pl-1 mt-1 font-medium text-md text-gray-700">Class - Subject List</h1>
+						<img src="class.png" class="h-8 pl-6 mt-2" alt="..." />
+						<h1 class="pt-2 pl-1 mt-1 font-medium text-md text-gray-700">Class - Subject List</h1>
 					</div>
 					<select
+						id="sort1"
 						class="mt-3 border-gray-200 w-40 h-6 font-medium text-sm text-center mr-6 border border-gray focus:none rounded-3xl shadow-sm"
 					>
 						<option disabled selected hidden class="rounded-3xl">Sort by</option>
 						<option class="rounded-xl">Teacher</option>
-						<option class="rounded-xl">Recently Added</option>
+						<option class="rounded-xl">Alphabetical</option>
 					</select>
 				</div>
 			</div>
@@ -247,7 +250,13 @@
 								{:catch error}
 									<td class="py-1 px-6 text-center">Error fetching teacher name</td>
 								{/await}
-								<td>8:00 AM - 10:00 AM</td>
+								<td>
+									{#if item1.data.timeIn && item1.data.timeOut}
+										{item1.data.timeIn} - {item1.data.timeOut}
+									{:else}
+										N/A
+									{/if}
+								</td>
 							</tr>
 						{/each}
 					</tbody>
@@ -306,8 +315,8 @@
 			<div class="flex flex-row justify-between mt-2">
 				<div class="flex flex-row justify-between w-full">
 					<div class="flex flex-row">
-					<img src="teacher.png" class="h-8 pl-6 mt-2" alt="..." />
-					<h1 class="pt-2 pl-1 mt-1 font-medium text-md text-gray-700">Teachers List</h1>
+						<img src="teacher.png" class="h-8 pl-6 mt-2" alt="..." />
+						<h1 class="pt-2 pl-1 mt-1 font-medium text-md text-gray-700">Teachers List</h1>
 					</div>
 					<select
 						class="mt-3 border-gray-200 w-40 h-6 font-medium text-sm text-center mr-6 border border-gray focus:none rounded-3xl shadow-sm"
@@ -316,7 +325,6 @@
 						<option class="rounded-xl">Alphabetical</option>
 						<option class="rounded-xl">Recently Added</option>
 					</select>
-					
 				</div>
 			</div>
 

@@ -11,14 +11,18 @@
 		onSnapshot,
 		updateDoc,
 		addDoc,
-		deleteDoc
+		deleteDoc,
+		arrayUnion
 	} from 'firebase/firestore';
 	import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 	import { goto } from '$app/navigation';
 	import { firebase, firestore, functions } from '$lib/firebase';
-	import { getDatabase, ref, onValue, get, child } from 'firebase/database';
+	import { getDatabase, ref, onValue, get, child, set } from 'firebase/database';
 	import { userId } from '../../lib/userStorage';
 	import { onMount } from 'svelte';
+	import Papa from 'papaparse';
+	import toast, { Toaster } from 'svelte-french-toast';
+
 	// Function to handle changes in the selected option
 	function handleSelectChange(event) {
 		const selectedOption = event.target.value;
@@ -35,6 +39,7 @@
 	}
 
 	let students = [];
+	let subjectArray = [];
 
 	async function studentCheck() {
 		const collectionRef = collection(firestore, 'users');
@@ -47,7 +52,267 @@
 		}));
 	}
 
+	async function classCheck() {
+		const collectionRef = collection(firestore, 'classes');
+		const querySnapshot = await getDocs(collectionRef);
+
+		subjectArray = querySnapshot.docs.map((doc) => ({
+			id: doc.id,
+			data: doc.data()
+		}));
+	}
+
 	studentCheck();
+	classCheck();
+
+	let studentName;
+	let bday;
+	let studentID;
+	let studentRFID;
+	let classSelect1;
+	let classSelect2;
+
+	let myVariable = '';
+	let rfidMode = '';
+	let modeSwitch;
+
+	function handleCSVUpload() {
+		const inp_file = document.getElementById('csvUpload');
+		let arrayobj = [];
+
+		if (classSelect2 !== null) {
+			Papa.parse(inp_file.files[0], {
+				download: true,
+				header: true,
+				skipEmptyLines: true,
+				complete: function (results) {
+					arrayobj = results.data;
+					console.log(arrayobj);
+					createStudentImport(arrayobj);
+				}
+			});
+		} else {
+			toast.error('Please Select a Class');
+		}
+	}
+
+	async function createStudentImport(csvFile) {
+		for (const student of csvFile) {
+			const userID = await generateAndCheckUID();
+			const docRef = await setDoc(doc(firestore, 'users', userID), {
+				UID: userID,
+				userRole: 'student',
+				Name: student.Name,
+				studentID: student.StudentID,
+				studentRFID: student.StudentRFID,
+				class: classSelect2,
+				birthday: student.birthday
+			});
+
+			const docRef2 = doc(firestore, 'classes', classSelect2);
+			await updateDoc(docRef2, {
+				students: arrayUnion(student.StudentRFID)
+			});
+		}
+
+		toast.success('Students succesfully added');
+	}
+
+	async function createStudent() {
+		if (
+			studentName == null ||
+			bday == null ||
+			studentID == null ||
+			studentRFID == null ||
+			classSelect1 == null ||
+			classSelect2 == null
+		) {
+			// At least one of the variables is null
+			toast.error('One or more input/s are empty');
+		} else {
+			// None of the variables are null
+			toast.success('All variables have values');
+
+			if (rfidMode == 'On') {
+				try {
+					const userID = await generateAndCheckUID();
+					console.log('createAccount');
+					console.log(userID);
+
+					const docRef = await setDoc(doc(firestore, 'users', userID), {
+						UID: userID,
+						userRole: 'student',
+						Name: studentName,
+						studentID: studentID,
+						studentRFID: myVariable,
+						class: classSelect1,
+						birthday: bday
+					});
+
+					const docRef2 = doc(firestore, 'classes', classSelect1);
+					await updateDoc(docRef2, {
+						students: arrayUnion(myVariable)
+					});
+
+					writeUserData1();
+
+					console.log('Document created in Firestore with ID:', userID);
+				} catch (error) {
+					const errorCode = error.code;
+					const errorMessage = error.message;
+					console.error('Error creating user and document:', errorCode, errorMessage);
+				}
+			} else {
+				try {
+					const userID = await generateAndCheckUID();
+					console.log('createAccount');
+					console.log(userID);
+
+					const docRef = await setDoc(doc(firestore, 'users', userID), {
+						UID: userID,
+						userRole: 'student',
+						Name: studentName,
+						studentID: studentID,
+						studentRFID: studentRFID,
+						class: classSelect1,
+						birthday: bday
+					});
+
+					const docRef2 = doc(firestore, 'classes', classSelect1);
+					await updateDoc(docRef2, {
+						students: arrayUnion(studentRFID)
+					});
+
+					writeUserData2();
+
+					console.log('Document created in Firestore with ID:', userID);
+				} catch (error) {
+					const errorCode = error.code;
+					const errorMessage = error.message;
+					console.error('Error creating user and document:', errorCode, errorMessage);
+				}
+			}
+		}
+	}
+
+	async function generateAndCheckUID() {
+		// Define a set of characters and numbers to choose from
+		const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
+		// Set the desired length of your UID
+		const uidLength = 10;
+
+		let uid = '';
+
+		// Generate the UID by randomly selecting characters from the set
+		for (let i = 0; i < uidLength; i++) {
+			const randomIndex = Math.floor(Math.random() * characters.length);
+			uid += characters.charAt(randomIndex);
+		}
+
+		const collectionRef = collection(firestore, 'users');
+		const docRef = doc(collectionRef, uid);
+
+		try {
+			const docSnapshot = await getDoc(docRef);
+			if (docSnapshot.exists()) {
+				// If the document with this UID already exists, generate a new one
+				return generateAndCheckUID();
+			} else {
+				// If the document doesn't exist, return the unique UID
+				return uid;
+			}
+		} catch (error) {
+			console.error('Error checking document: ', error);
+			throw error; // Rethrow the error
+		}
+	}
+
+	function writeUserData1() {
+		set(ref(database, 'rfid/' + myVariable), myVariable);
+		console.error('Using Arduino RFID');
+	}
+
+	function writeUserData2() {
+		set(ref(database, 'rfid/' + studentRFID), studentRFID);
+		console.error('Using Normal Way');
+	}
+
+	function toggleSwitch() {
+		console.log(modeSwitch.checked);
+
+		if (modeSwitch.checked) {
+			// Checkbox is checked
+			set(ref(database, 'rfidMode/register'), 'On');
+			console.log('Using Arduino RFID');
+		} else {
+			// Checkbox is not checked
+			set(ref(database, 'rfidMode/register'), 'Off');
+			console.log('Using Normal Way');
+		}
+	}
+
+	async function displayData() {
+		var rfidRef = ref(database, 'rfidRegisterValue/RFID');
+		var rfidModex = ref(database, 'rfidMode/register');
+
+		try {
+			const snapshot = await get(rfidRef);
+			const rfidValue = snapshot.val();
+			myVariable = rfidValue;
+			console.log('RFID value:', myVariable);
+		} catch (error) {
+			console.log('Error retrieving RFID value:', error);
+		}
+
+		try {
+			const snapshot = await get(rfidModex);
+			const mode = snapshot.val();
+			rfidMode = mode;
+			console.log('RFID mode:', rfidMode);
+		} catch (error) {
+			console.log('Error retrieving RFID mode:', error);
+		}
+	}
+
+	// Listen for changes in the data
+	function listenForChanges() {
+		var rfidRef = ref(database, 'rfidRegisterValue/RFID');
+		var rfidModex = ref(database, 'rfidMode/register');
+
+		onValue(rfidRef, (snapshot) => {
+			const rfidValue = snapshot.val();
+			myVariable = rfidValue;
+			console.log('RFID value changed:', myVariable);
+		});
+
+		onValue(rfidModex, (snapshot) => {
+			const mode = snapshot.val();
+			rfidMode = mode;
+			console.log('RFID mode changed:', rfidMode);
+		});
+	}
+
+	let selectedOption = ''; // Create a reactive variable to store the selected option
+	function sortStudents(option) {
+
+		if (option === 'Class') {
+			return students.sort((a, b) => a.data.class.localeCompare(b.data.class));
+        } else if (option === "Alphabetical") { // Changed the option value to "alphabetical"
+            return students.sort((a, b) => a.data.Name.localeCompare(b.data.Name)); // Sort alphabetically by student name
+        } else {
+            return students;
+        }
+	}
+
+	function handleSortChange(event) {
+		selectedOption = event.target.value;
+	}
+
+	$: sortedStudents = sortStudents(selectedOption);
+
+	listenForChanges();
+	displayData();
 </script>
 
 <body class=" bg-gray-50 h-screen w-full">
@@ -139,6 +404,7 @@
 										<h1 class="text-left my-2 mx-5">
 											Student Name
 											<input
+												bind:value={studentName}
 												class="mt-2 border rounded-3xl px-2 py-1 focus:ring-0 text-sm block bg-white w-full h-7 border-slate-300 shadow-sm focus:outline-none"
 												placeholder="Full Name"
 												type="text"
@@ -147,6 +413,7 @@
 										<h1 class="text-left my-2 mx-5">
 											Birthdate
 											<input
+												bind:value={bday}
 												class="mt-2 border rounded-3xl px-2 py-1 focus:ring-0 text-sm block bg-white w-full h-7 border-slate-300 shadow-sm focus:outline-none"
 												placeholder="Birthdate"
 												type="date"
@@ -155,6 +422,7 @@
 										<h1 class="text-left my-2 mx-5">
 											Student ID
 											<input
+												bind:value={studentID}
 												class="mt-2 border rounded-3xl px-2 py-1 focus:ring-0 text-sm block bg-white w-full h-7 border-slate-300 shadow-sm focus:outline-none"
 												placeholder="Student ID"
 												type="number"
@@ -163,16 +431,47 @@
 										<h1 class="text-left my-2 mx-5">
 											Student RFID
 											<div class="flex flex-row items-center">
-												<input
-													type="checkbox"
-													class="toggle toggle-md mt-2 mr-2 checked:bg-green-500"
-													checked
-												/>
-												<input
-													class="mt-2 border rounded-3xl px-2 py-1 focus:ring-0 text-sm block bg-white w-full h-7 border-slate-300 shadow-sm focus:outline-none"
-													placeholder="RFID"
-													type="text"
-												/>
+												{#if rfidMode == 'On'}
+													<input
+														bind:this={modeSwitch}
+														on:change={toggleSwitch}
+														type="checkbox"
+														id="toggleMode"
+														name="toggleMode"
+														class="toggle checked:bg-[#2ea44f] ml-3"
+														checked
+													/>
+												{:else}
+													<input
+														bind:this={modeSwitch}
+														on:change={toggleSwitch}
+														type="checkbox"
+														id="toggleMode"
+														name="toggleMode"
+														class="toggle checked:bg-[#2ea44f] ml-3"
+													/>
+												{/if}
+
+												{#if rfidMode == 'On'}
+													<input
+														bind:value={studentRFID}
+														type="text"
+														name="rfidStudent"
+														id="rfidStudent"
+														placeholder={myVariable}
+														class="ml-3 w-full px-3 py-2 placeholder-gray-700 border border-gray-300 rounded-2xl focus:outline-none"
+														disabled
+													/>
+												{:else}
+													<input
+														bind:value={studentRFID}
+														type="text"
+														name="rfidStudent"
+														id="rfidStudent"
+														placeholder="Student RFID"
+														class="ml-3 w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-2xl focus:outline-none"
+													/>
+												{/if}
 											</div>
 										</h1>
 
@@ -180,15 +479,19 @@
 											Select Class:
 
 											<select
+												bind:value={classSelect1}
 												class="select select-sm select-bordered focus:border-none border-gray-200 w-full h-5 rounded-3xl shadow-sm mt-2"
 											>
-												<option disabled selected hidden class="rounded-3xl">Select Class</option>
-												<option class="rounded-3xl" />
+												{#each subjectArray as item1 (item1.id)}
+													<option disabled selected hidden class="rounded-3xl">Select Class</option>
+													<option class="rounded-3xl" value={item1.id}>{item1.id}</option>
+												{/each}
 											</select>
 										</h1>
 
 										<div class="justify-end flex mt-5 mb-3">
 											<button
+												on:click={createStudent}
 												id="saveButton"
 												class="py-2 text-sm font-medium bg-green-500 hover:bg-green-600 text-white px-6 ml-1 rounded-3xl transform transition-transform focus:scale-100 active:scale-95"
 											>
@@ -206,23 +509,28 @@
 											Import
 											<input
 												type="file"
+												id="csvUpload"
 												class="file-input file-input-bordered file-input-xs w-full mt-2"
+												accept=".csv"
 											/>
 										</h1>
 										<h1 class="text-left mt-3 mb-2 mx-5">
 											Select Class:
-
 											<select
+												bind:value={classSelect2}
 												class="select select-sm select-bordered focus:border-none border-gray-200 w-full h-5 rounded-3xl shadow-sm mt-2"
 											>
-												<option disabled selected hidden class="rounded-3xl">Select Class</option>
-												<option class="rounded-3xl" />
+												{#each subjectArray as item1 (item1.id)}
+													<option disabled selected hidden class="rounded-3xl">Select Class</option>
+													<option class="rounded-3xl" value={item1.id}>{item1.id}</option>
+												{/each}
 											</select>
 										</h1>
 
 										<div class="justify-end flex mt-5 mb-3">
 											<button
-												id="saveButton"
+												on:click={handleCSVUpload}
+												id="uploadButton"
 												class="py-2 text-sm font-medium bg-green-500 hover:bg-green-600 text-white px-6 ml-1 rounded-3xl transform transition-transform focus:scale-100 active:scale-95"
 											>
 												Import</button
@@ -343,11 +651,13 @@
 						<h1 class="pt-2 pl-1 mt-1 font-medium text-md text-gray-700">Student List</h1>
 					</div>
 					<select
+						id="sortSelect"
+						on:change={handleSortChange}
 						class="mt-2 border-gray-200 w-56 h-6 font-medium text-sm text-center mr-6 border border-gray focus:none rounded-3xl shadow-sm"
 					>
 						<option disabled selected hidden class="rounded-3xl">Sort by</option>
-						<option class="rounded-xl">Class</option>
-						<option class="rounded-xl">Recently Added</option>
+						<option class="rounded-xl" selected>Alphabetical</option>
+						<option class="rounded-xl" >Class</option>
 					</select>
 				</div>
 			</div>
@@ -366,18 +676,15 @@
 						</tr>
 					</thead>
 					<tbody>
-						{#each students as item1 (item1.id)}
+						{#each sortedStudents as item1 (item1.id)}
 							<tr
 								class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
 							>
-								<td class="px-6 py-2">6 - Rambutan</td>
-								<td class="text-center"
-									><!--FOR MODAL--><label for="StudentInformation" class="cursor-pointer"
-										>{item1.data.Name}</label
-									>
+								<td class="px-6 py-2">{item1.data.class}</td>
+								<td class="text-center">
+									<label for="StudentInformation" class="cursor-pointer">{item1.data.Name}</label>
 								</td>
-
-								<td class="px-6 py-2">01/01/2001</td>
+								<td class="px-6 py-2">{item1.data.studentID}</td>
 								<td class="px-6 py-2">{item1.data.studentID}</td>
 								<td class="px-6 py-2">{item1.data.studentRFID}</td>
 							</tr>
@@ -484,4 +791,5 @@
 			</div>
 		</div>
 	</div>
+	<Toaster />
 </body>

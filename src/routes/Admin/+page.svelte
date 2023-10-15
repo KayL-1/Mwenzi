@@ -33,7 +33,7 @@
 						userId.set(userID);
 						userUID = localStorage.getItem('userId');
 						toast.success('Log In Successful');
-						window.location.replace('../Admin-Dashboard');
+						window.location.replace('../NewAdmin-Dashboard');
 					} else {
 						console.log('User is not an admin');
 						toast.error('User is not an admin');

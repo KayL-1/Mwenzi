@@ -1,3 +1,192 @@
+<script>
+	import { auth, database } from '$lib/firebase';
+	import {
+		doc,
+		setDoc,
+		query,
+		where,
+		getDocs,
+		collection,
+		getDoc,
+		onSnapshot,
+		updateDoc,
+		addDoc,
+		deleteDoc
+	} from 'firebase/firestore';
+	import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
+	import { goto } from '$app/navigation';
+	import { firebase, firestore, functions } from '$lib/firebase';
+	import { getDatabase, ref, onValue, get, child } from 'firebase/database';
+	import { userId } from '../../lib/userStorage';
+	import { onMount } from 'svelte';
+
+	let userUID = '';
+	let currentDatee;
+	let selecTSub;
+	let subjects = [];
+	let recitation = [];
+
+	let dateArray = {};
+	let dateArrayAsArray = [];
+	function getDate() {
+		fetch('http://worldtimeapi.org/api/timezone/Asia/Manila')
+			.then((response) => response.json())
+			.then((data) => {
+				// Extract the date components
+				var currentDate = new Date(data.datetime);
+				var year = currentDate.getFullYear();
+				var month = currentDate.getMonth() + 1;
+				var day = currentDate.getDate();
+
+				// Format the date as desired (e.g., YYYY-MM-DD)
+				currentDatee =
+					year + '-' + month.toString().padStart(2, '0') + '-' + day.toString().padStart(2, '0');
+
+				console.log(currentDatee); // Output: 2023-05-26
+			})
+			.catch((error) => {
+				console.log('Error:', error);
+			});
+	}
+
+	async function classCheck() {
+		const subjectRef = collection(firestore, 'Subject');
+		const queryRef = query(subjectRef, where('students', 'array-contains', userUID));
+
+		const querySnapshot = await getDocs(queryRef);
+
+		subjects = querySnapshot.docs.map((doc) => doc.id);
+	}
+	let presentCount = 0;
+	let absentCount = 0;
+	async function attendanceCheck() {
+		const attendanceCollectionRef = collection(firestore, 'Subject', `${selecTSub}`, 'Attendance');
+
+		// Use the getDocs function to retrieve all documents in the subcollection
+		const querySnapshot = await getDocs(attendanceCollectionRef);
+
+		querySnapshot.forEach((doc) => {
+			// Access the document data using doc.data()
+			const documentData = doc.data();
+
+			// Check if the document has the specific row
+			if (documentData[userUID]) {
+				dateArray[doc.id] = documentData[userUID];
+			}
+		});
+
+		dateArrayAsArray = Object.keys(dateArray).map((date) => ({
+			date,
+			...dateArray[date]
+		}));
+
+		dateArrayAsArray.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+		for (const item of dateArrayAsArray) {
+			if (item.status === 'Present') {
+				presentCount++;
+			} else if (item.status === 'Absent') {
+				absentCount++;
+			}
+		}
+
+		document.getElementById('presentCount').textContent = presentCount.toString();
+		document.getElementById('absentCount').textContent = absentCount.toString();
+
+		console.log('Present Count:', presentCount);
+		console.log('Absent Count:', absentCount);
+	}
+
+	async function recitationCheck() {
+		const attendanceCollectionReflll = collection(
+			firestore,
+			'Subject',
+			`${selecTSub}`,
+			'Recitation'
+		);
+		return onSnapshot(attendanceCollectionReflll, (snapshot) => {
+			recitation = [];
+			// Clear the recitation array before populating it again
+			snapshot.forEach((doc) => {
+				const documentData = doc.data();
+				const documentName = doc.id;
+				const totalPoints = documentData.totalPoints;
+
+				const documentInfo = {
+					id: documentName,
+					totalPoints: totalPoints
+				};
+
+				recitation.push(documentInfo);
+			});
+
+			recitation.sort((a, b) => b.totalPoints - a.totalPoints);
+
+			recitation.forEach((item, index) => {
+				item.ranking = index + 1;
+			});
+
+			console.log('Updated recitation array with ranking:', recitation);
+			console.log('recitation array:', recitation);
+			fetchNamesTwo();
+		});
+	}
+
+	async function fetchNamesTwo() {
+		const refer = collection(firestore, 'users');
+		const ids = recitation.map((item) => item.id); // Extract all IDs from the recitation array
+
+		// Query the Firestore documents by IDs
+		const snapshot = await getDocs(refer, where('studentRFID', 'in', ids));
+
+		snapshot.forEach((doc) => {
+			const id = doc.data().studentRFID;
+			const name = doc.data().Name;
+
+			// Find the item in the recitation array with the matching ID
+			const item = recitation.find((el) => el.id === id);
+
+			if (item) {
+				// Update the name property for the matching item
+				item.name = name;
+			}
+		});
+		recitation = recitation;
+	}
+
+	async function change() {
+		console.log(selecTSub);
+		attendanceCheck();
+		recitationCheck();
+	}
+
+	async function getuserName(id) {
+		const queryRef1 = collection(firestore, 'users');
+		const queryRef2 = query(queryRef1, where('studentRFID', '==', id));
+		const querySnapshot = await getDocs(queryRef2);
+		if (querySnapshot.docs.length > 0) {
+			const doc = querySnapshot.docs[0];
+			document.getElementById('userName').textContent = doc.data().Name;
+		} else {
+			return 'Student not found';
+		}
+	}
+
+	getDate();
+
+	onMount(() => {
+		const unsubscribe = userId.subscribe((value) => {
+			userUID = localStorage.getItem('userId');
+			console.log(userUID);
+			classCheck();
+			getuserName(userUID);
+			return () => {
+				unsubscribe();
+			};
+		});
+	});
+</script>
+
 <body class=" bg-gray-50 h-screen">
 	<header class="text-gray-600 body-font">
 		<!-- svelte-ignore a11y-missing-attribute -->
@@ -11,15 +200,18 @@
 				class="flex order-first lg:order-none lg:w-1/5 title-font font-medium items-center text-gray-900 lg:items-center lg:justify-center mb-4 md:mb-0"
 			>
 				<select
+					bind:value={selecTSub}
+					on:change={change}
 					class="select select-bordered focus:border-none border-gray-200 w-full h-5 max-w-xs rounded-3xl shadow-sm"
 				>
 					<option disabled selected hidden class="rounded-3xl">Select Class</option>
-
-					<option class="rounded-xl" />
+					{#each subjects as subject (subject)}
+						<option class="rounded-xl" value={subject}>{subject}</option>
+					{/each}
 				</select></a
 			>
 			<div class="lg:w-2/5 inline-flex lg:justify-end ml-5 lg:ml-0 ou">
-				<p class="font-medium text-md mr-5 mt-1">Hi, Mwenzi Student</p>
+				<p class="font-medium text-md mr-5 mt-1" id="userName">Hi, Mwenzi Student</p>
 				<button class="dropdown dropdown-end">
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
@@ -58,9 +250,9 @@
 					>
 						<!-- svelte-ignore a11y-missing-attribute -->
 						<a class="font-medium text-sm p-2">Total Present: </a>
-						<a class="font-semibold text-sm text-green-500"> 39</a>
+						<a id="presentCount" class="font-semibold text-sm text-green-500">0</a>
 						<a class="font-medium text-sm p-2">Total Absent: </a>
-						<a class="font-semibold text-sm text-red-500"> 1</a>
+						<a id="absentCount" class="font-semibold text-sm text-red-500">0</a>
 					</div>
 				</div>
 				<!--END SUMMARY ATTENDANCE -->
@@ -162,30 +354,71 @@
 						class="text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 sticky top-0"
 					>
 						<tr>
-							<th scope="col" class="px-6 py-4 text-left">Student Name</th>
-							<th scope="col" class="px-6 py-4 text-center">RFID Tag</th>
+							<th scope="col" class="px-6 py-4 text-left">Date</th>
 							<th scope="col" class="px-6 py-4 text-center">Time</th>
 							<th scope="col" class="px-6 py-4 text-center">Status</th>
 							<th scope="col" class="px-6 py-4 text-right">Late</th>
 						</tr>
 					</thead>
 					<tbody>
-						<tr
-							class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-						>
-							<th scope="row" class="px-6 py-2 font-medium text-gray-900 dark:text-white text-left">
-								<span />
-							</th>
-							<td class="px-6 py-2 text-center"><p /></td>
-							<td class="px-6 py-2 text-center" />
-							<td class="py-1 px-6 text-center">
-								<span class="bg-green-500 text-white py-1 px-3 rounded-full text-xs">Present</span>
-							</td>
+						{#each dateArrayAsArray as date}
+							<tr
+								class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+							>
+								<th
+									scope="row"
+									class="px-6 py-2 font-medium text-gray-900 dark:text-white text-left"
+								>
+									{date.date}
+								</th>
+								<td class="px-6 py-2 text-center">{date.time}</td>
+								<td class="py-1 px-6 text-center">
+									{#if date.status == 'Present'}
+										<td class="py-1 px-6 text-center">
+											<span class="bg-green-500 text-white py-1 px-3 rounded-full text-xs"
+												>Present</span
+											>
+										</td>
+									{:else if date.status == 'Late'}
+										<td class="py-1 px-6 text-center">
+											<span class="bg-orange-500 text-white py-1 px-3 rounded-full text-xs"
+												>Late</span
+											>
+										</td>
+									{:else}
+										<td class="py-1 px-6 text-center">
+											<span class="bg-red-500 text-white py-1 px-3 rounded-full text-xs"
+												>Absent</span
+											>
+										</td>
+									{/if}
+								</td><td class="px-6 py-2">
+									{#if date.status === 'Present'}
+										<input
+											type="checkbox"
+											class="toggle toggle-success h-6 pt-2"
+											checked
+											style="pointer-events: none;"
+										/>
+									{:else}
+										<input
+											type="checkbox"
+											class="toggle toggle-success h-6 pt-2"
+											style="pointer-events: none;"
+										/>
+									{/if}
+								</td>
 
-							<td class="px-6 py-2 text-right">
-								<input type="checkbox" class="checkbox checkbox-warning" />
-							</td>
-						</tr>
+								<td class="px-6 py-2 text-right">
+									<input
+										type="checkbox"
+										checked={date.late === 'True' ? true : false}
+										class="checkbox checkbox-warning"
+										style="pointer-events: none;"
+									/>
+								</td>
+							</tr>
+						{/each}
 					</tbody>
 				</table>
 			</div>
@@ -214,18 +447,24 @@
 							<th scope="col" class="px-6 py-4 text-left"> Rank </th>
 							<th scope="col" class="px-6 py-4 text-left"> Name </th>
 							<th scope="col" class="px-6 py-4 text-left"> Points </th>
-					
 						</tr>
 					</thead>
 					<tbody>
-						<!-- Table row for each recitation item -->
-						<tr class="border-b bg-white">
-							<!-- Display the data for each recitation item -->
-							<td class="text-sm text-gray-500 font-medium px-6 py-4 whitespace-nowrap" />
-							<td class="text-md text-gray-900 font-medium px-6 py-3 whitespace-nowrap" />
-							<td class="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap" />
-						
-						</tr>
+						{#each recitation as data}
+							<!-- Table row for each recitation item -->
+							<tr class="border-b bg-white">
+								<!-- Display the data for each recitation item -->
+								<td class="text-sm text-gray-500 font-medium px-6 py-4 whitespace-nowrap">
+									{data.ranking}
+								</td>
+								<td class="text-md text-gray-900 font-medium px-6 py-3 whitespace-nowrap">
+									{data.name}
+								</td>
+								<td class="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
+									{data.totalPoints}
+								</td>
+							</tr>
+						{/each}
 					</tbody>
 				</table>
 			</div>
@@ -233,165 +472,168 @@
 
 		<!--NOTES AND MATERIAL -->
 		<div class="flex-row w-2/5">
-		<!--NOTES-->
-		<div class="h-2/4 pb-2">
-		<div class="w-full bg-white bg-opacity-75 rounded-3xl text-center shadow-lg h-full">
-			<div class="flex flex-row justify-between ">
-			<div class="flex flex-row pt-2">	
-				<img src="todo.png" class="h-7 pl-6 mt-2" alt="..." />
-				<h1 class="pl-1 pt-2 font-medium text-md text-gray-700">Notes</h1>
-			</div>
-			<!--NOTE ARCHIVES -->
-			<label for="NotesArchives" class="mr-8 mt-3 rounded-3xl cursor-pointer">
-				<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="26"
-					><g id="SVGRepo_bgCarrier" stroke-width="0" /><g
-						id="SVGRepo_tracerCarrier"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-					/><g id="SVGRepo_iconCarrier"
-						><path
-							d="M8.707 6.707a1 1 0 0 0-1.414-1.414L4 8.586 2.707 7.293a1 1 0 0 0-1.414 1.414l2 2a1 1 0 0 0 1.414 0l4-4ZM12 7a1 1 0 1 0 0 2h10a1 1 0 1 0 0-2H12ZM8.707 13.293a1 1 0 0 1 0 1.414l-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 1 1 1.414-1.414L4 16.586l3.293-3.293a1 1 0 0 1 1.414 0ZM12 15a1 1 0 1 0 0 2h10a1 1 0 1 0 0-2H12Z"
-							fill="#currentColor"
-							class="fill-current text-gray-600 hover:text-blue-500"
-						/></g
-					></svg
-				>
-			</label>
-			</div>
-			<input type="checkbox" id="NotesArchives" class="modal-toggle" />
-			<div class="modal">
-				<div class="modal-box relative h-4/6 max-w-3xl text-left">
-					<label for="NotesArchives" class="btn btn-sm btn-circle absolute right-2 top-2">✕</label
-					>
-					<h3 class="text-xl font-bold text-center">Note Archives</h3>
-
-					<div class="mx-auto w-4/5 mt-5">
-						<!--NOTES DAY-->
-						<div class="divider mb-0" />
-						<h1 class="text-left font-medium">2023-10-02</h1>
-						<div class="divider my-0" />
-						<!--NOTES ONLY-->
-						<div class="flex flex-row">
-							<img src="done.png" class="h-7" alt="..." />
-							<h1 class="text-left my-1 ml-5">Study Lesson 1</h1>
+			<!--NOTES-->
+			<div class="h-2/4 pb-2">
+				<div class="w-full bg-white bg-opacity-75 rounded-3xl text-center shadow-lg h-full">
+					<div class="flex flex-row justify-between">
+						<div class="flex flex-row pt-2">
+							<img src="todo.png" class="h-7 pl-6 mt-2" alt="..." />
+							<h1 class="pl-1 pt-2 font-medium text-md text-gray-700">Notes</h1>
 						</div>
-						<!--END NOTES ONLY-->
+						<!--NOTE ARCHIVES -->
+						<label for="NotesArchives" class="mr-8 mt-3 rounded-3xl cursor-pointer">
+							<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="26"
+								><g id="SVGRepo_bgCarrier" stroke-width="0" /><g
+									id="SVGRepo_tracerCarrier"
+									stroke-linecap="round"
+									stroke-linejoin="round"
+								/><g id="SVGRepo_iconCarrier"
+									><path
+										d="M8.707 6.707a1 1 0 0 0-1.414-1.414L4 8.586 2.707 7.293a1 1 0 0 0-1.414 1.414l2 2a1 1 0 0 0 1.414 0l4-4ZM12 7a1 1 0 1 0 0 2h10a1 1 0 1 0 0-2H12ZM8.707 13.293a1 1 0 0 1 0 1.414l-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 1 1 1.414-1.414L4 16.586l3.293-3.293a1 1 0 0 1 1.414 0ZM12 15a1 1 0 1 0 0 2h10a1 1 0 1 0 0-2H12Z"
+										fill="#currentColor"
+										class="fill-current text-gray-600 hover:text-blue-500"
+									/></g
+								></svg
+							>
+						</label>
+					</div>
+					<input type="checkbox" id="NotesArchives" class="modal-toggle" />
+					<div class="modal">
+						<div class="modal-box relative h-4/6 max-w-3xl text-left">
+							<label for="NotesArchives" class="btn btn-sm btn-circle absolute right-2 top-2"
+								>✕</label
+							>
+							<h3 class="text-xl font-bold text-center">Note Archives</h3>
 
-						<!--NOTES ONLY-->
-						<div class="flex flex-row">
-							<img src="done.png" class="h-7" alt="..." />
-							<h1 class="text-left my-1 ml-5">Study Lesson 2 - From teacher</h1>
+							<div class="mx-auto w-4/5 mt-5">
+								<!--NOTES DAY-->
+								<div class="divider mb-0" />
+								<h1 class="text-left font-medium">2023-10-02</h1>
+								<div class="divider my-0" />
+								<!--NOTES ONLY-->
+								<div class="flex flex-row">
+									<img src="done.png" class="h-7" alt="..." />
+									<h1 class="text-left my-1 ml-5">Study Lesson 1</h1>
+								</div>
+								<!--END NOTES ONLY-->
+
+								<!--NOTES ONLY-->
+								<div class="flex flex-row">
+									<img src="done.png" class="h-7" alt="..." />
+									<h1 class="text-left my-1 ml-5">Study Lesson 2 - From teacher</h1>
+								</div>
+								<!--END NOTES ONLY-->
+
+								<!--END NOTES DAY-->
+							</div>
 						</div>
-						<!--END NOTES ONLY-->
+					</div>
 
-						<!--END NOTES DAY-->
+					<div class="flex flex-row items-center mt-2 justify-center">
+						<input
+							class="pl-4 border border-r-0 rounded-l-3xl focus:ring-0 text-sm block bg-white w-64 h-7 border-slate-300 shadow-sm focus:outline-none"
+							placeholder="Add Notes"
+							type="text"
+							name="search"
+						/>
+						<button
+							class="add-button w-12 h-7 border border-slate-300 rounded-r-3xl bg-blue-500 hover:bg-blue-700 border-none transform transition-transform focus:scale-100 active:scale-95"
+						>
+							<svg
+								width="20px"
+								height="20px"
+								viewBox="0 0 20 20"
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								class="ml-3"
+								><g id="SVGRepo_bgCarrier" stroke-width="0" /><g
+									id="SVGRepo_tracerCarrier"
+									stroke-linecap="round"
+									stroke-linejoin="round"
+								/><g id="SVGRepo_iconCarrier">
+									<path
+										fill="#f2f2f2"
+										fill-rule="evenodd"
+										d="M9 17a1 1 0 102 0v-6h6a1 1 0 100-2h-6V3a1 1 0 10-2 0v6H3a1 1 0 000 2h6v6z"
+									/>
+								</g></svg
+							>
+						</button>
+					</div>
+					<div class="divider mb-1" />
+
+					<!--TO DO LIST-->
+					<div class="h-80 overflow-auto">
+						<!--OVERFLOW-->
+						<div class="mt-2 flex flex-row justify-between w-full items-center px-7 border-b pb-1">
+							<h1 class="font-medium text-sm">· Study Lesson 1</h1>
+
+							<div class="flex items-center">
+								<!-- svelte-ignore a11y-label-has-associated-control -->
+								<label
+									class=" border-gray-200 w-36 h-6 mr-1 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
+									>Note from Teacher
+								</label>
+							</div>
+						</div>
+
+						<div class="mt-2 flex flex-row justify-between w-full items-center px-7 border-b pb-1">
+							<h1 class="font-medium text-sm">· Study Lesson 1</h1>
+
+							<div class="flex items-center">
+								<!-- svelte-ignore a11y-label-has-associated-control -->
+								<button>
+									<img
+										src="done.png"
+										class="h-7 transform transition-transform focus:scale-100 active:scale-90"
+										alt="..."
+									/>
+								</button>
+								<button>
+									<img
+										src="delete.png"
+										class="h-7 transform transition-transform focus:scale-100 active:scale-90"
+										alt="..."
+									/>
+								</button>
+							</div>
+						</div>
+					</div>
+					<!--OVERFLOW-->
+				</div>
+			</div>
+			<!--END NOTES-->
+
+			<div class="w-full bg-white bg-opacity-75 rounded-3xl text-center shadow-lg h-1/2">
+				<div class="flex flex-row pt-4">
+					<img src="todo.png" class="h-7 pl-6" alt="..." />
+					<h1 class="pl-1 font-medium text-md text-gray-700">Learning Materials</h1>
+				</div>
+				<div class="px-5">
+					<div class="divider my-0" />
+					<div class="h-80 overflow-auto">
+						<h1 class="text-left my-1 ml-5 text-normal">
+							<span class="font-bold">Week 1 -</span> Day 1
+						</h1>
+
+						<div class="flex items-center">
+							<a
+								href="https://www.googledrive.com/lesson1/"
+								target="_blank"
+								rel="noopener noreferrer"
+								class="w-full"
+							>
+								<input
+									type="text"
+									placeholder="www.googledrive.com/lesson1/"
+									class="input input-bordered w-11/12 focus:border-none cursor-pointer"
+									readonly
+								/>
+							</a>
+						</div>
 					</div>
 				</div>
 			</div>
-	
-			<div class="flex flex-row items-center mt-2 justify-center">
-				<input
-					class="pl-4 border border-r-0 rounded-l-3xl focus:ring-0 text-sm block bg-white w-64 h-7 border-slate-300 shadow-sm focus:outline-none"
-					placeholder="Add Notes"
-					type="text"
-					name="search"
-				/>
-				<button
-					class="add-button w-12 h-7 border border-slate-300 rounded-r-3xl bg-blue-500 hover:bg-blue-700 border-none transform transition-transform focus:scale-100 active:scale-95"
-				>
-					<svg
-						width="20px"
-						height="20px"
-						viewBox="0 0 20 20"
-						xmlns="http://www.w3.org/2000/svg"
-						fill="none"
-						class="ml-3"
-						><g id="SVGRepo_bgCarrier" stroke-width="0" /><g
-							id="SVGRepo_tracerCarrier"
-							stroke-linecap="round"
-							stroke-linejoin="round"
-						/><g id="SVGRepo_iconCarrier">
-							<path
-								fill="#f2f2f2"
-								fill-rule="evenodd"
-								d="M9 17a1 1 0 102 0v-6h6a1 1 0 100-2h-6V3a1 1 0 10-2 0v6H3a1 1 0 000 2h6v6z"
-							/>
-						</g></svg
-					>
-				</button>
-			</div>
-			<div class="divider mb-1" />
-
-			<!--TO DO LIST-->
-			<div class="h-80 overflow-auto"> <!--OVERFLOW-->
-			<div class="mt-2 flex flex-row justify-between w-full items-center px-7 border-b pb-1">
-				<h1 class="font-medium text-sm">· Study Lesson 1</h1>
-
-				<div class="flex items-center">
-					<!-- svelte-ignore a11y-label-has-associated-control -->
-					<label
-						class=" border-gray-200 w-36 h-6 mr-1 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
-						>Note from Teacher
-					</label>
-				</div>
-			</div>
-			
-
-			<div class="mt-2 flex flex-row justify-between w-full items-center px-7 border-b pb-1">
-				<h1 class="font-medium text-sm">· Study Lesson 1</h1>
-
-				<div class="flex items-center">
-					<!-- svelte-ignore a11y-label-has-associated-control -->
-					<button>
-						<img
-							src="done.png"
-							class="h-7 transform transition-transform focus:scale-100 active:scale-90"
-							alt="..."
-						/>
-					</button>
-					<button>
-						<img
-							src="delete.png"
-							class="h-7 transform transition-transform focus:scale-100 active:scale-90"
-							alt="..."
-						/>
-					</button>
-				</div>
-			</div>
 		</div>
-		<!--OVERFLOW-->
-		</div>
-	</div>
-		<!--END NOTES-->
-		
-		<div class="w-full bg-white bg-opacity-75 rounded-3xl text-center shadow-lg h-1/2 ">
-			<div class="flex flex-row pt-4 ">	
-				<img src="todo.png" class="h-7 pl-6" alt="..." />
-				<h1 class="pl-1 font-medium text-md text-gray-700">Learning Materials</h1>
-			</div>
-			<div class="px-5">
-							<div class="divider my-0" />
-							<div class="h-80 overflow-auto">
-							<h1 class="text-left my-1 ml-5 text-normal"><span class="font-bold">Week 1 -</span> Day 1</h1>
-							
-							<div class="flex items-center ">
-								<a
-									href="https://www.googledrive.com/lesson1/"
-									target="_blank"
-									rel="noopener noreferrer"
-									class="w-full"
-								>
-									<input
-										type="text"
-										placeholder="www.googledrive.com/lesson1/"
-										class="input input-bordered w-11/12 focus:border-none cursor-pointer"
-										readonly
-									/>
-								</a>	
-							</div>
-						</div>
-						</div>
-		</div>
-	</div>
 	</div>
 </body>

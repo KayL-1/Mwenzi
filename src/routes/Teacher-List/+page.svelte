@@ -1,4 +1,27 @@
 <script>
+	import { auth, database } from '$lib/firebase';
+	import {
+		doc,
+		setDoc,
+		query,
+		where,
+		getDocs,
+		collection,
+		getDoc,
+		onSnapshot,
+		updateDoc,
+		addDoc,
+		deleteDoc,
+		arrayUnion
+	} from 'firebase/firestore';
+	import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
+	import { goto } from '$app/navigation';
+	import { firebase, firestore, functions } from '$lib/firebase';
+	import { getDatabase, ref, onValue, get, child, set } from 'firebase/database';
+	import { userId } from '../../lib/userStorage';
+	import { onMount } from 'svelte';
+	import toast, { Toaster } from 'svelte-french-toast';
+	import { each } from 'svelte/internal';
 	// Function to handle changes in the selected option
 	function handleSelectChange(event) {
 		const selectedOption = event.target.value;
@@ -13,6 +36,74 @@
 			window.location.href = selectedOption;
 		}
 	}
+
+	let teachers = [];
+
+	async function teacherCheck() {
+		const collectionRef = collection(firestore, 'users');
+		const filter = query(collectionRef, where('userRole', '==', 'teacher'));
+		const querySnapshot = await getDocs(filter);
+
+		teachers = querySnapshot.docs.map((doc) => ({
+			id: doc.id,
+			data: doc.data()
+		}));
+	}
+
+	async function getSubjectName(id) {
+		const collectionRef = collection(firestore, 'Subject');
+		const filter = query(collectionRef, where('teacherID', '==', id));
+		const querySnapshot = await getDocs(filter);
+		const dataSub = [];
+		const subjectName = querySnapshot.docs.map((doc) => ({
+			id: doc.id,
+			data: doc.data()
+		}));
+
+		subjectName.forEach((subject) => {
+			dataSub.push(subject.id);
+		});
+		const commaSeparatedString = dataSub.join(' , ');
+		return commaSeparatedString;
+	}
+
+	let teacherName;
+	let email;
+	let password;
+	let passwordCon;
+
+	async function createTeacher() {
+		if (
+			teacherName === null ||
+			teacherName === undefined ||
+			email === null ||
+			email === undefined ||
+			password === null ||
+			password === undefined ||
+			passwordCon === null ||
+			passwordCon === undefined
+		) {
+			// At least one of the variables is null
+			toast.error('At least one of the variables is null.');
+		} else {
+			if (password === passwordCon) {
+				const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+				const user = userCredential.user;
+				const userID = user.uid;
+
+				const docRef = await setDoc(doc(firestore, 'users', userID), {
+					UID: userID,
+					email: email,
+					userRole: 'teacher',
+					Name: teacherName
+				});
+			} else {
+				toast.error('Password does not match');
+			}
+		}
+	}
+
+	teacherCheck();
 </script>
 
 <body class=" bg-gray-50 h-screen w-full">
@@ -102,6 +193,7 @@
 										<h1 class="text-left my-2 mx-5">
 											Teacher Name
 											<input
+												bind:value={teacherName}
 												class="mt-2 border rounded-3xl px-2 py-1 focus:ring-0 text-sm block bg-white w-full h-7 border-slate-300 shadow-sm focus:outline-none"
 												placeholder="Full Name"
 												type="text"
@@ -110,6 +202,7 @@
 										<h1 class="text-left my-2 mx-5">
 											Email
 											<input
+												bind:value={email}
 												class="mt-2 border rounded-3xl px-2 py-1 focus:ring-0 text-sm block bg-white w-full h-7 border-slate-300 shadow-sm focus:outline-none"
 												placeholder="Email"
 												type="email"
@@ -118,14 +211,25 @@
 										<h1 class="text-left my-2 mx-5">
 											Password
 											<input
+												bind:value={password}
 												class="mt-2 border rounded-3xl px-2 py-1 focus:ring-0 text-sm block bg-white w-full h-7 border-slate-300 shadow-sm focus:outline-none"
 												placeholder="Password"
-												type="text"
+												type="password"
+											/>
+										</h1>
+										<h1 class="text-left my-2 mx-5">
+											Confirm Password
+											<input
+												bind:value={passwordCon}
+												class="mt-2 border rounded-3xl px-2 py-1 focus:ring-0 text-sm block bg-white w-full h-7 border-slate-300 shadow-sm focus:outline-none"
+												placeholder="Password"
+												type="password"
 											/>
 										</h1>
 
 										<div class="justify-end flex mt-5 mb-3">
 											<button
+												on:click={createTeacher}
 												id="saveButton"
 												class="py-2 text-sm font-medium bg-green-500 hover:bg-green-600 text-white px-6 ml-1 rounded-3xl transform transition-transform focus:scale-100 active:scale-95"
 											>
@@ -243,8 +347,8 @@
 			<div class="flex flex-row justify-between mt-2">
 				<div class="flex flex-row justify-between w-full">
 					<div class="flex flex-row">
-					<img src="teacher.png" class="h-8 pl-6 mt-2" alt="..." />
-					<h1 class="pt-2 pl-1 mt-1 font-medium text-md text-gray-700">Teacher List</h1>
+						<img src="teacher.png" class="h-8 pl-6 mt-2" alt="..." />
+						<h1 class="pt-2 pl-1 mt-1 font-medium text-md text-gray-700">Teacher List</h1>
 					</div>
 					<select
 						class="mt-2 border-gray-200 w-56 h-6 font-medium text-sm text-center mr-6 border border-gray focus:none rounded-3xl shadow-sm"
@@ -265,28 +369,27 @@
 						<tr>
 							<th scope="col" class="px-6 py-4 text-center">Teacher Name</th>
 							<th scope="col" class="px-6 py-4 text-center">Email</th>
-							<th scope="col" class="px-6 py-4 text-center">Password</th>
 							<th scope="col" class="px-6 py-4 text-center">Subject Class</th>
 						</tr>
 					</thead>
 					<tbody>
-						<tr
-							class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-						>
-							<td class="text-center"
-								><!--FOR MODAL--><label for="StudentInformation" class="cursor-pointer"
-									>Ruffa May Monis</label
-								>
-							</td>
+						{#each teachers as item1 (item1.id)}
+							<tr
+								class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+							>
+								<td class="text-center"
+									><!--FOR MODAL--><label for="StudentInformation" class="cursor-pointer"
+										>{item1.data.Name}</label
+									>
+								</td>
 
-							<td class="px-6 py-2"> ruffamaymonis@gmail.com</td>
-							<td class="px-6 py-2">54231</td>
-							<td class="px-6 py-2"
-								>Guyabano - Research
-								<br />Rambutan - SYSAD
-								<br />Rambutan - IAS
-							</td>
-						</tr>
+								<td class="px-6 py-2">{item1.data.email}</td>
+
+								{#await getSubjectName(item1.id) then subjectName}
+									<td class="px-6 py-2">{subjectName}</td>
+								{/await}
+							</tr>
+						{/each}
 
 						<!--MEDIC MODAL-->
 						<input type="checkbox" id="StudentInformation" class="modal-toggle" />
@@ -361,4 +464,5 @@
 			</div>
 		</div>
 	</div>
+	<Toaster />
 </body>

@@ -1,3 +1,5 @@
+
+
 <body class="bg-gray-100 w-auto h-auto">
 	<!--HEADER-->
 	<header
@@ -44,7 +46,8 @@
 						>Coloong Elementary School</a
 					>, that integrates
 					<!-- svelte-ignore a11y-missing-attribute -->
-					<a class="font-bold"> RFID </a> for attendance tracking, group creation, and recitation points feature.
+					<a class="font-bold"> RFID </a> for attendance tracking, group creation, and recitation points
+					feature.
 				</p>
 				<div class="flex justify-left">
 					<a href="/Login">

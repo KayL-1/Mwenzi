@@ -492,7 +492,7 @@
 			const groupNumberCell = document.createElement('th');
 			groupNumberCell.classList.add('text-center', 'border-b', 'py-2');
 			groupNumberCell.setAttribute('scope', 'row');
-			groupNumberCell.textContent = index + 2;
+			groupNumberCell.textContent = index + 1;
 
 			// Create a table cell for the group members
 			const groupMembersCell = document.createElement('td');
@@ -626,11 +626,23 @@
 		fetchAndDisplayNotes();
 	}
 
+	async function getuserName(id) {
+		const queryRef1 = collection(firestore, 'users');
+		const queryRef2 = query(queryRef1, where('UID', '==', id));
+		const querySnapshot = await getDocs(queryRef2);
+		if (querySnapshot.docs.length > 0) {
+			const doc = querySnapshot.docs[0];
+			console.log(doc.data().Name);
+			document.getElementById('userName').textContent = doc.data().Name;
+		} else {
+			return 'Teacher not found';
+		}
+	}
 	onMount(() => {
 		const unsubscribe = userId.subscribe((value) => {
 			// Use the value of userId here
 			userUID = localStorage.getItem('userId');
-			// You can perform any other actions with the user ID
+			getuserName(userUID);
 			classCheck();
 			attendanceCheck();
 			return () => {
@@ -665,7 +677,7 @@
 				</select>
 			</a>
 			<div class="lg:w-2/5 inline-flex lg:justify-end ml-5 lg:ml-0 ou">
-				<p class="font-medium text-md mr-5 mt-1">Hi, Teacher Monis</p>
+				<p class="font-medium text-md mr-5 mt-1" id="userName" />
 				<button class="dropdown dropdown-end">
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
