@@ -374,6 +374,55 @@
 		updateRandomizerName('List of called students has been reset');
 	}
 
+	var isEditing = false;
+
+	function toggleEditButton() {
+		isEditing = !isEditing; // Toggle the editing state
+		var saveButton = document.getElementById('saveButton1'); // You need to define 'saveButton' if it's used elsewhere.
+
+		// Loop through the selected elements and enable/disable them based on the editing state
+		var elementsToEnable = [
+			'day1select',
+			'day1input',
+			'day1checkbox',
+			'day2select',
+			'day2input',
+			'day2checkbox',
+			'day3select',
+			'day3input',
+			'day3checkbox',
+			'day4select',
+			'day4input',
+			'day4checkbox',
+			'day5select',
+			'day5input',
+			'day5checkbox'
+			// Add IDs for other days here as needed
+		];
+
+		for (var i = 0; i < elementsToEnable.length; i++) {
+			var element = document.getElementById(elementsToEnable[i]);
+			if (element) {
+				if (isEditing) {
+					element.removeAttribute('disabled');
+				} else {
+					element.setAttribute('disabled', 'disabled');
+				}
+			}
+		}
+
+		// Add or remove the "pointer-events-none" class based on the editing state
+		if (!isEditing) {
+			saveButton.classList.add('pointer-events-none');
+		} else {
+			saveButton.classList.remove('pointer-events-none');
+		}
+
+		// Update the button text based on the editing state
+		var editButton = document.getElementById('editButton');
+		editButton.textContent = isEditing ? 'Done' : 'Edit';
+	}
+
 	function updateRandomizerName(name) {
 		const randomizerNameElement = document.getElementById('randomizerName');
 		if (randomizerNameElement) {
@@ -638,62 +687,70 @@
 			return 'Teacher not found';
 		}
 	}
-	let week1xx;
-	let day1x;
-	let day2x;
-	let day3x;
-	let day4x;
-	let day5x;
+	let day1x = '';
+	let day2x = '';
+	let day3x = '';
+	let day4x = '';
+	let day5x = '';
+
+	let day1status = '';
+	let day2status = '';
+	let day3status = '';
+	let day4status = '';
+	let day5status = '';
+
+	let day1status2 = '';
+	let day2status2 = '';
+	let day3status2 = '';
+	let day4status2 = '';
+	let day5status2 = '';
 
 	async function createWeeklyLesson() {
-		const collectionRef = collection(firestore, 'Subject', `${selecTSub}`, 'Lessons');
+		console.log('test');
+		const collectionRef = collection(firestore, 'Subject', selecTSub, 'Lessons');
 		const week1DocRef = doc(collectionRef, 'week1'); // Create a document reference with 'week1' as the ID
 		const data1 = {
 			day1: {
 				Link: day1x,
 				Status: day1status,
+				Share: day1status2
 			}
 		};
 
 		const data2 = {
 			day1: {
 				Link: day2x,
-				Status: day1status,
+				Status: day2status,
+				Share: day2status2
 			}
 		};
-
 
 		const data3 = {
 			day3: {
 				Link: day3x,
-				Status: day1status,
+				Status: day3status,
+				Share: day3status2
 			}
 		};
-
 
 		const data4 = {
 			day4: {
 				Link: day4x,
-				Status: day1status,
+				Status: day4status,
+				Share: day4status2
 			}
 		};
-
 
 		const data5 = {
 			day5: {
 				Link: day5x,
-				Status: day1status,
+				Status: day5status,
+				Share: day5status2
 			}
 		};
 
-
-
 		try {
-			await setDoc(week1DocRef, data1);
-			await setDoc(week1DocRef, data2);
-			await setDoc(week1DocRef, data3);
-			await setDoc(week1DocRef, data4);
-			await setDoc(week1DocRef, data5);
+			await setDoc(week1DocRef, data1, data2, data3, data4, data5);
 			console.log('Document written with ID: week1');
 		} catch (error) {
 			console.error('Error writing document: ', error);
@@ -1098,10 +1155,10 @@
 										>
 										<button
 											id="saveButton"
-											class="text-sm font-medium bg-green-500 hover:bg-green-600 text-white py-2 px-6 ml-1 rounded-3xl transform transition-transform focus:scale-100 active:scale-95"
+											class="text-sm font-medium bg-green-500 hover:bg-green-600 text-white px-6 ml-1 py-1 rounded-3xl pointer-events-none"
 										>
-											Save</button
-										>
+											Save
+										</button>
 									</div>
 								</div>
 							</div>
@@ -1454,17 +1511,19 @@
 					>
 						<div class="justify-end flex">
 							<button
+								on:click={toggleEditButton}
 								id="editButton"
 								class="text-sm font-medium bg-blue-500 hover:bg-blue-600 text-white px-6 ml-1 py-1 rounded-3xl"
 							>
 								Edit</button
 							>
 							<button
-								id="saveButton"
-								class="text-sm font-medium bg-green-500 hover:bg-green-600 text-white px-6 ml-1 py-1 rounded-3xl"
+								on:click={createWeeklyLesson}
+								id="saveButton1"
+								class="text-sm font-medium bg-green-500 hover:bg-green-600 text-white px-6 ml-1 py-1 rounded-3xl pointer-events-none"
 							>
-								Save</button
-							>
+								Save
+							</button>
 						</div>
 
 						<div class="mx-auto w-4/5 mt-5">
@@ -1472,130 +1531,156 @@
 							<!--WEEK-->
 							<h1 class="text-left font-medium mt-3">Week 1</h1>
 							<div class="divider my-0" />
+
 							<h1 class="text-left my-1 ml-5 text-normal">Day 1</h1>
 							<div class="flex items-center mt-1 pl-4">
 								<select
-									class=" border-gray-200 w-32 pl-1 h-8 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
+									id="day1select"
+									class="border-gray-200 w-32 pl-1 h-8 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
+									disabled="disabled"
+									bind:value={day1status2}
 								>
 									<option disabled selected hidden class="rounded-3xl">Share</option>
-									<option class="rounded-xl">Only Me</option>
-									<option class="rounded-xl">Subject Class</option>
+									<option class="rounded-xl" value="Only Me">Only Me</option>
+									<option class="rounded-xl" value="Subject Class">Subject Class</option>
 								</select>
-								<a
-									href="https://www.googledrive.com/lesson1/"
-									target="_blank"
-									rel="noopener noreferrer"
-									class="w-full"
-								>
-									<input
-										type="text"
-										placeholder="www.googledrive.com/lesson1/"
-										class="input input-bordered line-through w-11/12 focus:border-none cursor-pointer"
-										readonly
-									/>
-								</a>
-								<input type="checkbox" class="checkbox h-8 w-8" />
+								<input
+									id="day1input"
+									bind:value={day1x}
+									type="text"
+									placeholder="www.googledrive.com/lesson1/"
+									class="input input-bordered w-11/12 focus:border-none cursor-pointer"
+									disabled="disabled"
+								/>
+								<input
+									id="day1checkbox"
+									bind:value={day1status}
+									type="checkbox"
+									class="checkbox h-8 w-8"
+									on:change={() => {
+										day1status = day1status === 'finish' ? '' : 'finish';
+									}}
+								/>
 							</div>
 
 							<h1 class="text-left my-1 ml-5 text-normal">Day 2</h1>
 							<div class="flex items-center mt-1 pl-4">
 								<select
-									class=" border-gray-200 w-32 pl-1 h-8 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
+									id="day2select"
+									class="border-gray-200 w-32 pl-1 h-8 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
+									disabled="disabled"
+									bind:value={day2status2}
 								>
 									<option disabled selected hidden class="rounded-3xl">Share</option>
-									<option class="rounded-xl">Only Me</option>
-									<option class="rounded-xl">Subject Class</option>
+									<option class="rounded-xl" value="Only Me">Only Me</option>
+									<option class="rounded-xl" value="Subject Class">Subject Class</option>
 								</select>
-								<a
-									href="https://www.googledrive.com/lesson1/"
-									target="_blank"
-									rel="noopener noreferrer"
-									class="w-full"
-								>
-									<input
-										type="text"
-										placeholder="www.googledrive.com/lesson1/"
-										class="input input-bordered line-through w-11/12 focus:border-none cursor-pointer"
-										readonly
-									/>
-								</a>
-								<input type="checkbox" class="checkbox h-8 w-8" />
+								<input
+									id="day2input"
+									bind:value={day2x}
+									type="text"
+									placeholder="www.googledrive.com/lesson1/"
+									class="input input-bordered w-11/12 focus:border-none cursor-pointer"
+									disabled="disabled"
+								/>
+								<input
+									id="day2checkbox"
+									bind:value={day2status}
+									type="checkbox"
+									class="checkbox h-8 w-8"
+									disabled="disabled"
+								/>
 							</div>
 
 							<h1 class="text-left my-1 ml-5 text-normal">Day 3</h1>
 							<div class="flex items-center mt-1 pl-4">
 								<select
-									class=" border-gray-200 w-32 pl-1 h-8 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
+									id="day3select"
+									class="border-gray-200 w-32 pl-1 h-8 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
+									disabled="disabled"
+									bind:value={day3status2}
 								>
 									<option disabled selected hidden class="rounded-3xl">Share</option>
-									<option class="rounded-xl">Only Me</option>
-									<option class="rounded-xl">Subject Class</option>
+									<option class="rounded-xl" value="Only Me">Only Me</option>
+									<option class="rounded-xl" value="Subject Class">Subject Class</option>
 								</select>
-								<a
-									href="https://www.googledrive.com/lesson1/"
-									target="_blank"
-									rel="noopener noreferrer"
-									class="w-full"
-								>
-									<input
-										type="text"
-										placeholder="www.googledrive.com/lesson1/"
-										class="input input-bordered line-through w-11/12 focus:border-none cursor-pointer"
-										readonly
-									/>
-								</a>
-								<input type="checkbox" class="checkbox h-8 w-8" />
+								<input
+									id="day3input"
+									bind:value={day3x}
+									type="text"
+									placeholder="www.googledrive.com/lesson1/"
+									class="input input-bordered w-11/12 focus.border-none cursor-pointer"
+									disabled="disabled"
+								/>
+								<input
+									id="day3checkbox"
+									bind:value={day3status}
+									type="checkbox"
+									class="checkbox h-8 w-8"
+									disabled="disabled"
+								/>
 							</div>
 
 							<h1 class="text-left my-1 ml-5 text-normal">Day 4</h1>
 							<div class="flex items-center mt-1 pl-4">
 								<select
-									class=" border-gray-200 w-32 pl-1 h-8 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
+									id="day4select"
+									class="border-gray-200 w-32 pl-1 h-8 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
+									disabled="disabled"
+									bind:value={day4status2}
 								>
 									<option disabled selected hidden class="rounded-3xl">Share</option>
-									<option class="rounded-xl">Only Me</option>
-									<option class="rounded-xl">Subject Class</option>
+									<option class="rounded-xl" value="Only Me">Only Me</option>
+									<option class="rounded-xl" value="Subject Class">Subject Class</option>
 								</select>
-								<a
-									href="https://www.googledrive.com/lesson1/"
-									target="_blank"
-									rel="noopener noreferrer"
-									class="w-full"
-								>
-									<input
-										type="text"
-										placeholder="www.googledrive.com/lesson1/"
-										class="input input-bordered line-through w-11/12 focus:border-none cursor-pointer"
-										readonly
-									/>
-								</a>
-								<input type="checkbox" class="checkbox h-8 w-8" />
+								<input
+									id="day4input"
+									bind:value={day4x}
+									type="text"
+									placeholder="www.googledrive.com/lesson1/"
+									class="input input-bordered w-11/12 focus:border-none cursor-pointer"
+									disabled="disabled"
+								/>
+								<input
+									id="day4checkbox"
+									bind:value={day4status}
+									type="checkbox"
+									class="checkbox h-8 w-8"
+									disabled="disabled"
+								/>
 							</div>
 
 							<h1 class="text-left my-1 ml-5 text-normal">Day 5</h1>
 							<div class="flex items-center mt-1 pl-4">
 								<select
-									class=" border-gray-200 w-32 pl-1 h-8 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
+									id="day5select"
+									class="border-gray-200 w-32 pl-1 h-8 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
+									disabled="disabled"
+									bind:value={day5status2}
 								>
 									<option disabled selected hidden class="rounded-3xl">Share</option>
-									<option class="rounded-xl">Only Me</option>
-									<option class="rounded-xl">Subject Class</option>
+									<option class="rounded-xl" value="Only Me">Only Me</option>
+									<option class="rounded-xl" value="Subject Class">Subject Class</option>
 								</select>
-								<a
-									href="https://www.googledrive.com/lesson1/"
-									target="_blank"
-									rel="noopener noreferrer"
-									class="w-full"
-								>
-									<input
-										type="text"
-										placeholder="www.googledrive.com/lesson1/"
-										class="input input-bordered line-through w-11/12 focus:border-none cursor-pointer"
-										readonly
-									/>
-								</a>
-								<input type="checkbox" class="checkbox h-8 w-8" />
+								<input
+									id="day5input"
+									bind:value={day5x}
+									type="text"
+									placeholder="www.googledrive.com/lesson1/"
+									class="input input-bordered w-11/12 focus.border-none cursor-pointer"
+									disabled="disabled"
+								/>
+								<input
+									id="day5checkbox"
+									bind:value={day5status}
+									type="checkbox"
+									class="checkbox h-8 w-8"
+									disabled="disabled"
+								/>
 							</div>
+
+							<!-- Repeat the same pattern for Day 3, Day 4, and Day 5 -->
+
 							<!--END WEEK-->
 						</div>
 					</div>
