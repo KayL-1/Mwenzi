@@ -405,16 +405,16 @@
 				</div>
 			</div>
 
-			<div class="relative overflow-y-auto shadow-sm rounded-xl mx-5 my-5 h-96 max-h-96">
+			<div class="relative overflow-y-auto shadow-sm rounded-xl mx-5 my-5 h-4/5 max-h-4/5">
 				<table class="w-full text-sm text-gray-500 dark:text-gray-400">
 					<thead
 						class="text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 sticky top-0"
 					>
 						<tr>
-							<th scope="col" class="px-6 py-4 text-left">Date</th>
+							<th scope="col" class="px-6 py-4 text-center">Date</th>
 							<th scope="col" class="px-6 py-4 text-center">Time</th>
 							<th scope="col" class="px-6 py-4 text-center">Status</th>
-							<th scope="col" class="px-6 py-4 text-right">Late</th>
+							<th scope="col" class="px-6 py-4 text-left">Late</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -424,49 +424,33 @@
 							>
 								<th
 									scope="row"
-									class="px-6 py-2 font-medium text-gray-900 dark:text-white text-left"
+									class="px-6 py-2 font-medium text-gray-900 dark:text-white text-center"
 								>
 									{date.date}
 								</th>
 								<td class="px-6 py-2 text-center">{date.time}</td>
-								<td class="py-1 px-6 text-center">
+								<td class="py-1 px-6 flex justify-center">
 									{#if date.status == 'Present'}
-										<td class="py-1 px-6 text-center">
+										<td class="py-1 px-6 flex justify-center">
 											<span class="bg-green-500 text-white py-1 px-3 rounded-full text-xs"
 												>Present</span
 											>
 										</td>
 									{:else if date.status == 'Late'}
-										<td class="py-1 px-6 text-center">
+										<td class="py-1 px-6 flex justify-center">
 											<span class="bg-orange-500 text-white py-1 px-3 rounded-full text-xs"
 												>Late</span
 											>
 										</td>
 									{:else}
-										<td class="py-1 px-6 text-center">
+										<td class="py-1 px-6 flex justify-center">
 											<span class="bg-red-500 text-white py-1 px-3 rounded-full text-xs"
 												>Absent</span
 											>
 										</td>
 									{/if}
-								</td><td class="px-6 py-2">
-									{#if date.status === 'Present'}
-										<input
-											type="checkbox"
-											class="toggle toggle-success h-6 pt-2"
-											checked
-											style="pointer-events: none;"
-										/>
-									{:else}
-										<input
-											type="checkbox"
-											class="toggle toggle-success h-6 pt-2"
-											style="pointer-events: none;"
-										/>
-									{/if}
 								</td>
-
-								<td class="px-6 py-2 text-right">
+								<td class="px-6 py-2 text-left">
 									<input
 										type="checkbox"
 										checked={date.late === 'True' ? true : false}
@@ -495,15 +479,15 @@
 				<option class="rounded-xl">Weekly</option>
 				<option class="rounded-xl">Monthly</option>
 			</select>
-			<div class="relative overflow-y-auto shadow-sm rounded-xl mx-5 my-4 max-h-80">
+			<div class="relative overflow-y-auto shadow-sm rounded-xl mx-5 my-4 max-h-4/5">
 				<table class="w-full text-sm text-gray-500 dark:text-gray-400">
 					<thead
 						class="text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 sticky top-0"
 					>
 						<tr>
-							<th scope="col" class="px-6 py-4 text-left"> Rank </th>
-							<th scope="col" class="px-6 py-4 text-left"> Name </th>
-							<th scope="col" class="px-6 py-4 text-left"> Points </th>
+							<th scope="col" class="px-6 py-4 text-center"> Rank </th>
+							<th scope="col" class="px-6 py-4 text-center"> Name </th>
+							<th scope="col" class="px-6 py-4 text-center"> Points </th>
 						</tr>
 					</thead>
 					<tbody>
@@ -514,10 +498,10 @@
 								<td class="text-sm text-gray-500 font-medium px-6 py-4 whitespace-nowrap">
 									{data.ranking}
 								</td>
-								<td class="text-md text-gray-900 font-medium px-6 py-3 whitespace-nowrap">
+								<td class="text-center text-md text-gray-900 font-medium px-6 py-3 whitespace-nowrap">
 									{data.name}
 								</td>
-								<td class="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
+								<td class="text-center text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
 									{data.totalPoints}
 								</td>
 							</tr>
@@ -562,26 +546,65 @@
 							>
 							<h3 class="text-xl font-bold text-center">Note Archives</h3>
 
-							<div class="mx-auto w-4/5 mt-5">
-								<!--NOTES DAY-->
-								<div class="divider mb-0" />
-								<h1 class="text-left font-medium">2023-10-02</h1>
-								<div class="divider my-0" />
-								<!--NOTES ONLY-->
-								<div class="flex flex-row">
-									<img src="done.png" class="h-7" alt="..." />
-									<h1 class="text-left my-1 ml-5">Study Lesson 1</h1>
-								</div>
-								<!--END NOTES ONLY-->
+							<div class="mx-auto w-full mt-5">
+								<table
+									class="w-full text-sm text-gray-500 dark:text-gray-400 table-fixed overflow-x-auto"
+								>
+									<thead
+										class="text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 sticky top-0"
+									>
+										<tr>
+											<th scope="col" class="pl-6 py-4 text-left">Date </th>
+											<th scope="col" class="px-1 py-4 text-left">Note </th>
+											<th scope="col" class="px-6 py-4 text-left">Status </th>
+											<th scope="col" class="px-9 py-4 text-left"> Action </th>
+										</tr>
+									</thead>
+									<tbody>
+										<!-- Table row for each recitation item -->
+										<tr class="border-b bg-white">
+											<!-- Display the data for each recitation item -->
+											<td class="text-sm text-gray-500 font-medium px-6 py-4"> 2023-10-16 </td>
+											<td class="text-md text-gray-900 font-medium px- py-3"> Study Lesson 1 </td>
+											<td class="text-sm text-gray-900 font-medium px-6 py-4">
+												<select
+													class=" border-gray-200 w-32 h-6 mr-1 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
+												>
+													<option disabled selected hidden class="rounded-xl">Subject Class</option>
+												</select>
+											</td>
+											<td class="text-sm text-gray-900 font-medium px-6 py-4">
+												<label
+													for=""
+													class="px-4 bg-yellow-500 border-transparent hover:bg-yellow-600 hover:border-none text-sm text-white rounded-3xl"
+													>Undo</label
+												>
+											</td>
+										</tr>
 
-								<!--NOTES ONLY-->
-								<div class="flex flex-row">
-									<img src="done.png" class="h-7" alt="..." />
-									<h1 class="text-left my-1 ml-5">Study Lesson 2 - From teacher</h1>
-								</div>
-								<!--END NOTES ONLY-->
+										<!-- Table row for each recitation item -->
+										<tr class="border-b bg-white">
+											<!-- Display the data for each recitation item -->
+											<td class="text-sm text-gray-500 font-medium px-6 py-4"> 2023-10-16 </td>
+											<td class="text-md text-gray-900 font-medium px- py-3"> Study Lesson 1 </td>
+											<td class="text-sm text-gray-900 font-medium px-6 py-4">
+												<select
+													class=" border-gray-200 w-32 h-6 mr-1 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
+												>
+													<option disabled selected hidden class="rounded-xl">Only Me</option>
+												</select>
+											</td>
+											<td class="text-sm text-gray-900 font-medium px-6 py-4">
+												<label
+													for=""
+													class="px-4 bg-yellow-500 border-transparent hover:bg-yellow-600 hover:border-none text-sm text-white rounded-3xl"
+													>Undo</label
+												>
+											</td>
+										</tr>
 
-								<!--END NOTES DAY-->
+									</tbody>
+								</table>
 							</div>
 						</div>
 					</div>
@@ -680,12 +703,11 @@
 						</select>
 					</div>
 					<div class="divider my-0 mt-2" />
-					<div class="h-60 overflow-auto">
+					<div class="h-56 overflow-auto">
 						<h1 class="text-left mt-2 ml-5 text-sm">Day 1</h1>
 						<div class="flex items-center mt-1 pl-4">
 							<input
 								id="day1input"
-								
 								type="text"
 								placeholder="www.googledrive.com/lesson1/"
 								class="input input-bordered w-11/12 focus:border-none cursor-pointer text-sm"
@@ -697,7 +719,6 @@
 						<div class="flex items-center mt-1 pl-4">
 							<input
 								id="day2input"
-								
 								type="text"
 								placeholder="www.googledrive.com/lesson1/"
 								class="input input-bordered w-11/12 focus:border-none cursor-pointer text-sm"
@@ -709,7 +730,6 @@
 						<div class="flex items-center mt-1 pl-4">
 							<input
 								id="day3input"
-								
 								type="text"
 								placeholder="www.googledrive.com/lesson1/"
 								class="input input-bordered w-11/12 focus.border-none cursor-pointer text-sm"
@@ -721,7 +741,6 @@
 						<div class="flex items-center mt-1 pl-4">
 							<input
 								id="day4input"
-								
 								type="text"
 								placeholder="www.googledrive.com/lesson1/"
 								class="input input-bordered w-11/12 focus:border-none cursor-pointer text-sm"
@@ -733,7 +752,6 @@
 						<div class="flex items-center mt-1 pl-4">
 							<input
 								id="day5input"
-								
 								type="text"
 								placeholder="www.googledrive.com/lesson1/"
 								class="input input-bordered w-11/12 focus.border-none cursor-pointer text-sm"
