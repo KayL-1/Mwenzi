@@ -1181,7 +1181,7 @@
 				<option disabled selected hidden class="rounded-3xl">Sort by</option>
 				<option class="rounded-xl">Daily</option>
 				<option class="rounded-xl">Weekly</option>
-				<option class="rounded-xl">Monthly</option>
+				<option class="rounded-xl">Quarterly</option>
 			</select>
 			<div class="relative overflow-y-auto shadow-sm rounded-xl mx-5 my-4 max-h-96">
 				<table class="w-full text-sm text-gray-500 dark:text-gray-400">
@@ -1192,7 +1192,7 @@
 							<th scope="col" class="px-6 py-4 text-left"> Rank </th>
 							<th scope="col" class="px-6 py-4 text-left"> Name </th>
 							<th scope="col" class="px-6 py-4 text-left"> Points </th>
-							<th scope="col" class="px-6 py-4 text-left"> Update Points </th>
+							<th scope="col" class=" py-4 text-left"> Update Points </th>
 						</tr>
 					</thead>
 					<tbody>
@@ -1203,7 +1203,7 @@
 								<td class="text-sm text-gray-500 font-medium px-6 py-4 whitespace-nowrap">
 									{data.ranking}
 								</td>
-								<td class="text-md text-gray-900 font-medium px-6 py-3 whitespace-nowrap">
+								<td class="text-md text-gray-900 font-medium px-6 py-3 whitespace-nowrap text-left">
 									{data.name}
 								</td>
 								<td class="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
@@ -1263,26 +1263,44 @@
 						>
 						<h3 class="text-xl font-bold text-center">Note Archives</h3>
 
-						<div class="mx-auto w-4/5 mt-5">
-							<!--NOTES DAY-->
-							<div class="divider mb-0" />
-							<h1 class="text-left font-medium">2023-10-02</h1>
-							<div class="divider my-0" />
-							<!--NOTES ONLY-->
-							<div class="flex flex-row">
-								<img src="done.png" class="h-7" alt="..." />
-								<h1 class="text-left my-1 ml-5">Present Lesson 1</h1>
-							</div>
-							<!--END NOTES ONLY-->
-
-							<!--NOTES ONLY-->
-							<div class="flex flex-row">
-								<img src="done.png" class="h-7" alt="..." />
-								<h1 class="text-left my-1 ml-5">Present Lesson 2</h1>
-							</div>
-							<!--END NOTES ONLY-->
-
-							<!--END NOTES DAY-->
+						<div class="mx-auto w-full mt-5">
+							<table
+								class="w-full text-sm text-gray-500 dark:text-gray-400 table-fixed overflow-x-auto"
+							>
+								<thead
+									class="text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 sticky top-0"
+								>
+									<tr>
+										<th scope="col" class="pl-6 py-4 text-left">Date </th>
+										<th scope="col" class="px-1 py-4 text-left">Note </th>
+										<th scope="col" class="px-6 py-4 text-left">Status </th>
+										<th scope="col" class="px-9 py-4 text-left"> Action </th>
+									</tr>
+								</thead>
+								<tbody>
+									<!-- Table row for each recitation item -->
+									<tr class="border-b bg-white">
+										<!-- Display the data for each recitation item -->
+										<td class="text-sm text-gray-500 font-medium px-6 py-4"> 2023-10-16 </td>
+										<td class="text-md text-gray-900 font-medium px- py-3"> Present Lesson 1 </td>
+										<td class="text-sm text-gray-900 font-medium px-6 py-4">
+											<select
+												class=" border-gray-200 w-32 h-6 mr-1 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
+											>
+												<option class="rounded-xl">Only Me</option>
+												<option class="rounded-xl">Subject Class</option>
+											</select>
+										</td>
+										<td class="text-sm text-gray-900 font-medium px-6 py-4">
+											<label
+												for=""
+												class="px-4 bg-yellow-500 border-transparent hover:bg-yellow-600 hover:border-none text-sm text-white rounded-3xl"
+												>Undo</label
+											>
+										</td>
+									</tr>
+								</tbody>
+							</table>
 						</div>
 					</div>
 				</div>
@@ -1337,16 +1355,17 @@
 							<option class="rounded-xl">Subject Class</option>
 						</select>
 
+						
 						<button>
 							<img
-								src="done.png"
+								src="delete.png"
 								class="h-7 transform transition-transform focus:scale-100 active:scale-90"
 								alt="..."
 							/>
 						</button>
 						<button>
 							<img
-								src="delete.png"
+								src="done.png"
 								class="h-7 transform transition-transform focus:scale-100 active:scale-90"
 								alt="..."
 							/>
@@ -1379,17 +1398,20 @@
 					<div class="divider mt-14" />
 					<p class="font-medium text-lg text-center" id="randomizerName">STUDENT NAME</p>
 					<div class="divider" />
-					<button
-						on:click={getRandomName}
-						class="start-button btn mt-10 w-1/2 rounded-3xl bg-[#EF5051] hover:bg-red-600 border-none"
-						>START</button
-					>
-					<button
-						on:click={resetRecitation}
-						id="resetButton"
-						class="start-button btn mt-10 w-1/2 rounded-3xl bg-[#EF5051] hover:bg-red-600 border-none"
-						>Reset Called Students</button
-					>
+
+					<div class="flex flex-row justify-center">
+						<button
+							on:click={resetRecitation}
+							id="resetButton"
+							class="start-button btn mt-8 w-40 mx-1 rounded-3xl bg-[#EF5051] hover:bg-red-600 border-none"
+							>Reset</button
+						>
+						<button
+							on:click={getRandomName}
+							class="start-button btn mt-8 w-40 mx-1 rounded-3xl bg-[#EF5051] hover:bg-red-600 border-none"
+							>START</button
+						>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -1497,7 +1519,7 @@
 			>
 			<input type="checkbox" id="lessonplan" class="modal-toggle" />
 			<div class="modal">
-				<div class="modal-box relative h-5/6 max-w-4xl">
+				<div class="modal-box relative h-4/6 max-w-3xl">
 					<label for="lessonplan" class="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
 
 					<div class="text-xl font-bold text-center w-full justify-center flex flex-row">
@@ -1509,7 +1531,128 @@
 						class="w-full flex flex-col mx-auto
 					 py-3 px-4 outline rounded-3xl outline-gray-50 mt-5"
 					>
-						<div class="justify-end flex">
+						<div class="mx-auto w-4/5 mt-5">
+							<!--WEEK-->
+							<!--WEEK-->
+							<div class="flex flex-row justify-center">
+								<select
+									class="w-40 border-gray-200 h-8 font-medium text-sm text-center mr-3 border border-gray focus:none rounded-3xl shadow-sm"
+								>
+									<option disabled selected class="rounded-3xl">Select Week</option>
+									<option class="rounded-3xl">Week 1</option>
+									<option class="rounded-3xl">Week 2</option>
+								</select>
+
+								<select
+									class="w-32 border-gray-200 h-8 font-medium text-sm text-center mr-3 border border-gray focus:none rounded-3xl shadow-sm"
+								>
+									<option disabled selected class="rounded-3xl">Share</option>
+									<option class="rounded-3xl">Only Me</option>
+									<option class="rounded-3xl">Subject Class</option>
+								</select>
+							</div>
+							<div class="divider my-0 mt-3" />
+
+							<h1 class="text-left mt-2 ml-5 text-sm">Day 1</h1>
+							<div class="flex items-center mt-1 pl-4">
+								<input
+									id="day1input"
+									bind:value={day1x}
+									type="text"
+									placeholder="www.googledrive.com/lesson1/"
+									class="input input-bordered w-11/12 focus:border-none cursor-pointer text-sm"
+									disabled="disabled"
+								/>
+								<input
+									id="day1checkbox"
+									bind:value={day1status}
+									type="checkbox"
+									class="checkbox h-8 w-8 ml-2"
+									on:change={() => {
+										day1status = day1status === 'finish' ? '' : 'finish';
+									}}
+								/>
+							</div>
+
+							<h1 class="text-left mt-2 ml-5 text-sm">Day 2</h1>
+							<div class="flex items-center mt-1 pl-4">
+								<input
+									id="day2input"
+									bind:value={day2x}
+									type="text"
+									placeholder="www.googledrive.com/lesson1/"
+									class="input input-bordered w-11/12 focus:border-none cursor-pointer text-sm"
+									disabled="disabled"
+								/>
+								<input
+									id="day2checkbox"
+									bind:value={day2status}
+									type="checkbox"
+									class="checkbox h-8 w-8 ml-2"
+									disabled="disabled"
+								/>
+							</div>
+
+							<h1 class="text-left mt-2 ml-5 text-sm">Day 3</h1>
+							<div class="flex items-center mt-1 pl-4">
+								<input
+									id="day3input"
+									bind:value={day3x}
+									type="text"
+									placeholder="www.googledrive.com/lesson1/"
+									class="input input-bordered w-11/12 focus.border-none cursor-pointer text-sm"
+									disabled="disabled"
+								/>
+								<input
+									id="day3checkbox"
+									bind:value={day3status}
+									type="checkbox"
+									class="checkbox h-8 w-8 ml-2"
+									disabled="disabled"
+								/>
+							</div>
+
+							<h1 class="text-left mt-2 ml-5 text-sm">Day 4</h1>
+							<div class="flex items-center mt-1 pl-4">
+								<input
+									id="day4input"
+									bind:value={day4x}
+									type="text"
+									placeholder="www.googledrive.com/lesson1/"
+									class="input input-bordered w-11/12 focus:border-none cursor-pointer text-sm"
+									disabled="disabled"
+								/>
+								<input
+									id="day4checkbox"
+									bind:value={day4status}
+									type="checkbox"
+									class="checkbox h-8 w-8 ml-2"
+									disabled="disabled"
+								/>
+							</div>
+
+							<h1 class="text-left mt-2 ml-5 text-sm">Day 5</h1>
+							<div class="flex items-center mt-1 pl-4">
+								<input
+									id="day5input"
+									bind:value={day5x}
+									type="text"
+									placeholder="www.googledrive.com/lesson1/"
+									class="input input-bordered w-11/12 focus.border-none cursor-pointer text-sm"
+									disabled="disabled"
+								/>
+								<input
+									id="day5checkbox"
+									bind:value={day5status}
+									type="checkbox"
+									class="checkbox h-8 w-8 ml-2"
+									disabled="disabled"
+								/>
+							</div>
+							<!--END WEEK-->
+						</div>
+
+						<div class="justify-end flex mt-8 mb-2">
 							<button
 								on:click={toggleEditButton}
 								id="editButton"
@@ -1524,164 +1667,6 @@
 							>
 								Save
 							</button>
-						</div>
-
-						<div class="mx-auto w-4/5 mt-5">
-							<!--WEEK-->
-							<!--WEEK-->
-							<h1 class="text-left font-medium mt-3">Week 1</h1>
-							<div class="divider my-0" />
-
-							<h1 class="text-left my-1 ml-5 text-normal">Day 1</h1>
-							<div class="flex items-center mt-1 pl-4">
-								<select
-									id="day1select"
-									class="border-gray-200 w-32 pl-1 h-8 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
-									disabled="disabled"
-									bind:value={day1status2}
-								>
-									<option disabled selected hidden class="rounded-3xl">Share</option>
-									<option class="rounded-xl" value="Only Me">Only Me</option>
-									<option class="rounded-xl" value="Subject Class">Subject Class</option>
-								</select>
-								<input
-									id="day1input"
-									bind:value={day1x}
-									type="text"
-									placeholder="www.googledrive.com/lesson1/"
-									class="input input-bordered w-11/12 focus:border-none cursor-pointer"
-									disabled="disabled"
-								/>
-								<input
-									id="day1checkbox"
-									bind:value={day1status}
-									type="checkbox"
-									class="checkbox h-8 w-8"
-									on:change={() => {
-										day1status = day1status === 'finish' ? '' : 'finish';
-									}}
-								/>
-							</div>
-
-							<h1 class="text-left my-1 ml-5 text-normal">Day 2</h1>
-							<div class="flex items-center mt-1 pl-4">
-								<select
-									id="day2select"
-									class="border-gray-200 w-32 pl-1 h-8 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
-									disabled="disabled"
-									bind:value={day2status2}
-								>
-									<option disabled selected hidden class="rounded-3xl">Share</option>
-									<option class="rounded-xl" value="Only Me">Only Me</option>
-									<option class="rounded-xl" value="Subject Class">Subject Class</option>
-								</select>
-								<input
-									id="day2input"
-									bind:value={day2x}
-									type="text"
-									placeholder="www.googledrive.com/lesson1/"
-									class="input input-bordered w-11/12 focus:border-none cursor-pointer"
-									disabled="disabled"
-								/>
-								<input
-									id="day2checkbox"
-									bind:value={day2status}
-									type="checkbox"
-									class="checkbox h-8 w-8"
-									disabled="disabled"
-								/>
-							</div>
-
-							<h1 class="text-left my-1 ml-5 text-normal">Day 3</h1>
-							<div class="flex items-center mt-1 pl-4">
-								<select
-									id="day3select"
-									class="border-gray-200 w-32 pl-1 h-8 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
-									disabled="disabled"
-									bind:value={day3status2}
-								>
-									<option disabled selected hidden class="rounded-3xl">Share</option>
-									<option class="rounded-xl" value="Only Me">Only Me</option>
-									<option class="rounded-xl" value="Subject Class">Subject Class</option>
-								</select>
-								<input
-									id="day3input"
-									bind:value={day3x}
-									type="text"
-									placeholder="www.googledrive.com/lesson1/"
-									class="input input-bordered w-11/12 focus.border-none cursor-pointer"
-									disabled="disabled"
-								/>
-								<input
-									id="day3checkbox"
-									bind:value={day3status}
-									type="checkbox"
-									class="checkbox h-8 w-8"
-									disabled="disabled"
-								/>
-							</div>
-
-							<h1 class="text-left my-1 ml-5 text-normal">Day 4</h1>
-							<div class="flex items-center mt-1 pl-4">
-								<select
-									id="day4select"
-									class="border-gray-200 w-32 pl-1 h-8 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
-									disabled="disabled"
-									bind:value={day4status2}
-								>
-									<option disabled selected hidden class="rounded-3xl">Share</option>
-									<option class="rounded-xl" value="Only Me">Only Me</option>
-									<option class="rounded-xl" value="Subject Class">Subject Class</option>
-								</select>
-								<input
-									id="day4input"
-									bind:value={day4x}
-									type="text"
-									placeholder="www.googledrive.com/lesson1/"
-									class="input input-bordered w-11/12 focus:border-none cursor-pointer"
-									disabled="disabled"
-								/>
-								<input
-									id="day4checkbox"
-									bind:value={day4status}
-									type="checkbox"
-									class="checkbox h-8 w-8"
-									disabled="disabled"
-								/>
-							</div>
-
-							<h1 class="text-left my-1 ml-5 text-normal">Day 5</h1>
-							<div class="flex items-center mt-1 pl-4">
-								<select
-									id="day5select"
-									class="border-gray-200 w-32 pl-1 h-8 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
-									disabled="disabled"
-									bind:value={day5status2}
-								>
-									<option disabled selected hidden class="rounded-3xl">Share</option>
-									<option class="rounded-xl" value="Only Me">Only Me</option>
-									<option class="rounded-xl" value="Subject Class">Subject Class</option>
-								</select>
-								<input
-									id="day5input"
-									bind:value={day5x}
-									type="text"
-									placeholder="www.googledrive.com/lesson1/"
-									class="input input-bordered w-11/12 focus.border-none cursor-pointer"
-									disabled="disabled"
-								/>
-								<input
-									id="day5checkbox"
-									bind:value={day5status}
-									type="checkbox"
-									class="checkbox h-8 w-8"
-									disabled="disabled"
-								/>
-							</div>
-
-							<!-- Repeat the same pattern for Day 3, Day 4, and Day 5 -->
-
-							<!--END WEEK-->
 						</div>
 					</div>
 				</div>

@@ -670,25 +670,75 @@
 				</div>
 				<div class="px-5">
 					<div class="divider my-0" />
-					<div class="h-80 overflow-auto">
-						<h1 class="text-left my-1 ml-5 text-normal">
-							<span class="font-bold">Week 1 -</span> Day 1
-						</h1>
+					<div class="flex flex-row justify-center mt-2">
+						<select
+							class="w-40 border-gray-200 h-8 font-medium text-sm text-center mr-3 border border-gray focus:none rounded-3xl shadow-sm"
+						>
+							<option disabled selected class="rounded-3xl">Select Week</option>
+							<option class="rounded-3xl">Week 1</option>
+							<option class="rounded-3xl">Week 2</option>
+						</select>
+					</div>
+					<div class="divider my-0 mt-2" />
+					<div class="h-60 overflow-auto">
+						<h1 class="text-left mt-2 ml-5 text-sm">Day 1</h1>
+						<div class="flex items-center mt-1 pl-4">
+							<input
+								id="day1input"
+								
+								type="text"
+								placeholder="www.googledrive.com/lesson1/"
+								class="input input-bordered w-11/12 focus:border-none cursor-pointer text-sm"
+								readonly
+							/>
+						</div>
 
-						<div class="flex items-center">
-							<a
-								href="https://www.googledrive.com/lesson1/"
-								target="_blank"
-								rel="noopener noreferrer"
-								class="w-full"
-							>
-								<input
-									type="text"
-									placeholder="www.googledrive.com/lesson1/"
-									class="input input-bordered w-11/12 focus:border-none cursor-pointer"
-									readonly
-								/>
-							</a>
+						<h1 class="text-left mt-2 ml-5 text-sm">Day 2</h1>
+						<div class="flex items-center mt-1 pl-4">
+							<input
+								id="day2input"
+								
+								type="text"
+								placeholder="www.googledrive.com/lesson1/"
+								class="input input-bordered w-11/12 focus:border-none cursor-pointer text-sm"
+								readonly
+							/>
+						</div>
+
+						<h1 class="text-left mt-2 ml-5 text-sm">Day 3</h1>
+						<div class="flex items-center mt-1 pl-4">
+							<input
+								id="day3input"
+								
+								type="text"
+								placeholder="www.googledrive.com/lesson1/"
+								class="input input-bordered w-11/12 focus.border-none cursor-pointer text-sm"
+								readonly
+							/>
+						</div>
+
+						<h1 class="text-left mt-2 ml-5 text-sm">Day 4</h1>
+						<div class="flex items-center mt-1 pl-4">
+							<input
+								id="day4input"
+								
+								type="text"
+								placeholder="www.googledrive.com/lesson1/"
+								class="input input-bordered w-11/12 focus:border-none cursor-pointer text-sm"
+								readonly
+							/>
+						</div>
+
+						<h1 class="text-left mt-2 ml-5 text-sm">Day 5</h1>
+						<div class="flex items-center mt-1 pl-4">
+							<input
+								id="day5input"
+								
+								type="text"
+								placeholder="www.googledrive.com/lesson1/"
+								class="input input-bordered w-11/12 focus.border-none cursor-pointer text-sm"
+								readonly
+							/>
 						</div>
 					</div>
 				</div>
