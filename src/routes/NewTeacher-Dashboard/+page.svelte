@@ -606,9 +606,9 @@
             >
               <option disabled hidden class="rounded-3xl">Share</option>
               <option value="Only Me" ${status === 'Only Me' ? 'selected' : ''}>Only Me</option>
-              <option value="Subject Class" ${
-								status === 'Subject Class' ? 'selected' : ''
-							}>Subject Class</option>
+              <option value="Current Class" ${
+								status === 'Current Class' ? 'selected' : ''
+							}>Current Class</option>
             </select>
             <button class="update-status-button">
               <img
@@ -1288,7 +1288,7 @@
 												class=" border-gray-200 w-32 h-6 mr-1 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
 											>
 												<option class="rounded-xl">Only Me</option>
-												<option class="rounded-xl">Subject Class</option>
+												<option class="rounded-xl">Current Class</option>
 											</select>
 										</td>
 										<td class="text-sm text-gray-900 font-medium px-6 py-4">
@@ -1352,7 +1352,7 @@
 						>
 							<option disabled selected hidden class="rounded-3xl">Share</option>
 							<option class="rounded-xl">Only Me</option>
-							<option class="rounded-xl">Subject Class</option>
+							<option class="rounded-xl">Current Class</option>
 						</select>
 
 						
@@ -1548,7 +1548,7 @@
 								>
 									<option disabled selected class="rounded-3xl">Share</option>
 									<option class="rounded-3xl">Only Me</option>
-									<option class="rounded-3xl">Subject Class</option>
+									<option class="rounded-3xl">Current Class</option>
 								</select>
 							</div>
 							<div class="divider my-0 mt-3" />
