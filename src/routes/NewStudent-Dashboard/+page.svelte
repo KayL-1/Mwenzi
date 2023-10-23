@@ -61,7 +61,9 @@
 
 	async function getNotes() {
 		const collectionRef = collection(firestore, 'Subject', selecTSub, 'Notes');
-		const querySnapshot = await getDocs(collectionRef);
+		const queryRef2 = query(collectionRef, where('Archive', '==', "false"));
+		const querySnapshot = await getDocs(queryRef2);
+
 
 		querySnapshot.forEach((doc) => {
 			// Access the document ID
@@ -214,6 +216,7 @@
 		console.log(selecTSub);
 		attendanceCheck();
 		recitationCheck();
+		getNotes();
 		fetchAndDisplayNotes();
 	}
 

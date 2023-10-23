@@ -569,7 +569,12 @@
 		if (title.trim() !== '') {
 			const collectionRef = collection(firestore, 'Subject', selecTSub, 'Notes');
 
-			addDoc(collectionRef, { Title: title, Date: currentDatee, Status: 'Only Me' })
+			addDoc(collectionRef, {
+				Title: title,
+				Date: currentDatee,
+				Status: 'Only Me',
+				Archive: 'false'
+			})
 				.then((docRef) => {
 					console.log('Document written with ID: ', docRef.id);
 				})
@@ -583,11 +588,11 @@
 		}
 	}
 
-	async function fetchAndDisplayNotes() {
+	async function fetchAndDisplayNotes2() {
 		const collectionRef = collection(firestore, 'Subject', selecTSub, 'Notes');
-
+		const queryRef2 = query(collectionRef, where('Archive', '==', 'true'));
 		try {
-			const querySnapshot = await getDocs(collectionRef);
+			const querySnapshot = await getDocs(queryRef2);
 
 			querySnapshot.forEach((doc) => {
 				const title1 = doc.data().Title;
@@ -602,7 +607,95 @@
   
           <div class="flex items-center">
             <select
-              class="border-gray-200 w-32 h-6 mr-1 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
+              class="update-status-select border-gray-200 w-32 h-6 mr-1 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
+            >
+              <option disabled hidden class="rounded-3xl">Share</option>
+              <option value="Only Me" ${status === 'Only Me' ? 'selected' : ''}>Only Me</option>
+              <option value="Current Class" ${
+								status === 'Current Class' ? 'selected' : ''
+							}>Current Class</option>
+            </select>
+            <button class="update-status-button">
+              <img
+                src="done.png"
+                class="h-7 transform transition-transform focus:scale-100 active:scale-90"
+                alt="..."
+              />
+            </button>
+            <button class="delete-button">
+              <img
+                src="delete.png"
+                class="h-7 transform transition-transform focus:scale-100 active:scale-90"
+                alt="..."
+              />
+            </button>
+          </div>
+        </div>`;
+
+				const notesContainer = document.getElementById('notes-container2');
+				notesContainer.appendChild(noteElement);
+
+				// Add event listener to the update-status-button
+				noteElement.querySelector('.update-status-button').addEventListener('click', async () => {
+					const selectElement = noteElement.querySelector('select');
+					const newStatus = selectElement.value;
+
+					try {
+						await updateDoc(doc.ref, { Archive: 'true' });
+						Archive = 'true';
+						location.reload();
+					} catch (error) {
+						console.error('Error updating document: ', error);
+					}
+				});
+
+				noteElement.querySelector('.update-status-select').addEventListener('change', async () => {
+					const selectElement = noteElement.querySelector('select');
+					const newStatus = selectElement.value;
+					try {
+						await updateDoc(doc.ref, { Status: newStatus });
+						status = newStatus;
+					} catch (error) {
+						console.error('Error updating document: ', error);
+					}
+				});
+
+				noteElement.querySelector('.delete-button').addEventListener('click', async () => {
+					try {
+						// Delete the document from Firestore
+						await deleteDoc(doc.ref);
+						// Remove the note element from the UI
+						noteElement.remove();
+					} catch (error) {
+						console.error('Error deleting document: ', error);
+					}
+				});
+			});
+		} catch (error) {
+			console.error('Error fetching documents: ', error);
+		}
+	}
+
+	async function fetchAndDisplayNotes() {
+		const collectionRef = collection(firestore, 'Subject', selecTSub, 'Notes');
+		const queryRef2 = query(collectionRef, where('Archive', '==', 'false'));
+		try {
+			const querySnapshot = await getDocs(queryRef2);
+
+			querySnapshot.forEach((doc) => {
+				const title1 = doc.data().Title;
+				let status = doc.data().Status;
+				const id = doc.id;
+				const noteElement = document.createElement('div');
+				noteElement.className =
+					'mt-2 flex flex-row justify-between w-full items-center px-7 border-b pb-1';
+				noteElement.innerHTML = `
+        <div class="mt-2 flex flex-row justify-between w-full items-center px-7 pb-1">
+          <h1 class="font-medium text-sm">${title1}</h1>
+  
+          <div class="flex items-center">
+            <select
+              class="update-status-select border-gray-200 w-32 h-6 mr-1 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
             >
               <option disabled hidden class="rounded-3xl">Share</option>
               <option value="Only Me" ${status === 'Only Me' ? 'selected' : ''}>Only Me</option>
@@ -636,6 +729,18 @@
 					const newStatus = selectElement.value;
 
 					try {
+						await updateDoc(doc.ref, { Archive: 'true' });
+						Archive = 'true';
+						location.reload();
+					} catch (error) {
+						console.error('Error updating document: ', error);
+					}
+				});
+
+				noteElement.querySelector('.update-status-select').addEventListener('change', async () => {
+					const selectElement = noteElement.querySelector('select');
+					const newStatus = selectElement.value;
+					try {
 						await updateDoc(doc.ref, { Status: newStatus });
 						status = newStatus;
 					} catch (error) {
@@ -643,7 +748,6 @@
 					}
 				});
 
-				// Add event listener to the delete button
 				noteElement.querySelector('.delete-button').addEventListener('click', async () => {
 					try {
 						// Delete the document from Firestore
@@ -673,6 +777,7 @@
 		recitationCheck();
 		resetChanges();
 		fetchAndDisplayNotes();
+		getArchiveNotes();
 	}
 
 	async function getuserName(id) {
@@ -1277,28 +1382,32 @@
 										<th scope="col" class="px-9 py-4 text-left"> Action </th>
 									</tr>
 								</thead>
-								<tbody>
-									<!-- Table row for each recitation item -->
-									<tr class="border-b bg-white">
-										<!-- Display the data for each recitation item -->
-										<td class="text-sm text-gray-500 font-medium px-6 py-4"> 2023-10-16 </td>
-										<td class="text-md text-gray-900 font-medium px- py-3"> Present Lesson 1 </td>
-										<td class="text-sm text-gray-900 font-medium px-6 py-4">
-											<select
-												class=" border-gray-200 w-32 h-6 mr-1 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
-											>
-												<option class="rounded-xl">Only Me</option>
-												<option class="rounded-xl">Current Class</option>
-											</select>
-										</td>
-										<td class="text-sm text-gray-900 font-medium px-6 py-4">
-											<label
-												for=""
-												class="px-4 bg-yellow-500 border-transparent hover:bg-yellow-600 hover:border-none text-sm text-white rounded-3xl"
-												>Undo</label
-											>
-										</td>
-									</tr>
+								<tbody id="note-archive">
+
+											<tr class="border-b bg-white">
+												<!-- Display the data for each recitation item -->
+												<td class="text-sm text-gray-500 font-medium px-6 py-4"
+													></td
+												>
+												<td class="text-md text-gray-900 font-medium px- py-3"
+													></td
+												>
+												<td class="text-sm text-gray-900 font-medium px-6 py-4">
+													<select
+														class=" border-gray-200 w-32 h-6 mr-1 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
+													>
+														<option class="rounded-xl">Only Me</option>
+														<option class="rounded-xl">Current Class</option>
+													</select>
+												</td>
+												<td class="text-sm text-gray-900 font-medium px-6 py-4">
+													<label
+														for=""
+														class="px-4 bg-yellow-500 border-transparent hover:bg-yellow-600 hover:border-none text-sm text-white rounded-3xl"
+														>Undo</label
+													>
+												</td>
+											</tr>
 								</tbody>
 							</table>
 						</div>
@@ -1355,7 +1464,6 @@
 							<option class="rounded-xl">Current Class</option>
 						</select>
 
-						
 						<button>
 							<img
 								src="delete.png"
