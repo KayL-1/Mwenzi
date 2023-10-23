@@ -594,86 +594,77 @@
 		try {
 			const querySnapshot = await getDocs(queryRef2);
 
+			const notesContainer = document.getElementById('note-archive');
+			const tableBody = document.createElement('tbody');
+
+			// Iterate over query results and populate the table rows
 			querySnapshot.forEach((doc) => {
 				const title1 = doc.data().Title;
+				const date1 = doc.data().Date;
 				let status = doc.data().Status;
 				const id = doc.id;
-				const noteElement = document.createElement('div');
-				noteElement.className =
-					'mt-2 flex flex-row justify-between w-full items-center px-7 border-b pb-1';
-				noteElement.innerHTML = `
-        <div class="mt-2 flex flex-row justify-between w-full items-center px-7 pb-1">
-          <h1 class="font-medium text-sm">${title1}</h1>
-  
-          <div class="flex items-center">
-            <select
-              class="update-status-select border-gray-200 w-32 h-6 mr-1 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
-            >
-              <option disabled hidden class="rounded-3xl">Share</option>
-              <option value="Only Me" ${status === 'Only Me' ? 'selected' : ''}>Only Me</option>
-              <option value="Current Class" ${
-								status === 'Current Class' ? 'selected' : ''
-							}>Current Class</option>
-            </select>
-            <button class="update-status-button">
-              <img
-                src="done.png"
-                class="h-7 transform transition-transform focus:scale-100 active:scale-90"
-                alt="..."
-              />
-            </button>
-            <button class="delete-button">
-              <img
-                src="delete.png"
-                class="h-7 transform transition-transform focus:scale-100 active:scale-90"
-                alt="..."
-              />
-            </button>
-          </div>
-        </div>`;
 
-				const notesContainer = document.getElementById('notes-container2');
-				notesContainer.appendChild(noteElement);
+				// Create a table row
+				const tableRow = document.createElement('tr');
+				tableRow.className = 'border-b bg-white';
 
-				// Add event listener to the update-status-button
-				noteElement.querySelector('.update-status-button').addEventListener('click', async () => {
-					const selectElement = noteElement.querySelector('select');
-					const newStatus = selectElement.value;
+				tableRow.innerHTML = `
+      <td class="text-sm text-gray-500 font-medium px-6 py-4">${date1}</td>
+      <td class="text-md text-gray-900 font-medium px-6 py-4">${title1}</td>
+      <td class="text-sm text-gray-900 font-medium px-6 py-4">
+        <select class="update-status-select1 border-gray-200 w-32 h-6 mr-1 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm">
+          <option class="rounded-xl" ${status === 'Only Me' ? 'selected' : ''}>Only Me</option>
+          <option class="rounded-xl" ${
+						status === 'Current Class' ? 'selected' : ''
+					}>Current Class</option>
+        </select>
+      </td>
+      <td class="text-sm text-gray-900 font-medium px-6 py-4">
+		
+		<button class="update-status-button1 px-4 bg-yellow-500 border-transparent hover:bg-yellow-600 hover:border-none text-sm text-white rounded-3xl" on:click(clickTest)>
+  Undo
+</button>
+		</td>
+    `;
 
-					try {
-						await updateDoc(doc.ref, { Archive: 'true' });
-						Archive = 'true';
-						location.reload();
-					} catch (error) {
-						console.error('Error updating document: ', error);
-					}
-				});
-
-				noteElement.querySelector('.update-status-select').addEventListener('change', async () => {
-					const selectElement = noteElement.querySelector('select');
-					const newStatus = selectElement.value;
-					try {
-						await updateDoc(doc.ref, { Status: newStatus });
-						status = newStatus;
-					} catch (error) {
-						console.error('Error updating document: ', error);
-					}
-				});
-
-				noteElement.querySelector('.delete-button').addEventListener('click', async () => {
-					try {
-						// Delete the document from Firestore
-						await deleteDoc(doc.ref);
-						// Remove the note element from the UI
-						noteElement.remove();
-					} catch (error) {
-						console.error('Error deleting document: ', error);
-					}
-				});
+				// Append the table row to the table body
+				tableBody.appendChild(tableRow);
 			});
+
+			// Append the table body to the container
+			notesContainer.appendChild(tableBody);
+
+			noteElement.querySelector('.update-status-select1').addEventListener('change', async () => {
+				const selectElement = noteElement.querySelector('select');
+				const newStatus = selectElement.value;
+				try {
+					await updateDoc(doc.ref, { Status: newStatus });
+					status = newStatus;
+				} catch (error) {
+					console.error('Error updating document: ', error);
+				}
+			});
+
+
 		} catch (error) {
-			console.error('Error fetching documents: ', error);
+			console.error('Error:', error);
 		}
+	}
+	function clicktest(){
+				console.log('test');
+
+				// Uncomment and add your functionality here
+				// const selectElement = noteElement.querySelector('select');
+				// const newStatus = selectElement.value;
+
+				// try {
+				//   // Perform your desired actions here, e.g., updating data
+				//   // await updateDoc(doc.ref, { Archive: 'false' });
+				//   // Archive = 'true';
+				//   // location.reload();
+				// } catch (error) {
+				//   console.error('Error updating document: ', error);
+				// }
 	}
 
 	async function fetchAndDisplayNotes() {
@@ -777,7 +768,7 @@
 		recitationCheck();
 		resetChanges();
 		fetchAndDisplayNotes();
-		getArchiveNotes();
+		fetchAndDisplayNotes2();
 	}
 
 	async function getuserName(id) {
@@ -1383,31 +1374,26 @@
 									</tr>
 								</thead>
 								<tbody id="note-archive">
-
-											<tr class="border-b bg-white">
-												<!-- Display the data for each recitation item -->
-												<td class="text-sm text-gray-500 font-medium px-6 py-4"
-													></td
-												>
-												<td class="text-md text-gray-900 font-medium px- py-3"
-													></td
-												>
-												<td class="text-sm text-gray-900 font-medium px-6 py-4">
-													<select
-														class=" border-gray-200 w-32 h-6 mr-1 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
-													>
-														<option class="rounded-xl">Only Me</option>
-														<option class="rounded-xl">Current Class</option>
-													</select>
-												</td>
-												<td class="text-sm text-gray-900 font-medium px-6 py-4">
-													<label
-														for=""
-														class="px-4 bg-yellow-500 border-transparent hover:bg-yellow-600 hover:border-none text-sm text-white rounded-3xl"
-														>Undo</label
-													>
-												</td>
-											</tr>
+									<tr class="border-b bg-white">
+										<!-- Display the data for each recitation item -->
+										<td class="text-sm text-gray-500 font-medium px-6 py-4" />
+										<td class="text-md text-gray-900 font-medium px- py-3" />
+										<td class="text-sm text-gray-900 font-medium px-6 py-4">
+											<select
+												class=" border-gray-200 w-32 h-6 mr-1 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
+											>
+												<option class="rounded-xl">Only Me</option>
+												<option class="rounded-xl">Current Class</option>
+											</select>
+										</td>
+										<td class="text-sm text-gray-900 font-medium px-6 py-4">
+											<label
+												for=""
+												class="px-4 bg-yellow-500 border-transparent hover:bg-yellow-600 hover:border-none text-sm text-white rounded-3xl"
+												>Undo</label
+											>
+										</td>
+									</tr>
 								</tbody>
 							</table>
 						</div>
