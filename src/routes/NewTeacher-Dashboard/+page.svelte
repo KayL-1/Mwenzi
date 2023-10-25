@@ -595,7 +595,9 @@
 			const querySnapshot = await getDocs(queryRef2);
 
 			const notesContainer = document.getElementById('note-archive');
-			const tableBody = document.createElement('tbody');
+
+			// Clear the existing content of the table body
+			notesContainer.innerHTML = '';
 
 			// Iterate over query results and populate the table rows
 			querySnapshot.forEach((doc) => {
@@ -609,62 +611,58 @@
 				tableRow.className = 'border-b bg-white';
 
 				tableRow.innerHTML = `
-      <td class="text-sm text-gray-500 font-medium px-6 py-4">${date1}</td>
-      <td class="text-md text-gray-900 font-medium px-6 py-4">${title1}</td>
-      <td class="text-sm text-gray-900 font-medium px-6 py-4">
-        <select class="update-status-select1 border-gray-200 w-32 h-6 mr-1 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm">
-          <option class="rounded-xl" ${status === 'Only Me' ? 'selected' : ''}>Only Me</option>
-          <option class="rounded-xl" ${
-						status === 'Current Class' ? 'selected' : ''
-					}>Current Class</option>
-        </select>
-      </td>
-      <td class="text-sm text-gray-900 font-medium px-6 py-4">
-		
-		<button class="update-status-button1 px-4 bg-yellow-500 border-transparent hover:bg-yellow-600 hover:border-none text-sm text-white rounded-3xl" on:click(clickTest)>
-  Undo
-</button>
-		</td>
-    `;
+        <td class="text-xs text-gray-500 font-medium mx-3 py-3 text-center">${date1}</td>
+        <td class="text-md text-gray-900 font-medium pl-5 py-3">${title1}</td>
+        <td class="text-sm text-gray-900 font-medium pl-7 pr-4 py-4">
+          <select class="update-status-select1 border-gray-200 w-28 h-6 mr-1 font-medium text-xs text-center border border-gray focus:none rounded-3xl shadow-sm">
+            <option class="rounded-xl" ${status === 'Only Me' ? 'selected' : ''}>Only Me</option>
+            <option class="rounded-xl" ${
+							status === 'Current Class' ? 'selected' : ''
+						}>Current Class</option>
+          </select>
+        </td>
+        <td class="text-sm text-gray-900 font-medium justify-center py-4 flex">
+          <button class="update-status-button1 px-4 bg-yellow-500 border-transparent hover:bg-yellow-600 hover:border-none text-sm text-white rounded-3xl" on:click="clickTest()">
+            Undo
+          </button>
+        </td>
+      `;
 
 				// Append the table row to the table body
-				tableBody.appendChild(tableRow);
+				notesContainer.appendChild(tableRow);
+
+				// Handle select change for updating status
+				const selectElement = tableRow.querySelector('select');
+				selectElement.addEventListener('change', async () => {
+					const newStatus = selectElement.value;
+					try {
+						await updateDoc(doc.ref, { Status: newStatus });
+						status = newStatus;
+					} catch (error) {
+						console.error('Error updating document: ', error);
+					}
+				});
 			});
-
-			// Append the table body to the container
-			notesContainer.appendChild(tableBody);
-
-			noteElement.querySelector('.update-status-select1').addEventListener('change', async () => {
-				const selectElement = noteElement.querySelector('select');
-				const newStatus = selectElement.value;
-				try {
-					await updateDoc(doc.ref, { Status: newStatus });
-					status = newStatus;
-				} catch (error) {
-					console.error('Error updating document: ', error);
-				}
-			});
-
-
 		} catch (error) {
 			console.error('Error:', error);
 		}
 	}
-	function clicktest(){
-				console.log('test');
 
-				// Uncomment and add your functionality here
-				// const selectElement = noteElement.querySelector('select');
-				// const newStatus = selectElement.value;
+	function clicktest() {
+		console.log('test');
 
-				// try {
-				//   // Perform your desired actions here, e.g., updating data
-				//   // await updateDoc(doc.ref, { Archive: 'false' });
-				//   // Archive = 'true';
-				//   // location.reload();
-				// } catch (error) {
-				//   console.error('Error updating document: ', error);
-				// }
+		// Uncomment and add your functionality here
+		// const selectElement = noteElement.querySelector('select');
+		// const newStatus = selectElement.value;
+
+		// try {
+		//   // Perform your desired actions here, e.g., updating data
+		//   // await updateDoc(doc.ref, { Archive: 'false' });
+		//   // Archive = 'true';
+		//   // location.reload();
+		// } catch (error) {
+		//   console.error('Error updating document: ', error);
+		// }
 	}
 
 	async function fetchAndDisplayNotes() {
@@ -911,11 +909,8 @@
 					<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
 					<ul
 						tabindex="0"
-						class="text-center rounded-2xl mt-2 dropdown-content shadow bg-base-100 w-40 h-16"
+						class="text-center rounded-2xl mt-2 dropdown-content shadow bg-base-100 w-40"
 					>
-						<li class="rounded-2xl hover:bg-gray-200">
-							<a href="/" class="ml-12 py-1 flex align-center font-medium">Settings</a>
-						</li>
 						<li class="rounded-2xl hover:bg-gray-200">
 							<a href="/Login" class="ml-12 py-1 flex text-center font-medium">Log out</a>
 						</li>
@@ -1276,8 +1271,7 @@
 			>
 				<option disabled selected hidden class="rounded-3xl">Sort by</option>
 				<option class="rounded-xl">Daily</option>
-				<option class="rounded-xl">Weekly</option>
-				<option class="rounded-xl">Quarterly</option>
+				<option class="rounded-xl">Monthly</option>
 			</select>
 			<div class="relative overflow-y-auto shadow-sm rounded-xl mx-5 my-4 max-h-96">
 				<table class="w-full text-sm text-gray-500 dark:text-gray-400">
@@ -1342,7 +1336,7 @@
 							id="SVGRepo_tracerCarrier"
 							stroke-linecap="round"
 							stroke-linejoin="round"
-						/><g id="SVGRepo_iconCarrier"
+						/><g id="SVGRepo_iconCarrier" ble-fi
 							><path
 								d="M8.707 6.707a1 1 0 0 0-1.414-1.414L4 8.586 2.707 7.293a1 1 0 0 0-1.414 1.414l2 2a1 1 0 0 0 1.414 0l4-4ZM12 7a1 1 0 1 0 0 2h10a1 1 0 1 0 0-2H12ZM8.707 13.293a1 1 0 0 1 0 1.414l-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 1 1 1.414-1.414L4 16.586l3.293-3.293a1 1 0 0 1 1.414 0ZM12 15a1 1 0 1 0 0 2h10a1 1 0 1 0 0-2H12Z"
 								fill="#currentColor"
@@ -1359,42 +1353,19 @@
 						>
 						<h3 class="text-xl font-bold text-center">Note Archives</h3>
 
-						<div class="mx-auto w-full mt-5">
-							<table
-								class="w-full text-sm text-gray-500 dark:text-gray-400 table-fixed overflow-x-auto"
-							>
+						<div class="relative overflow-y-auto shadow-sm rounded-xl mx-5 my-5 h-4/5 max-h-4/5">
+							<table class="w-full text-sm text-gray-500 dark:text-gray-400">
 								<thead
 									class="text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 sticky top-0"
 								>
 									<tr>
-										<th scope="col" class="pl-6 py-4 text-left">Date </th>
-										<th scope="col" class="px-1 py-4 text-left">Note </th>
-										<th scope="col" class="px-6 py-4 text-left">Status </th>
-										<th scope="col" class="px-9 py-4 text-left"> Action </th>
+										<th scope="col" class="px-6 py-4 text-center">Date</th>
+										<th scope="col" class="px-6 py-4 text-left">Notes</th>
+										<th scope="col" class="py-4 text-center">Status</th>
+										<th scope="col" class="px-6 py-4 text-center">Action</th>
 									</tr>
 								</thead>
-								<tbody id="note-archive">
-									<tr class="border-b bg-white">
-										<!-- Display the data for each recitation item -->
-										<td class="text-sm text-gray-500 font-medium px-6 py-4" />
-										<td class="text-md text-gray-900 font-medium px- py-3" />
-										<td class="text-sm text-gray-900 font-medium px-6 py-4">
-											<select
-												class=" border-gray-200 w-32 h-6 mr-1 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
-											>
-												<option class="rounded-xl">Only Me</option>
-												<option class="rounded-xl">Current Class</option>
-											</select>
-										</td>
-										<td class="text-sm text-gray-900 font-medium px-6 py-4">
-											<label
-												for=""
-												class="px-4 bg-yellow-500 border-transparent hover:bg-yellow-600 hover:border-none text-sm text-white rounded-3xl"
-												>Undo</label
-											>
-										</td>
-									</tr>
-								</tbody>
+								<tbody id="note-archive" />
 							</table>
 						</div>
 					</div>
@@ -1438,34 +1409,7 @@
 
 			<!--TO DO LIST-->
 			<div id="notes-container">
-				<div class="mt-2 flex flex-row justify-between w-full items-center px-7 border-b pb-1">
-					<h1 class="font-medium text-sm">· Present Lesson 1</h1>
-
-					<div class="flex items-center">
-						<select
-							class=" border-gray-200 w-32 h-6 mr-1 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
-						>
-							<option disabled selected hidden class="rounded-3xl">Share</option>
-							<option class="rounded-xl">Only Me</option>
-							<option class="rounded-xl">Current Class</option>
-						</select>
-
-						<button>
-							<img
-								src="delete.png"
-								class="h-7 transform transition-transform focus:scale-100 active:scale-90"
-								alt="..."
-							/>
-						</button>
-						<button>
-							<img
-								src="done.png"
-								class="h-7 transform transition-transform focus:scale-100 active:scale-90"
-								alt="..."
-							/>
-						</button>
-					</div>
-				</div>
+				
 			</div>
 		</div>
 	</div>
@@ -1489,7 +1433,17 @@
 				<div class="modal-box relative h-96">
 					<label for="randomizer" class="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
 					<h3 class="text-xl font-bold text-center">Randomizer</h3>
-					<div class="divider mt-14" />
+					<div class="mt-6 mb-1">
+						<select
+							class="w-1/2 mr-1 border-gray-200 h-6 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
+							id=""
+						>
+							<option disabled selected class="rounded-3xl">Option</option>
+							<option class="rounded-3xl" value="2">Present Only</option>
+							<option class="rounded-3xl" value="3">All Students</option>
+						</select>
+					</div>
+					<div class="divider mt-5" />
 					<p class="font-medium text-lg text-center" id="randomizerName">STUDENT NAME</p>
 					<div class="divider" />
 
@@ -1530,12 +1484,20 @@
 					<label for="GroupCreator" class="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
 					<h3 class="text-xl font-bold text-center">Group Creator</h3>
 					<p class="mt-7 mb-2 font-medium">Group By</p>
-					<div class="mt-3 mb-1">
+					<div class="mt-3 mb-1 flex flex-row mx-10">
 						<select
-							class="w-1/2 border-gray-200 h-6 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
-							id="groupSize"
+							class="w-1/2 mr-1 border-gray-200 h-6 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
+							id=""
 						>
 							<option disabled selected class="rounded-3xl">Select</option>
+							<option class="rounded-3xl" value="2">Present Only</option>
+							<option class="rounded-3xl" value="3">All Students</option>
+						</select>
+						<select
+							class="w-1/2 ml-1 border-gray-200 h-6 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
+							id="groupSize"
+						>
+							<option disabled selected class="rounded-3xl">Number of Members</option>
 							<option class="rounded-3xl" value="2">2 Members Each</option>
 							<option class="rounded-3xl" value="3">3 Members Each</option>
 							<option class="rounded-3xl" value="4">4 Members Each</option>
@@ -1625,7 +1587,7 @@
 						class="w-full flex flex-col mx-auto
 					 py-3 px-4 outline rounded-3xl outline-gray-50 mt-5"
 					>
-						<div class="mx-auto w-4/5 mt-5">
+						<div class="mx-auto w-4/5 mt-3">
 							<!--WEEK-->
 							<!--WEEK-->
 							<div class="flex flex-row justify-center">
@@ -1636,19 +1598,18 @@
 									<option class="rounded-3xl">Week 1</option>
 									<option class="rounded-3xl">Week 2</option>
 								</select>
-
-								<select
-									class="w-32 border-gray-200 h-8 font-medium text-sm text-center mr-3 border border-gray focus:none rounded-3xl shadow-sm"
-								>
-									<option disabled selected class="rounded-3xl">Share</option>
-									<option class="rounded-3xl">Only Me</option>
-									<option class="rounded-3xl">Current Class</option>
-								</select>
 							</div>
 							<div class="divider my-0 mt-3" />
 
 							<h1 class="text-left mt-2 ml-5 text-sm">Day 1</h1>
 							<div class="flex items-center mt-1 pl-4">
+								<select
+									class="w-32 border-gray-200 h-8 font-medium text-xs text-center mr-3 border border-gray focus:none rounded-3xl shadow-sm"
+								>
+									<option disabled selected class="rounded-3xl">Share</option>
+									<option class="rounded-3xl">Only Me</option>
+									<option class="rounded-3xl">Current Class</option>
+								</select>
 								<input
 									id="day1input"
 									bind:value={day1x}
@@ -1670,6 +1631,13 @@
 
 							<h1 class="text-left mt-2 ml-5 text-sm">Day 2</h1>
 							<div class="flex items-center mt-1 pl-4">
+								<select
+									class="w-32 border-gray-200 h-8 font-medium text-xs text-center mr-3 border border-gray focus:none rounded-3xl shadow-sm"
+								>
+									<option disabled selected class="rounded-3xl">Share</option>
+									<option class="rounded-3xl">Only Me</option>
+									<option class="rounded-3xl">Current Class</option>
+								</select>
 								<input
 									id="day2input"
 									bind:value={day2x}
@@ -1689,6 +1657,13 @@
 
 							<h1 class="text-left mt-2 ml-5 text-sm">Day 3</h1>
 							<div class="flex items-center mt-1 pl-4">
+								<select
+									class="w-32 border-gray-200 h-8 font-medium text-xs text-center mr-3 border border-gray focus:none rounded-3xl shadow-sm"
+								>
+									<option disabled selected class="rounded-3xl">Share</option>
+									<option class="rounded-3xl">Only Me</option>
+									<option class="rounded-3xl">Current Class</option>
+								</select>
 								<input
 									id="day3input"
 									bind:value={day3x}
@@ -1708,6 +1683,13 @@
 
 							<h1 class="text-left mt-2 ml-5 text-sm">Day 4</h1>
 							<div class="flex items-center mt-1 pl-4">
+								<select
+									class="w-32 border-gray-200 h-8 font-medium text-xs text-center mr-3 border border-gray focus:none rounded-3xl shadow-sm"
+								>
+									<option disabled selected class="rounded-3xl">Share</option>
+									<option class="rounded-3xl">Only Me</option>
+									<option class="rounded-3xl">Current Class</option>
+								</select>
 								<input
 									id="day4input"
 									bind:value={day4x}
@@ -1727,6 +1709,13 @@
 
 							<h1 class="text-left mt-2 ml-5 text-sm">Day 5</h1>
 							<div class="flex items-center mt-1 pl-4">
+								<select
+									class="w-32 border-gray-200 h-8 font-medium text-xs text-center mr-3 border border-gray focus:none rounded-3xl shadow-sm"
+								>
+									<option disabled selected class="rounded-3xl">Share</option>
+									<option class="rounded-3xl">Only Me</option>
+									<option class="rounded-3xl">Current Class</option>
+								</select>
 								<input
 									id="day5input"
 									bind:value={day5x}
@@ -1746,21 +1735,30 @@
 							<!--END WEEK-->
 						</div>
 
-						<div class="justify-end flex mt-8 mb-2">
+						<div class="justify-between flex mt-9 mb-2 mx-4">
 							<button
 								on:click={toggleEditButton}
-								id="editButton"
-								class="text-sm font-medium bg-blue-500 hover:bg-blue-600 text-white px-6 ml-1 py-1 rounded-3xl"
+								id=""
+								class="text-sm font-medium bg-red-500 hover:bg-red-600 text-white px-6 ml-1 py-1 rounded-3xl"
 							>
-								Edit</button
+								Reset</button
 							>
-							<button
-								on:click={createWeeklyLesson}
-								id="saveButton1"
-								class="text-sm font-medium bg-green-500 hover:bg-green-600 text-white px-6 ml-1 py-1 rounded-3xl pointer-events-none"
-							>
-								Save
-							</button>
+							<div class="flex flex-row">
+								<button
+									on:click={toggleEditButton}
+									id="editButton"
+									class="text-sm font-medium bg-blue-500 hover:bg-blue-600 text-white px-6 ml-1 py-1 rounded-3xl"
+								>
+									Edit</button
+								>
+								<button
+									on:click={createWeeklyLesson}
+									id="saveButton1"
+									class="text-sm font-medium bg-green-500 hover:bg-green-600 text-white px-6 ml-1 py-1 rounded-3xl pointer-events-none"
+								>
+									Save
+								</button>
+							</div>
 						</div>
 					</div>
 				</div>

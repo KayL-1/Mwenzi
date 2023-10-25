@@ -137,11 +137,8 @@
 					<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
 					<ul
 						tabindex="0"
-						class="text-center rounded-2xl mt-2 dropdown-content shadow bg-base-100 w-40 h-16"
+						class="text-center rounded-2xl mt-2 dropdown-content shadow bg-base-100 w-40"
 					>
-						<li class="rounded-2xl hover:bg-gray-200">
-							<a href="/" class="ml-12 py-1 flex align-center font-medium">Settings</a>
-						</li>
 						<li class="rounded-2xl hover:bg-gray-200">
 							<a href="/Login" class="ml-12 py-1 flex text-center font-medium">Log out</a>
 						</li>
