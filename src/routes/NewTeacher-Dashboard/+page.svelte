@@ -26,8 +26,46 @@
 	let attendance = [];
 	let nameArray = [];
 	let recitation = [];
+	let attendanceDates = [];
 
 	let currentDatee;
+	let dateSelected;
+
+	async function getDates() {
+		const attendanceCollectionRef = collection(firestore, 'Subject', `${selecTSub}`, 'Attendance');
+
+		getDocs(attendanceCollectionRef)
+			.then((querySnapshot) => {
+				querySnapshot.forEach((doc) => {
+					attendanceDates.push(doc.id);
+					// You can also access the document data using doc.data()
+					// const data = doc.data();
+					// console.log("Document Data:", data);
+				});
+			})
+			.catch((error) => {
+				console.error('Error fetching documents:', error);
+			});
+		attendanceDates.sort((a, b) => {
+			// Convert the dates to Date objects for comparison
+			const dateA = new Date(a);
+			const dateB = new Date(b);
+
+			// Sort in descending order (latest date first)
+			return dateB - dateA;
+		});
+
+		// Remove the first element from the array
+		attendanceDates.shift();
+
+		const selectElement = document.querySelector('#dateSelector1'); // Select by id
+
+		attendanceDates.forEach((date) => {
+			const optionElement = document.createElement('option');
+			optionElement.textContent = date;
+			selectElement.appendChild(optionElement);
+		});
+	}
 
 	async function classCheck() {
 		const collectionRef = collection(firestore, 'Subject');
@@ -95,22 +133,56 @@
 		});
 	}
 
-	function attendanceCheck() {
-		const attendanceCollectionRef = collection(firestore, 'Subject', `${selecTSub}`, 'Attendance');
-		const attendanceDocRef = doc(attendanceCollectionRef, currentDatee);
+	function attendanceCheck(type) {
+		const date123 = document.getElementById('dateSelector1').value;
 
-		return onSnapshot(attendanceDocRef, (attendanceDocSnapshot) => {
-			attendance = Object.entries(attendanceDocSnapshot.data()).map(([key, value]) => ({
-				id: key,
-				...value
-			}));
+		if (type === 1) {
+			const attendanceCollectionRef = collection(
+				firestore,
+				'Subject',
+				`${selecTSub}`,
+				'Attendance'
+			);
+			const attendanceDocRef = doc(attendanceCollectionRef, currentDatee);
 
-			console.log(attendance);
-			// Update your UI or perform any other actions with the updated data here
-			fetchTime();
-			fetchNames();
-		});
-		attendance = attendance;
+			return onSnapshot(attendanceDocRef, (attendanceDocSnapshot) => {
+				attendance = Object.entries(attendanceDocSnapshot.data()).map(([key, value]) => ({
+					id: key,
+					...value
+				}));
+
+				console.log(attendance);
+				// Update your UI or perform any other actions with the updated data here
+				fetchTime();
+				fetchNames();
+			});
+
+			attendance = attendance;
+		}
+
+		if (type === 2) {
+
+			const attendanceCollectionRef = collection(
+				firestore,
+				'Subject',
+				`${selecTSub}`,
+				'Attendance'
+			);
+			const attendanceDocRef = doc(attendanceCollectionRef, date123);
+			return onSnapshot(attendanceDocRef, (attendanceDocSnapshot) => {
+				attendance = Object.entries(attendanceDocSnapshot.data()).map(([key, value]) => ({
+					id: key,
+					...value
+				}));
+
+				console.log(attendance);
+				// Update your UI or perform any other actions with the updated data here
+				fetchTime();
+				fetchNames();
+			});
+
+			attendance = attendance;
+		}
 	}
 
 	// Iterate over each object
@@ -840,13 +912,15 @@
 	async function change() {
 		console.log(selecTSub);
 		classCheck();
-		attendanceCheck();
+		await getDates();
+		attendanceCheck(1);
 		recitationCheck();
 		resetChanges();
 		fetchAndDisplayNotes();
 		fetchAndDisplayNotes2();
 		updateLessonText();
-		sortRecitationA();
+		sortRecitation();
+
 	}
 
 	async function getuserName(id) {
@@ -1134,7 +1208,7 @@
 			userUID = localStorage.getItem('userId');
 			getuserName(userUID);
 			classCheck();
-			attendanceCheck();
+			attendanceCheck(1);
 			return () => {
 				unsubscribe();
 			};
@@ -1325,9 +1399,8 @@
 							<select
 								class="w-48 border-gray-200 h-6 font-medium text-sm text-center mr-3 border border-gray focus:none rounded-3xl shadow-sm"
 							>
-								<option disabled selected class="rounded-3xl">Select Date</option>
 								<option class="rounded-3xl">Today</option>
-								<option class="rounded-3xl">September 14, 2023</option>s
+								<option class="rounded-3xl">September 14, 2023</option>
 							</select>
 						</div>
 						<button class="btn btn-success mt-1 rounded-3xl text-white w-48">Export Selected</button
@@ -1338,10 +1411,12 @@
 			<!--END EXPORT ATT-->
 
 			<select
+				id="dateSelector1"
+				bind:value={dateSelected}
+				on:change={() => attendanceCheck(2)}
 				class="justify-end border-gray-200 w-56 h-6 font-medium text-sm text-center mr-3 border border-gray focus:none rounded-3xl shadow-sm"
 			>
-				<option disabled selected hidden class="rounded-3xl">Select Date</option>
-				<option class="rounded-xl" value={currentDatee}>Today</option>
+				<option class="rounded-xl" value={currentDatee} selected>Today</option>
 			</select>
 
 			<div class="relative overflow-y-auto shadow-sm rounded-xl mx-5 my-5 h-96 max-h-96">
