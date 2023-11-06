@@ -180,8 +180,9 @@
 				for (const student of studentArray) {
 					const recitationDocRef = doc(recitationCollectionRef, student);
 					await setDoc(recitationDocRef, {
-						totalPoints: 0 // Set the initial value of totalPoints to 0
-						// Add more fields as needed for each student in the Recitation document
+						totalPoints: 0, // Set the initial value of totalPoints to 0
+						week: 0,
+						day: 0
 					});
 				}
 

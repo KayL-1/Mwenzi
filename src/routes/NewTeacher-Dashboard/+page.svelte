@@ -41,6 +41,7 @@
 	}
 
 	async function recitationCheck() {
+		const selectOption = document.getElementById('SortRec').value;
 		const attendanceCollectionReflll = collection(
 			firestore,
 			'Subject',
@@ -54,23 +55,42 @@
 				const documentData = doc.data();
 				const documentName = doc.id;
 				const totalPoints = documentData.totalPoints;
+				const week = documentData.week || 0;
+				const day = documentData.day || 0;
 
 				const documentInfo = {
 					id: documentName,
-					totalPoints: totalPoints
+					totalPoints: totalPoints,
+					week: week,
+					day: day
 				};
 
 				recitation.push(documentInfo);
 			});
 
-			recitation.sort((a, b) => b.totalPoints - a.totalPoints);
+			if (selectOption == 'Total Points') {
+				recitation.sort((a, b) => b.totalPoints - a.totalPoints);
 
-			recitation.forEach((item, index) => {
-				item.ranking = index + 1;
-			});
+				recitation.forEach((item, index) => {
+					item.ranking = index + 1;
+				});
 
-			console.log('Updated recitation array with ranking:', recitation);
-			console.log('recitation array:', recitation);
+				console.log('Updated recitation array with ranking:', recitation);
+				console.log('recitation array:', recitation);
+			} else if (selectOption == 'Weekly') {
+				recitation.sort((a, b) => b.week - a.week);
+
+				recitation.forEach((item, index) => {
+					item.ranking = index + 1;
+				});
+			} else if (selectOption == 'Daily') {
+				recitation.sort((a, b) => b.day - a.day);
+
+				recitation.forEach((item, index) => {
+					item.ranking = index + 1;
+				});
+			}
+
 			fetchNamesTwo();
 		});
 	}
@@ -228,9 +248,15 @@
 
 				// Decrease the value of the totalPoint field by 1
 				const newTotalPoint = docData.totalPoints - 1;
+				const WeekTotalPoint = docData.week - 1;
+				const DayTotalPoint = docData.day - 1;
 
 				// Update the document with the new value
-				await updateDoc(recitationDocRef, { totalPoints: newTotalPoint });
+				await updateDoc(recitationDocRef, {
+					totalPoints: newTotalPoint,
+					week: WeekTotalPoint,
+					day: DayTotalPoint
+				});
 				console.log('Minus button clicked for document ID:', documentID);
 			}
 		}
@@ -246,9 +272,14 @@
 
 				// Decrease the value of the totalPoint field by 1
 				const newTotalPoint = docData.totalPoints + 1;
-
+				const WeekTotalPoint = docData.week + 1;
+				const DayTotalPoint = docData.day + 1;
 				// Update the document with the new value
-				await updateDoc(recitationDocRefe, { totalPoints: newTotalPoint });
+				await updateDoc(recitationDocRefe, {
+					totalPoints: newTotalPoint,
+					week: WeekTotalPoint,
+					day: DayTotalPoint
+				});
 				console.log('Minus button clicked for document ID:', documentID);
 			}
 			console.log('Add button clicked for document ID:', documentID);
@@ -321,6 +352,7 @@
 	let isRolling = false;
 	let previousStudentIndex = -1; // Initialize with an invalid index
 	const calledNames = [];
+	let recitationType;
 	async function getRandomName() {
 		if (isRolling) return; // Prevent multiple clicks while rolling
 		const collectionRef = collection(firestore, 'Subject', `${selecTSub}`, 'Attendance');
@@ -333,10 +365,19 @@
 
 				// Assuming 'data' is an object with map fields, iterate through the fields
 				const presentNames = [];
-				for (const field in data) {
-					if (data[field].status === 'Present' && !calledNames.includes(field)) {
-						// Do something with the map field where status is "Present"
-						console.log(`Field ${field} is Present`);
+
+				if (recitationType === 'Present Only') {
+					for (const field in data) {
+						if (data[field].status === 'Present' && !calledNames.includes(field)) {
+							// Do something with the map field where status is "Present"
+							console.log(`Field ${field} is Present`);
+							presentNames.push(field);
+						}
+					}
+				}
+
+				if (recitationType === 'All Students') {
+					for (const field in data) {
 						presentNames.push(field);
 					}
 				}
@@ -447,50 +488,90 @@
 			throw error; // Re-throw the error to handle it in the calling function
 		}
 	}
-
+	let groupType;
 	async function groupStudents() {
-		console.log(selecTSub);
+		console.log(groupType);
 
 		// Create a reference to the specific document within the 'Subject' collection
-		const docRef = doc(firestore, 'Subject', selecTSub);
 
-		try {
-			// Get the data for the specific document
-			const docSnapshot = await getDoc(docRef);
-
-			if (docSnapshot.exists()) {
-				// Assuming 'students' is the name of the field containing the student array
-				const studentIDs = docSnapshot.data().students;
-
-				if (studentIDs) {
-					// Get the selected group size from the select element with the 'groupSize' id
-					const selectedGroupSize = parseInt(document.getElementById('groupSize').value);
-
-					if (!isNaN(selectedGroupSize) && selectedGroupSize > 0) {
-						// Fetch student names based on their IDs
-						const studentNames = await fetchStudentNames(studentIDs);
-
-						// Create an array to store the grouped students
-						const groupedStudents = [];
-
-						// Iterate through the student names and group them
-						for (let i = 0; i < studentNames.length; i += selectedGroupSize) {
-							groupedStudents.push(studentNames.slice(i, i + selectedGroupSize));
+		if (groupType === 'Present Only') {
+			try {
+				const collectionRef = collection(firestore, 'Subject', `${selecTSub}`, 'Attendance');
+				const queryRef = doc(collectionRef, currentDatee);
+				const querySnapshot123 = await getDoc(queryRef);
+				const selectedGroupSize = parseInt(document.getElementById('groupSize').value);
+				if (querySnapshot123.exists()) {
+					const data = querySnapshot123.data();
+					const studentIdsx = [];
+					console.log('yeahS');
+					if (recitationType === 'Present Only') {
+						for (const field in data) {
+							if (data[field].status === 'Present') {
+								// Do something with the map field where status is "Present"
+								console.log(`Field ${field} is Present`);
+								studentIdsx.push(field);
+							}
 						}
 
-						// Display the grouped students in the HTML table
-						displayGroupedStudents(groupedStudents);
+						if (!isNaN(selectedGroupSize) && selectedGroupSize > 0) {
+							const studentNames = await fetchStudentNames(studentIdsx);
+
+							const groupedStudents = [];
+
+							// Iterate through the student names and group them
+							for (let i = 0; i < studentNames.length; i += selectedGroupSize) {
+								groupedStudents.push(studentNames.slice(i, i + selectedGroupSize));
+							}
+
+							displayGroupedStudents(groupedStudents);
+						} else {
+							console.log('Please select a valid group size.');
+						}
+					}
+				}
+			} catch (error) {
+				console.error('Error fetching document:', error);
+			}
+		}
+
+		if (groupType === 'All Students') {
+			try {
+				const docRef = doc(firestore, 'Subject', selecTSub);
+				const docSnapshot = await getDoc(docRef);
+
+				if (docSnapshot.exists()) {
+					// Assuming 'students' is the name of the field containing the student array
+					const studentIDs = docSnapshot.data().students;
+
+					if (studentIDs) {
+						// Get the selected group size from the select element with the 'groupSize' id
+						const selectedGroupSize = parseInt(document.getElementById('groupSize').value);
+
+						if (!isNaN(selectedGroupSize) && selectedGroupSize > 0) {
+							// Fetch student names based on their IDs
+							const studentNames = await fetchStudentNames(studentIDs);
+							// Create an array to store the grouped students
+							const groupedStudents = [];
+
+							// Iterate through the student names and group them
+							for (let i = 0; i < studentNames.length; i += selectedGroupSize) {
+								groupedStudents.push(studentNames.slice(i, i + selectedGroupSize));
+							}
+							console.log(groupedStudents);
+							// Display the grouped students in the HTML table
+							displayGroupedStudents(groupedStudents);
+						} else {
+							console.log('Please select a valid group size.');
+						}
 					} else {
-						console.log('Please select a valid group size.');
+						console.log("No 'students' field found in the document.");
 					}
 				} else {
-					console.log("No 'students' field found in the document.");
+					console.log('Document does not exist.');
 				}
-			} else {
-				console.log('Document does not exist.');
+			} catch (error) {
+				console.error('Error fetching document:', error);
 			}
-		} catch (error) {
-			console.error('Error fetching document:', error);
 		}
 	}
 
@@ -635,9 +716,24 @@
 				const selectElement = tableRow.querySelector('select');
 				selectElement.addEventListener('change', async () => {
 					const newStatus = selectElement.value;
+					console.log(newStatus);
 					try {
 						await updateDoc(doc.ref, { Status: newStatus });
 						status = newStatus;
+					} catch (error) {
+						console.error('Error updating document: ', error);
+					}
+				});
+
+				const undoButton = tableRow.querySelector('.update-status-button1');
+
+				undoButton.addEventListener('click', async () => {
+					console.log('Element clicked!');
+
+					try {
+						// Perform your desired actions here, e.g., updating data
+						await updateDoc(doc.ref, { Archive: 'false' });
+						location.reload();
 					} catch (error) {
 						console.error('Error updating document: ', error);
 					}
@@ -646,23 +742,6 @@
 		} catch (error) {
 			console.error('Error:', error);
 		}
-	}
-
-	function clicktest() {
-		console.log('test');
-
-		// Uncomment and add your functionality here
-		// const selectElement = noteElement.querySelector('select');
-		// const newStatus = selectElement.value;
-
-		// try {
-		//   // Perform your desired actions here, e.g., updating data
-		//   // await updateDoc(doc.ref, { Archive: 'false' });
-		//   // Archive = 'true';
-		//   // location.reload();
-		// } catch (error) {
-		//   console.error('Error updating document: ', error);
-		// }
 	}
 
 	async function fetchAndDisplayNotes() {
@@ -719,7 +798,6 @@
 
 					try {
 						await updateDoc(doc.ref, { Archive: 'true' });
-						Archive = 'true';
 						location.reload();
 					} catch (error) {
 						console.error('Error updating document: ', error);
@@ -767,6 +845,8 @@
 		resetChanges();
 		fetchAndDisplayNotes();
 		fetchAndDisplayNotes2();
+		updateLessonText();
+		sortRecitationA();
 	}
 
 	async function getuserName(id) {
@@ -799,43 +879,33 @@
 	let day4status2 = '';
 	let day5status2 = '';
 
+	let weekStatus = '';
+
 	async function createWeeklyLesson() {
 		console.log('test');
 		const collectionRef = collection(firestore, 'Subject', selecTSub, 'Lessons');
-		const week1DocRef = doc(collectionRef, 'week1'); // Create a document reference with 'week1' as the ID
+		const week1DocRef = doc(collectionRef, weekStatus); // Create a document reference with 'week1' as the ID
 		const data1 = {
 			day1: {
 				Link: day1x,
 				Status: day1status,
 				Share: day1status2
-			}
-		};
-
-		const data2 = {
-			day1: {
+			},
+			day2: {
 				Link: day2x,
 				Status: day2status,
 				Share: day2status2
-			}
-		};
-
-		const data3 = {
+			},
 			day3: {
 				Link: day3x,
 				Status: day3status,
 				Share: day3status2
-			}
-		};
-
-		const data4 = {
+			},
 			day4: {
 				Link: day4x,
 				Status: day4status,
 				Share: day4status2
-			}
-		};
-
-		const data5 = {
+			},
 			day5: {
 				Link: day5x,
 				Status: day5status,
@@ -844,11 +914,218 @@
 		};
 
 		try {
-			await setDoc(week1DocRef, data1, data2, data3, data4, data5);
+			await setDoc(week1DocRef, data1);
 			console.log('Document written with ID: week1');
 		} catch (error) {
 			console.error('Error writing document: ', error);
 		}
+	}
+
+	async function redirectToURL() {}
+
+	async function updateLessonText() {
+		const weekSelector = document.getElementById('weekSelector');
+		const selectedValue = weekSelector.value;
+		const collectionRef = collection(firestore, 'Subject', selecTSub, 'Lessons');
+		const week1DocRef = doc(collectionRef, selectedValue); // Use the selectedValue
+		try {
+			const docSnapshot = await getDoc(week1DocRef);
+
+			if (docSnapshot.exists()) {
+				const queriedData = docSnapshot.data();
+
+				for (let day = 1; day <= 5; day++) {
+					const inputElement = document.getElementById(`day${day}input`);
+					const selectElement = document.getElementById(`day${day}Select`);
+					const checkboxElement = document.getElementById(`day${day}checkbox`);
+
+					const dayData = queriedData[`day${day}`];
+					if (dayData) {
+						if (dayData.Link !== null) {
+							inputElement.value = dayData.Link || '';
+						}
+
+						// Update the select value
+						if (dayData.Share !== null) {
+							selectElement.value = dayData.Share || '';
+						}
+
+						if (dayData.Status !== null) {
+							checkboxElement.checked = dayData.Status === 'finish';
+						}
+					}
+				}
+			} else {
+				console.log('Document does not exist.');
+				for (let day = 1; day <= 5; day++) {
+					const inputElement = document.getElementById(`day${day}input`);
+					const selectElement = document.getElementById(`day${day}Select`);
+					const checkboxElement = document.getElementById(`day${day}checkbox`);
+					inputElement.value = '';
+
+					selectElement.value = '';
+					checkboxElement.checked = '';
+				}
+			}
+		} catch (error) {
+			console.error('Error getting document:', error);
+		}
+	}
+
+	let studentIDxx;
+
+	function redirectToLink(id) {
+		const inputElement = document.getElementById(id);
+		const inputValue = inputElement.value.trim();
+		const link = 'https:' + inputValue;
+		if (inputValue) {
+			window.open(link, '_blank');
+		}
+	}
+
+	async function studentInformation(id) {
+		studentIDxx = id;
+		const queryRef1 = collection(firestore, 'users');
+		const queryRef2 = query(queryRef1, where('studentRFID', '==', id));
+		const querySnapshot = await getDocs(queryRef2);
+		const namex = document.getElementById('studentNamex');
+		const idx = document.getElementById('studentIDx');
+		const addressx = document.getElementById('studentAddressx');
+		const parent = document.getElementById('studentParentx');
+		const contact = document.getElementById('studentContactx');
+		const medical = document.getElementById('studentMedicalx');
+
+		querySnapshot.forEach((doc) => {
+			// Access the data within each document
+			const data = doc.data();
+			namex.textContent = data.Name || '';
+
+			// Update "studentIDx" element
+			idx.textContent = data.studentID || '';
+
+			// Update "studentParentx" element
+			parent.value = data.parentName || '';
+
+			// Update "studentContactx" element
+			contact.value = data.contactNum || '';
+
+			// Update "addressx" element
+			addressx.value = data.address || '';
+
+			// Update "medical" element
+			medical.value = data.medicalCondition || '';
+		});
+	}
+
+	function undisabledInputs() {
+		const addressx = document.getElementById('studentAddressx');
+		const parent = document.getElementById('studentParentx');
+		const contact = document.getElementById('studentContactx');
+		const medical = document.getElementById('studentMedicalx');
+		const savebutton = document.getElementById('saveButtonx1');
+
+		if (addressx.disabled) {
+			addressx.removeAttribute('disabled');
+			parent.removeAttribute('disabled');
+			contact.removeAttribute('disabled');
+			medical.removeAttribute('disabled');
+			savebutton.classList.remove('pointer-events-none');
+		} else {
+			addressx.setAttribute('disabled', 'disabled');
+			parent.setAttribute('disabled', 'disabled');
+			contact.setAttribute('disabled', 'disabled');
+			medical.setAttribute('disabled', 'disabled');
+			savebutton.classList.add('pointer-events-none');
+		}
+	}
+
+	async function saveStudentInformation() {
+		const queryRef1 = collection(firestore, 'users');
+		const queryRef2 = query(queryRef1, where('studentRFID', '==', studentIDxx));
+
+		const addressx = document.getElementById('studentAddressx').value;
+		const parent = document.getElementById('studentParentx').value;
+		const contact = document.getElementById('studentContactx').value;
+		const medical = document.getElementById('studentMedicalx').value;
+
+		try {
+			const querySnapshot = await getDocs(queryRef2);
+
+			querySnapshot.forEach(async (doc) => {
+				// Assuming docRef is the reference to the document you want to update
+				await updateDoc(doc.ref, {
+					parentName: parent,
+					contactNum: contact,
+					address: addressx,
+					medicalCondition: medical
+				});
+			});
+		} catch (error) {
+			console.error('Error updating documents:', error);
+		}
+	}
+
+	async function sortRecitation() {
+		console.log('haha');
+		const selectOption = document.getElementById('SortRec').value;
+		const totalElements = document.getElementsByClassName('pointsDisplay1');
+		const weekElements = document.getElementsByClassName('pointsDisplay2');
+		const dayElements = document.getElementsByClassName('pointsDisplay3');
+
+		if (selectOption === 'Total Points') {
+			for (let i = 0; i < totalElements.length; i++) {
+				totalElements[i].hidden = false;
+			}
+			for (let i = 0; i < weekElements.length; i++) {
+				weekElements[i].hidden = true;
+			}
+			for (let i = 0; i < dayElements.length; i++) {
+				dayElements[i].hidden = true;
+			}
+
+			recitation.sort((a, b) => b.totalPoints - a.totalPoints);
+
+			recitation.forEach((item, index) => {
+				item.ranking = index + 1;
+			});
+		}
+
+		if (selectOption === 'Weekly') {
+			for (let i = 0; i < totalElements.length; i++) {
+				totalElements[i].hidden = true;
+			}
+			for (let i = 0; i < weekElements.length; i++) {
+				weekElements[i].hidden = true;
+			}
+			for (let i = 0; i < dayElements.length; i++) {
+				dayElements[i].hidden = false;
+			}
+
+			recitation.sort((a, b) => b.week - a.week);
+
+			recitation.forEach((item, index) => {
+				item.ranking = index + 1;
+			});
+		}
+
+		if (selectOption === 'Daily') {
+			for (let i = 0; i < totalElements.length; i++) {
+				totalElements[i].hidden = true;
+			}
+			for (let i = 0; i < weekElements.length; i++) {
+				weekElements[i].hidden = false;
+			}
+			for (let i = 0; i < dayElements.length; i++) {
+				dayElements[i].hidden = true;
+			}
+
+			recitation.sort((a, b) => b.day - a.day);
+
+			recitation.forEach((item, index) => {
+				item.ranking = index + 1;
+			});
+		}
+		recitationCheck();
 	}
 
 	onMount(() => {
@@ -1007,37 +1284,6 @@
 						>
 						<a class="font-medium text-sm p-2">{currentDatee}</a>
 					</div>
-
-					<div
-						class="container h-8 my-6 mx-1 border border-gray-200 rounded-3xl w-48 flex justify-center items-center"
-					>
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							enable-background="new 0 0 24 24"
-							viewBox="0 0 24 24"
-							id="nfc"
-							height="20"
-							width="20"
-							><g
-								><path
-									d="M7,14c0-1.103,0.897-2,2-2h6c1.103,0,2,0.897,2,2v8h2v-8c0-2.2056-1.7944-4-4-4H9c-2.2056,0-4,1.7944-4,4v8h2V14z"
-									fill="#ADADAD"
-								/><path
-									d="M11 13c-.5522 0-1 .4478-1 1s.4478 1 1 1h2c.5522 0 1-.4478 1-1s-.4478-1-1-1H11zM7.7554 6.7705C7.3691 7.1655 7.376 7.7983 7.7705 8.1851c.1948.1904.4473.2852.6997.2852.2593 0 .5186-.1006.7148-.3003.7817-.7993 1.8779-1.2222 3.02-1.1616.9971.0547 1.9253.4683 2.6133 1.1646.3887.3936 1.0215.3965 1.4141.0088.3931-.3882.397-1.0215.0088-1.4141-1.0376-1.0508-2.4321-1.6743-3.9277-1.7563C10.5933 4.9175 8.9404 5.561 7.7554 6.7705z"
-									fill="#ADADAD"
-								/><path
-									d="M6.3501,6.3501c0.2583,0,0.5161-0.0991,0.7119-0.2979c1.3813-1.3994,3.3179-2.1436,5.2944-2.0439
-                c1.7383,0.0933,3.3662,0.8198,4.584,2.0464c0.3887,0.3916,1.0225,0.3945,1.4141,0.0049c0.3921-0.3892,0.394-1.022,0.0049-1.4141
-                c-1.5674-1.5791-3.6616-2.5146-5.8984-2.6343c-2.5527-0.1289-5.041,0.8315-6.8228,2.6367C5.2505,5.041,5.2544,5.6738,5.6479,6.062
-                C5.8428,6.2544,6.0962,6.3501,6.3501,6.3501z"
-									fill="#ADADAD"
-								/></g
-							></svg
-						>
-						<!-- svelte-ignore a11y-missing-attribute -->
-						<a class="font-medium text-sm p-2"> RFID Status: </a>
-						<a class="font-semibold text-sm text-green-500"> On</a>
-					</div>
 				</div>
 				<!--END RFID STATUS, DATE, SUBJECT TIME -->
 			</div>
@@ -1124,7 +1370,8 @@
 								>
 									<!--LABEL FOR MEDIC MODAL -->
 									<label for="MedicalRecords" class="cursor-pointer">
-										<span>{data.name}</span>
+										<!-- svelte-ignore a11y-click-events-have-key-events -->
+										<span on:click={() => studentInformation(data.id)}>{data.name}</span>
 									</label>
 									<!--END LABEL FOR MEDIC MODAL -->
 								</th>
@@ -1174,87 +1421,97 @@
 							</tr>
 
 							<!--MEDIC MODAL-->
-							<input type="checkbox" id="MedicalRecords" class="modal-toggle" />
-							<div class="modal">
-								<div class="modal-box relative h-2/4 max-w-xl">
-									<label for="MedicalRecords" class="btn btn-sm btn-circle absolute right-2 top-2"
-										>✕</label
-									>
 
-									<div class="text-xl font-bold text-center w-full justify-center flex flex-row">
-										<p>Student Information</p>
-										<span />
-									</div>
-
-									<div
-										class="w-full flex flex-col mx-auto px-4 pb-4 outline rounded-3xl outline-gray-50 mt-3"
-									>
-										<div class="mx-auto w-full">
-											<div class="flex flex-row justify-between mt-5 mx-2">
-												<h1 class="text-left font-medium text-lg mt-3">Ace Dela Cuesta</h1>
-												<h1 class="text-left font-medium text-lg mt-3">19-1064</h1>
-											</div>
-											<div class="divider mt-0" />
-											<h1 class="text-left my-2 mx-5">
-												Parent/Guardian Name:
-												<input
-													class="mt-1 border rounded-3xl px-2 focus:ring-0 text-sm block bg-white w-full h-7 border-slate-300 shadow-sm focus:outline-none"
-													placeholder="Yohan Dela Cuesta"
-													type="text"
-													readonly
-												/>
-											</h1>
-
-											<h1 class="text-left my-2 mx-5">
-												Contact Number:
-												<input
-													class="mt-1 border rounded-3xl px-2 focus:ring-0 text-sm block bg-white w-full h-7 border-slate-300 shadow-sm focus:outline-none"
-													placeholder="09355349012"
-													type="text"
-													readonly
-												/>
-											</h1>
-
-											<h1 class="text-left my-2 mx-5">
-												Address:
-												<input
-													class="mt-1 border rounded-3xl px-2 focus:ring-0 text-sm block bg-white w-full h-7 border-slate-300 shadow-sm focus:outline-none"
-													placeholder="Address"
-													type="text"
-													readonly
-												/>
-											</h1>
-
-											<h1 class="text-left my-2 mx-5">
-												Medical Condition/s:
-												<input
-													class="mt-1 border rounded-3xl px-2 focus:ring-0 text-sm block bg-white w-full h-7 border-slate-300 shadow-sm focus:outline-none"
-													placeholder="Asthma"
-													type="text"
-													readonly
-												/>
-											</h1>
-										</div>
-									</div>
-
-									<div class="justify-end flex mt-4">
-										<button
-											id="editButton"
-											class="text-sm font-medium bg-blue-500 hover:bg-blue-600 text-white py-2 px-6 ml-1 rounded-3xl transform transition-transform focus:scale-100 active:scale-95"
-										>
-											Edit</button
-										>
-										<button
-											id="saveButton"
-											class="text-sm font-medium bg-green-500 hover:bg-green-600 text-white px-6 ml-1 py-1 rounded-3xl pointer-events-none"
-										>
-											Save
-										</button>
-									</div>
-								</div>
-							</div>
 							<!--END MEDIC MODAL-->
 						{/each}
+
+						<input type="checkbox" id="MedicalRecords" class="modal-toggle" />
+						<div class="modal">
+							<div class="modal-box relative h-2/4 max-w-xl">
+								<label for="MedicalRecords" class="btn btn-sm btn-circle absolute right-2 top-2"
+									>✕</label
+								>
+
+								<div class="text-xl font-bold text-center w-full justify-center flex flex-row">
+									<p>Student Information</p>
+									<span />
+								</div>
+
+								<div
+									class="w-full flex flex-col mx-auto px-4 pb-4 outline rounded-3xl outline-gray-50 mt-3"
+								>
+									<div class="mx-auto w-full">
+										<div class="flex flex-row justify-between mt-5 mx-2">
+											<h1 id="studentNamex" class="text-left font-medium text-lg mt-3">
+												Ace Dela Cuesta
+											</h1>
+											<h1 id="studentIDx" class="text-left font-medium text-lg mt-3">19-1064</h1>
+										</div>
+										<div class="divider mt-0" />
+										<h1 class="text-left my-2 mx-5">
+											Parent/Guardian Name:
+											<input
+												id="studentParentx"
+												class="mt-1 border rounded-3xl px-2 focus:ring-0 text-sm block bg-white w-full h-7 border-slate-300 shadow-sm focus:outline-none"
+												placeholder="Yohan Dela Cuesta"
+												type="text"
+												disabled
+											/>
+										</h1>
+
+										<h1 class="text-left my-2 mx-5">
+											Contact Number:
+											<input
+												id="studentContactx"
+												class="mt-1 border rounded-3xl px-2 focus:ring-0 text-sm block bg-white w-full h-7 border-slate-300 shadow-sm focus:outline-none"
+												placeholder="09355349012"
+												type="text"
+												disabled
+											/>
+										</h1>
+
+										<h1 class="text-left my-2 mx-5">
+											Address:
+											<input
+												id="studentAddressx"
+												class="mt-1 border rounded-3xl px-2 focus:ring-0 text-sm block bg-white w-full h-7 border-slate-300 shadow-sm focus:outline-none"
+												placeholder="Address"
+												type="text"
+												disabled
+											/>
+										</h1>
+
+										<h1 class="text-left my-2 mx-5">
+											Medical Condition/s:
+											<input
+												id="studentMedicalx"
+												class="mt-1 border rounded-3xl px-2 focus:ring-0 text-sm block bg-white w-full h-7 border-slate-300 shadow-sm focus:outline-none"
+												placeholder="Asthma"
+												type="text"
+												disabled
+											/>
+										</h1>
+									</div>
+								</div>
+
+								<div class="justify-end flex mt-4">
+									<button
+										id="editButtonx1"
+										class="text-sm font-medium bg-blue-500 hover:bg-blue-600 text-white py-2 px-6 ml-1 rounded-3xl transform transition-transform focus:scale-100 active:scale-95"
+										on:click={undisabledInputs}
+									>
+										Edit</button
+									>
+									<button
+										id="saveButtonx1"
+										class="text-sm font-medium bg-green-500 hover:bg-green-600 text-white px-6 ml-1 py-1 rounded-3xl pointer-events-none"
+										on:click={() => saveStudentInformation()}
+									>
+										Save
+									</button>
+								</div>
+							</div>
+						</div>
 					</tbody>
 				</table>
 			</div>
@@ -1267,11 +1524,13 @@
 				<h1 class="pl-1 pt-2 font-medium text-md text-gray-700">Points</h1>
 			</div>
 			<select
+				id="SortRec"
 				class="mt-2 border-gray-200 w-56 h-6 font-medium text-sm text-center mr-3 border border-gray focus:none rounded-3xl shadow-sm"
+				on:change={sortRecitation}
 			>
-				<option disabled selected hidden class="rounded-3xl">Sort by</option>
+				<option selected class="rounded-3xl">Total Points</option>
 				<option class="rounded-xl">Daily</option>
-				<option class="rounded-xl">Monthly</option>
+				<option class="rounded-xl">Weekly</option>
 			</select>
 			<div class="relative overflow-y-auto shadow-sm rounded-xl mx-5 my-4 max-h-96">
 				<table class="w-full text-sm text-gray-500 dark:text-gray-400">
@@ -1296,9 +1555,27 @@
 								<td class="text-md text-gray-900 font-medium px-6 py-3 whitespace-nowrap text-left">
 									{data.name}
 								</td>
-								<td class="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
+								<td
+									id="pointsDisplay1"
+									class="pointsDisplay1 text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap"
+								>
 									{data.totalPoints}
 								</td>
+								<td
+									hidden
+									id="pointsDisplay2"
+									class="pointsDisplay2 text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap"
+								>
+									{data.day}
+								</td>
+								<td
+									hidden
+									id="pointsDisplay3"
+									class="pointsDisplay3 text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap"
+								>
+									{data.week}
+								</td>
+
 								<td class="flex mt-2 justify-center">
 									<!-- svelte-ignore a11y-click-events-have-key-events -->
 									<img
@@ -1408,9 +1685,7 @@
 			<div class="divider mb-1" />
 
 			<!--TO DO LIST-->
-			<div id="notes-container">
-				
-			</div>
+			<div id="notes-container" />
 		</div>
 	</div>
 
@@ -1435,12 +1710,11 @@
 					<h3 class="text-xl font-bold text-center">Randomizer</h3>
 					<div class="mt-6 mb-1">
 						<select
+							bind:value={recitationType}
 							class="w-1/2 mr-1 border-gray-200 h-6 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
-							id=""
 						>
-							<option disabled selected class="rounded-3xl">Option</option>
-							<option class="rounded-3xl" value="2">Present Only</option>
-							<option class="rounded-3xl" value="3">All Students</option>
+							<option class="rounded-3xl" selected>Present Only</option>
+							<option class="rounded-3xl">All Students</option>
 						</select>
 					</div>
 					<div class="divider mt-5" />
@@ -1486,12 +1760,13 @@
 					<p class="mt-7 mb-2 font-medium">Group By</p>
 					<div class="mt-3 mb-1 flex flex-row mx-10">
 						<select
+							bind:value={groupType}
 							class="w-1/2 mr-1 border-gray-200 h-6 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
 							id=""
 						>
 							<option disabled selected class="rounded-3xl">Select</option>
-							<option class="rounded-3xl" value="2">Present Only</option>
-							<option class="rounded-3xl" value="3">All Students</option>
+							<option class="rounded-3xl">Present Only</option>
+							<option class="rounded-3xl">All Students</option>
 						</select>
 						<select
 							class="w-1/2 ml-1 border-gray-200 h-6 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
@@ -1592,11 +1867,20 @@
 							<!--WEEK-->
 							<div class="flex flex-row justify-center">
 								<select
+									id="weekSelector"
 									class="w-40 border-gray-200 h-8 font-medium text-sm text-center mr-3 border border-gray focus:none rounded-3xl shadow-sm"
+									bind:value={weekStatus}
+									on:change={updateLessonText}
 								>
 									<option disabled selected class="rounded-3xl">Select Week</option>
 									<option class="rounded-3xl">Week 1</option>
 									<option class="rounded-3xl">Week 2</option>
+									<option class="rounded-3xl">Week 3</option>
+									<option class="rounded-3xl">Week 4</option>
+									<option class="rounded-3xl">Week 5</option>
+									<option class="rounded-3xl">Week 6</option>
+									<option class="rounded-3xl">Week 7</option>
+									<option class="rounded-3xl">Week 8</option>
 								</select>
 							</div>
 							<div class="divider my-0 mt-3" />
@@ -1604,7 +1888,9 @@
 							<h1 class="text-left mt-2 ml-5 text-sm">Day 1</h1>
 							<div class="flex items-center mt-1 pl-4">
 								<select
+									id="day1Select"
 									class="w-32 border-gray-200 h-8 font-medium text-xs text-center mr-3 border border-gray focus:none rounded-3xl shadow-sm"
+									bind:value={day1status2}
 								>
 									<option disabled selected class="rounded-3xl">Share</option>
 									<option class="rounded-3xl">Only Me</option>
@@ -1616,8 +1902,9 @@
 									type="text"
 									placeholder="www.googledrive.com/lesson1/"
 									class="input input-bordered w-11/12 focus:border-none cursor-pointer text-sm"
-									disabled="disabled"
+									readonly
 								/>
+								<button on:click={() => redirectToLink('day1input')}>Redirect to url</button>
 								<input
 									id="day1checkbox"
 									bind:value={day1status}
@@ -1632,7 +1919,9 @@
 							<h1 class="text-left mt-2 ml-5 text-sm">Day 2</h1>
 							<div class="flex items-center mt-1 pl-4">
 								<select
+									id="day2Select"
 									class="w-32 border-gray-200 h-8 font-medium text-xs text-center mr-3 border border-gray focus:none rounded-3xl shadow-sm"
+									bind:value={day2status2}
 								>
 									<option disabled selected class="rounded-3xl">Share</option>
 									<option class="rounded-3xl">Only Me</option>
@@ -1644,8 +1933,9 @@
 									type="text"
 									placeholder="www.googledrive.com/lesson1/"
 									class="input input-bordered w-11/12 focus:border-none cursor-pointer text-sm"
-									disabled="disabled"
+									readonly
 								/>
+								<button on:click={() => redirectToLink('day12nput')}>Redirect to url</button>
 								<input
 									id="day2checkbox"
 									bind:value={day2status}
@@ -1658,7 +1948,9 @@
 							<h1 class="text-left mt-2 ml-5 text-sm">Day 3</h1>
 							<div class="flex items-center mt-1 pl-4">
 								<select
+									id="day3Select"
 									class="w-32 border-gray-200 h-8 font-medium text-xs text-center mr-3 border border-gray focus:none rounded-3xl shadow-sm"
+									bind:value={day3status2}
 								>
 									<option disabled selected class="rounded-3xl">Share</option>
 									<option class="rounded-3xl">Only Me</option>
@@ -1670,8 +1962,9 @@
 									type="text"
 									placeholder="www.googledrive.com/lesson1/"
 									class="input input-bordered w-11/12 focus.border-none cursor-pointer text-sm"
-									disabled="disabled"
+									readonly
 								/>
+								<button on:click={() => redirectToLink('day13nput')}>Redirect to url</button>
 								<input
 									id="day3checkbox"
 									bind:value={day3status}
@@ -1684,7 +1977,9 @@
 							<h1 class="text-left mt-2 ml-5 text-sm">Day 4</h1>
 							<div class="flex items-center mt-1 pl-4">
 								<select
+									id="day4Select"
 									class="w-32 border-gray-200 h-8 font-medium text-xs text-center mr-3 border border-gray focus:none rounded-3xl shadow-sm"
+									bind:value={day4status2}
 								>
 									<option disabled selected class="rounded-3xl">Share</option>
 									<option class="rounded-3xl">Only Me</option>
@@ -1696,8 +1991,9 @@
 									type="text"
 									placeholder="www.googledrive.com/lesson1/"
 									class="input input-bordered w-11/12 focus:border-none cursor-pointer text-sm"
-									disabled="disabled"
+									readonly
 								/>
+								<button on:click={() => redirectToLink('day14nput')}>Redirect to url</button>
 								<input
 									id="day4checkbox"
 									bind:value={day4status}
@@ -1710,7 +2006,9 @@
 							<h1 class="text-left mt-2 ml-5 text-sm">Day 5</h1>
 							<div class="flex items-center mt-1 pl-4">
 								<select
+									id="day5Select"
 									class="w-32 border-gray-200 h-8 font-medium text-xs text-center mr-3 border border-gray focus:none rounded-3xl shadow-sm"
+									bind:value={day5status2}
 								>
 									<option disabled selected class="rounded-3xl">Share</option>
 									<option class="rounded-3xl">Only Me</option>
@@ -1722,8 +2020,9 @@
 									type="text"
 									placeholder="www.googledrive.com/lesson1/"
 									class="input input-bordered w-11/12 focus.border-none cursor-pointer text-sm"
-									disabled="disabled"
+									readonly
 								/>
+								<button on:click={() => redirectToLink('day15nput')}>Redirect to url</button>
 								<input
 									id="day5checkbox"
 									bind:value={day5status}
