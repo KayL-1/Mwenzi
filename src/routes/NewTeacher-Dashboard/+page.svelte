@@ -27,7 +27,6 @@
 	let nameArray = [];
 	let recitation = [];
 	let attendanceDates = [];
-
 	let currentDatee;
 	let dateSelected;
 
@@ -133,6 +132,9 @@
 		});
 	}
 
+	let presentCount = 0;
+	let absentCount = 0;
+
 	function attendanceCheck(type) {
 		const date123 = document.getElementById('dateSelector1').value;
 
@@ -152,16 +154,24 @@
 				}));
 
 				console.log(attendance);
-				// Update your UI or perform any other actions with the updated data here
+				for (const record of attendance) {
+					if (record.status === 'Present') {
+						presentCount++;
+					} else if (record.status === 'Absent') {
+						absentCount++;
+					}
+				}
+
+				console.log(presentCount, absentCount);
+				document.getElementById('present1').textContent = presentCount;
+				document.getElementById('absent1').textContent = absentCount;
 				fetchTime();
 				fetchNames();
 			});
-
 			attendance = attendance;
 		}
 
 		if (type === 2) {
-
 			const attendanceCollectionRef = collection(
 				firestore,
 				'Subject',
@@ -176,7 +186,17 @@
 				}));
 
 				console.log(attendance);
-				// Update your UI or perform any other actions with the updated data here
+				for (const record of attendance) {
+					if (record.status === 'Present') {
+						presentCount++;
+					} else if (record.status === 'Absent') {
+						absentCount++;
+					}
+				}
+
+				console.log(presentCount, absentCount);
+				document.getElementById('present1').textContent = presentCount;
+				document.getElementById('absent1').textContent = absentCount;
 				fetchTime();
 				fetchNames();
 			});
@@ -920,7 +940,6 @@
 		fetchAndDisplayNotes2();
 		updateLessonText();
 		sortRecitation();
-
 	}
 
 	async function getuserName(id) {
@@ -1277,9 +1296,9 @@
 					>
 						<!-- svelte-ignore a11y-missing-attribute -->
 						<a class="font-medium text-sm p-2">Total Present: </a>
-						<a class="font-semibold text-sm text-green-500"> 39</a>
+						<a id="present1" class="font-semibold text-sm text-green-500"> 0</a>
 						<a class="font-medium text-sm p-2">Total Absent: </a>
-						<a class="font-semibold text-sm text-red-500"> 1</a>
+						<a id="absent1" class="font-semibold text-sm text-red-500">0</a>
 					</div>
 				</div>
 				<!--END SUMMARY ATTENDANCE -->
