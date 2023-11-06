@@ -30,6 +30,22 @@
 	let currentDatee;
 	let dateSelected;
 
+	async function getSubjectTime() {
+		const docRef = doc(firestore, 'Subject', selecTSub);
+		const docSnapshot = await getDoc(docRef);
+
+		if (docSnapshot.exists()) {
+			console.log(docSnapshot.data().timeIn);
+			const timeIn = docSnapshot.data().timeIn || "";
+			const timeOut = docSnapshot.data().timeOut || "";
+
+			const timeText = document.getElementById('subjectTime');
+			timeText.textContent = timeIn + ' - ' + timeOut;
+		} else {
+			console.log('No documents found in the collection.');
+		}
+	}
+
 	async function getDates() {
 		const attendanceCollectionRef = collection(firestore, 'Subject', `${selecTSub}`, 'Attendance');
 
@@ -942,6 +958,7 @@
 		fetchAndDisplayNotes2();
 		updateLessonText();
 		sortRecitation();
+		getSubjectTime();
 	}
 
 	async function getuserName(id) {
@@ -1308,7 +1325,7 @@
 				<!--RFID STATUS, DATE, SUBJECT TIME -->
 				<div class="flex flex-row">
 					<div
-						class="container h-8 my-6 mx-1 px-2 border border-gray-200 rounded-3xl w-2/5 flex justify-center items-center"
+						class="container h-8 w-80 my-6 mx-1 px-2 border border-gray-200 rounded-3xl w-2/5 flex justify-center items-center"
 					>
 						<svg
 							viewBox="0 0 24 24"
@@ -1333,7 +1350,7 @@
 						>
 						<!-- svelte-ignore a11y-missing-attribute -->
 						<a class="font-medium text-sm p-2"> Subject Time: </a>
-						<a class="font-semibold text-sm"> 8:00 AM - 10:00 AM</a>
+						<a id="subjectTime" class="font-semibold text-sm"> 8:00 AM - 10:00 AM</a>
 					</div>
 
 					<div

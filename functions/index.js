@@ -74,3 +74,57 @@ exports.createDailyAttendance = functions.pubsub
 //   logger.info("Hello logs!", {structuredData: true});
 //   response.send("Hello from Firebase!");
 // });
+
+exports.resetDailyRecitation = functions.pubsub
+.schedule('0 4 * * *')
+.timeZone('Asia/Manila')
+.onRun(async (context) => {
+  try {
+    const subjectSnapshot = await admin.firestore().collection('Subject').get();
+
+    subjectSnapshot.forEach(async (subjectDoc) => {
+      const attendanceDocRef = subjectDoc.ref.collection('Recitation');
+      const recitationSnapshot = await attendanceDocRef.get();
+
+      recitationSnapshot.forEach(async (recitationDoc) => {
+        const recitationData = recitationDoc.data();
+        console.log("Recitation Document Data: ", recitationData);
+
+        // Update the 'day' field to 0 in each "Recitation" document
+        await recitationDoc.ref.update({ day: 0 });
+      });
+    });
+
+    return null;
+  } catch (error) {
+    console.error("Error fetching or updating documents: ", error);
+    return null;
+  }
+});
+
+exports.resetWeeklyRecitation = functions.pubsub
+  .schedule('0 4 * * 0') // Weekly, every Sunday (0 represents Sunday)
+  .timeZone('Asia/Manila')
+  .onRun(async (context) => {
+    try {
+      const subjectSnapshot = await admin.firestore().collection('Subject').get();
+
+      subjectSnapshot.forEach(async (subjectDoc) => {
+        const attendanceDocRef = subjectDoc.ref.collection('Recitation');
+        const recitationSnapshot = await attendanceDocRef.get();
+
+        recitationSnapshot.forEach(async (recitationDoc) => {
+          const recitationData = recitationDoc.data();
+          console.log("Recitation Document Data: ", recitationData);
+
+          // Update the 'day' field to 0 in each "Recitation" document
+          await recitationDoc.ref.update({ week: 0 });
+        });
+      });
+
+      return null;
+    } catch (error) {
+      console.error("Error fetching or updating documents: ", error);
+      return null;
+    }
+  });
