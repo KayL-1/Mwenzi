@@ -1325,7 +1325,7 @@
 				<!--RFID STATUS, DATE, SUBJECT TIME -->
 				<div class="flex flex-row">
 					<div
-						class="container h-8 w-80 my-6 mx-1 px-2 border border-gray-200 rounded-3xl w-2/5 flex justify-center items-center"
+						class="container h-8 w-80 my-6 mx-1 px-2 border border-gray-200 rounded-3xl flex justify-center items-center"
 					>
 						<svg
 							viewBox="0 0 24 24"
