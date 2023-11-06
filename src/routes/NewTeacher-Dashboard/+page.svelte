@@ -136,6 +136,8 @@
 	let absentCount = 0;
 
 	function attendanceCheck(type) {
+		presentCount = 0;
+		absentCount = 0;
 		const date123 = document.getElementById('dateSelector1').value;
 
 		if (type === 1) {
