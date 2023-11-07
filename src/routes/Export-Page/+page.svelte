@@ -25,7 +25,7 @@
 	<body class="bg-gray-50 h-screen w-full">
 		<div class="mx-12 flex pt-5 justify-between">
 			<div>
-				<a href="/Login">
+				<a href="/NewTeacher-Dashboard">
 					<img src="Mwenzi.png" class="h-14 pb-2" alt="..." />
 				</a>
 			</div>
@@ -38,38 +38,42 @@
 		</div>
 
 		<div class="w-full flex flex-col items-center">
-			<div class="w-2/5 bg-white pt-8 px-6 mb-8 pb-16 flex flex-col">
+			<div class="w-2/4 bg-white pt-8 px-14 mb-8 pb-16 flex flex-col">
 				<!-- PAPER 1 -->
 
 				<!--PRINTABLE AREA 1 -->
 				<div class="w-full" id="printableArea1">
-					<div class="flex items-center flex-col mb-5 mt-5">
+					<div class="flex items-center flex-col mb-5 mt-2">
 						<p class="text-center text-lg font-medium">Attendance Record</p>
+						<p class="text-center text-md font-medium">6 Rambutan - Science | Ruffa May Monis</p>
 						<p class="text-center text-md">January 1, 2023 - January 29, 2023</p>
 					</div>
 					<table class="w-full mt-3 border text-sm">
 						<thead>
 							<tr class="border border-black text-center text-sm" />
-							<th class="border border-black px-1 w-10" />
-							<th class="border border-black px-1 w-24 text-sm"></th>
-							<th class="border px-1 border-black w-24 text-sm"></th>
-							<th class="border px-1 border-black w-28 text-sm"></th>
-							<th class="border px-1 border-black w-32 text-sm"></th>
+							<th class="border border-black px-1 w-24 text-sm">Student ID:</th>
+							<th class="border border-black px-1 w-24 text-sm">Student Name:</th>
+							<th class="border px-1 border-black w-28 text-sm">Total Absent:</th>
+							<th class="border px-1 border-black w-24 text-sm">Total Present:</th>
 						</thead>
 						<tbody>
 							<tr class="border border-black text-center text-sm">
-								<td class="border border-black text-sm">Boys</td>
-								<td class="border border-black text-sm" />
-								<td class="border border-black text-sm" />
-
-								<td class="border border-black text-sm" />
-								<td class="border border-black text-sm" />
+								<td class="border border-black text-sm">201175</td>
+								<td class="border border-black text-sm">Luis Santiago</td>
+								<td class="border border-black text-sm">1 </td>
+								<td class="border border-black text-sm">20</td>
 							</tr>
+							<tr class="border border-black text-center text-sm">
+								<td class="border border-black text-sm">201175</td>
+								<td class="border border-black text-sm">Ace Gabriel Dela Cuesta</td>
+								<td class="border border-black text-sm">1 </td>
+								<td class="border border-black text-sm">20</td>
+							</tr>
+							
 						</tbody>
 					</table>
 				</div>
-				<div class="h-96" />
-				<div class="h-96" />
+
 				<!-- END PRINTABLE AREA 1-->
 
 				<!-- END PAPER 1 -->

@@ -36,8 +36,8 @@
 
 		if (docSnapshot.exists()) {
 			console.log(docSnapshot.data().timeIn);
-			const timeIn = docSnapshot.data().timeIn || "";
-			const timeOut = docSnapshot.data().timeOut || "";
+			const timeIn = docSnapshot.data().timeIn || '';
+			const timeOut = docSnapshot.data().timeOut || '';
 
 			const timeText = document.getElementById('subjectTime');
 			timeText.textContent = timeIn + ' - ' + timeOut;
@@ -1423,39 +1423,53 @@
 
 				<input type="checkbox" id="AttendanceSettings" class="modal-toggle" />
 				<div class="modal">
-					<div class="modal-box relative h-96">
+					<div class="modal-box relative h-64">
 						<label for="AttendanceSettings" class="btn btn-sm btn-circle absolute right-2 top-2"
 							>✕</label
 						>
 						<h3 class="text-xl font-bold text-center">Export Attendance</h3>
 
-						<p class="mt-8 mb-2 font-medium">Export All Records:</p>
-						<button class="btn btn-info rounded-3xl text-white w-48">Export All</button>
-						<div class="divider" />
-						<p class="mt-5 mb-2 font-medium">Export Selected Record:</p>
-						<div class="my-2">
-							<select
-								class="w-48 border-gray-200 h-6 font-medium text-sm text-center mr-3 border border-gray focus:none rounded-3xl shadow-sm"
+						<p class="mt-7 mb-2 font-medium">Export Record:</p>
+						<div class="w-full mt-3 justify-center flex flex-row">
+							<input type="date" class="mx-2 rounded-xl border border-gray-400 px-2" />
+							<p class="font-medium">to</p>
+							<input type="date" class="mx-2 rounded-xl border border-gray-400 px-2" />
+							<!-- <select
+								class="w-48 border-gray-200 h-6 font-medium text-sm mx-2 text-center border border-gray focus:none rounded-3xl shadow-sm"
 							>
 								<option class="rounded-3xl">Today</option>
 								<option class="rounded-3xl">September 14, 2023</option>
 							</select>
+							
+							<select
+								class="w-48 border-gray-200 h-6 font-medium mx-2 text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
+							>
+								<option class="rounded-3xl">Today</option>
+								<option class="rounded-3xl">September 14, 2023</option>
+							</select> -->
 						</div>
-						<button class="btn btn-success mt-1 rounded-3xl text-white w-48">Export Selected</button
-						>
+						<a href="/Export-Page">
+							<button class="btn btn-success mt-4 rounded-3xl text-white w-48"
+								>Export Selected</button
+							>
+						</a>
 					</div>
 				</div>
 			</div>
 			<!--END EXPORT ATT-->
 
-			<select
+			<input
+				type="date"
+				class="w-56 h-6 font-medium text-sm text-center mx-2 rounded-xl border border-gray-400 px-2 focus:outline-1"
+			/>
+			<!-- <select
 				id="dateSelector1"
 				bind:value={dateSelected}
 				on:change={() => attendanceCheck(2)}
 				class="justify-end border-gray-200 w-56 h-6 font-medium text-sm text-center mr-3 border border-gray focus:none rounded-3xl shadow-sm"
 			>
 				<option class="rounded-xl" value={currentDatee} selected>Today</option>
-			</select>
+			</select> -->
 
 			<div class="relative overflow-y-auto shadow-sm rounded-xl mx-5 my-5 h-96 max-h-96">
 				<table class="w-full text-sm text-gray-500 dark:text-gray-400">
@@ -1632,9 +1646,32 @@
 
 		<!--POINTS-->
 		<div class="w-2/5 bg-white bg-opacity-75 pb-12 rounded-3xl text-center shadow-lg mr-2">
-			<div class="flex flex-row mt-2">
-				<img src="leaderboard.png" class="h-8 pl-6 pr-1 mt-1" alt="..." />
-				<h1 class="pl-1 pt-2 font-medium text-md text-gray-700">Points</h1>
+			<div class="flex flex-row justify-between mt-2">
+				<div class="flex flex-row mt-2">
+					<img src="leaderboard.png" class="h-8 pl-6 pr-1 mt-1" alt="..." />
+					<h1 class="pl-1 pt-2 font-medium text-md text-gray-700">Points</h1>
+				</div>
+
+				<label for="" class="mr-8 mt-4 rounded-3xl cursor-pointer">
+					<svg
+						fill="#3d3d3d"
+						viewBox="0 0 1920 1920"
+						xmlns="http://www.w3.org/2000/svg"
+						transform="matrix(1, 0, 0, -1, 0, 0)"
+						width="19" height="19"
+						><g id="SVGRepo_bgCarrier" stroke-width="0" /><g
+							id="SVGRepo_tracerCarrier"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+						/><g id="SVGRepo_iconCarrier">
+							<path
+								d="M960 0v213.333c411.627 0 746.667 334.934 746.667 746.667S1371.627 1706.667 960 1706.667 213.333 1371.733 213.333 960c0-197.013 78.4-382.507 213.334-520.747v254.08H640V106.667H53.333V320h191.04C88.64 494.08 0 720.96 0 960c0 529.28 430.613 960 960 960s960-430.72 960-960S1489.387 0 960 0"
+								fill-rule="evenodd"
+								class="fill-current text-gray-600 hover:text-yellow-500"
+							/>
+						</g></svg
+					>
+				</label>
 			</div>
 			<select
 				id="SortRec"
