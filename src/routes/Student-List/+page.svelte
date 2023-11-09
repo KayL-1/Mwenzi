@@ -30,7 +30,7 @@
 		if (selectedOption === '/NewAdmin-Dashboard') {
 			window.location.href = selectedOption;
 		}
-		if (selectedOption === '/Class-Subject') {
+		if (selectedOption === '/Section-Subject') {
 			window.location.href = selectedOption;
 		}
 		if (selectedOption === '/Teacher-List') {
@@ -92,7 +92,7 @@
 				}
 			});
 		} else {
-			toast.error('Please Select a Class');
+			toast.error('Please Select a Section');
 		}
 	}
 
@@ -296,7 +296,7 @@
 	let selectedOption = ''; // Create a reactive variable to store the selected option
 	function sortStudents(option) {
 
-		if (option === 'Class') {
+		if (option === 'Section') {
 			return students.sort((a, b) => a.data.class.localeCompare(b.data.class));
         } else if (option === "Alphabetical") { // Changed the option value to "alphabetical"
             return students.sort((a, b) => a.data.Name.localeCompare(b.data.Name)); // Sort alphabetically by student name
@@ -335,8 +335,8 @@
 					<option value="/NewAdmin-Dashboard" id="NewAdmin-Dashboard" class="rounded-3xl"
 						>Dashboard</option
 					>
-					<option value="/Class-Subject" id="Class-Subject" class="rounded-xl"
-						>Class - Subject</option
+					<option value="/Section-Subject" id="Section-Subject" class="rounded-xl"
+						>Section - Subject</option
 					>
 					<option value="/Teacher-List" id="Teacher-List" class="rounded-xl">Teachers</option>
 				</select>
@@ -361,11 +361,8 @@
 					<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
 					<ul
 						tabindex="0"
-						class="text-center rounded-2xl mt-2 dropdown-content shadow bg-base-100 w-40 h-16"
+						class="text-center rounded-2xl mt-2 dropdown-content shadow bg-base-100 w-40"
 					>
-						<li class="rounded-2xl hover:bg-gray-200">
-							<a href="/" class="ml-12 py-1 flex align-center font-medium">Settings</a>
-						</li>
 						<li class="rounded-2xl hover:bg-gray-200">
 							<a href="/Login" class="ml-12 py-1 flex text-center font-medium">Log out</a>
 						</li>
@@ -476,14 +473,14 @@
 										</h1>
 
 										<h1 class="text-left mt-3 mb-2 mx-5">
-											Select Class:
+											Select Section:
 
 											<select
 												bind:value={classSelect1}
 												class="select select-sm select-bordered focus:border-none border-gray-200 w-full h-5 rounded-3xl shadow-sm mt-2"
 											>
 												{#each subjectArray as item1 (item1.id)}
-													<option disabled selected hidden class="rounded-3xl">Select Class</option>
+													<option disabled selected hidden class="rounded-3xl">Select Section</option>
 													<option class="rounded-3xl" value={item1.id}>{item1.id}</option>
 												{/each}
 											</select>
@@ -515,13 +512,13 @@
 											/>
 										</h1>
 										<h1 class="text-left mt-3 mb-2 mx-5">
-											Select Class:
+											Select Section:
 											<select
 												bind:value={classSelect2}
 												class="select select-sm select-bordered focus:border-none border-gray-200 w-full h-5 rounded-3xl shadow-sm mt-2"
 											>
 												{#each subjectArray as item1 (item1.id)}
-													<option disabled selected hidden class="rounded-3xl">Select Class</option>
+													<option disabled selected hidden class="rounded-3xl">Select Section</option>
 													<option class="rounded-3xl" value={item1.id}>{item1.id}</option>
 												{/each}
 											</select>
@@ -657,7 +654,7 @@
 					>
 						<option disabled selected hidden class="rounded-3xl">Sort by</option>
 						<option class="rounded-xl" selected>Alphabetical</option>
-						<option class="rounded-xl" >Class</option>
+						<option class="rounded-xl" >Section</option>
 					</select>
 				</div>
 			</div>
@@ -668,7 +665,7 @@
 						class="text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 sticky top-0"
 					>
 						<tr>
-							<th scope="col" class="px-6 py-4 text-center">Class</th>
+							<th scope="col" class="px-6 py-4 text-center">Section</th>
 							<th scope="col" class="px-6 py-4 text-center">Student Name</th>
 							<th scope="col" class="px-6 py-4 text-center">Birthdate</th>
 							<th scope="col" class="px-6 py-4 text-center">Student ID</th>
@@ -742,7 +739,7 @@
 										</h1>
 
 										<h1 class="text-left my-2 mx-5">
-											Class
+											Section
 											<input
 												class="mt-1 border rounded-3xl px-2 focus:ring-0 text-sm block bg-white w-full h-7 border-slate-300 shadow-sm focus:outline-none"
 												placeholder="6-Rambutan"

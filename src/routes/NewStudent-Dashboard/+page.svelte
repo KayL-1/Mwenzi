@@ -61,9 +61,8 @@
 
 	async function getNotes() {
 		const collectionRef = collection(firestore, 'Subject', selecTSub, 'Notes');
-		const queryRef2 = query(collectionRef, where('Archive', '==', "false"));
+		const queryRef2 = query(collectionRef, where('Archive', '==', 'false'));
 		const querySnapshot = await getDocs(queryRef2);
-
 
 		querySnapshot.forEach((doc) => {
 			// Access the document ID
@@ -251,102 +250,46 @@
 	<header class="text-gray-600 body-font">
 		<!-- svelte-ignore a11y-missing-attribute -->
 		<div class="mx-12 flex flex-wrap pt-5 flex-col md:flex-row items-center">
-			<nav class="flex lg:w-2/5 flex-wrap items-center text-base md:ml-auto">
-				<!-- svelte-ignore a11y-missing-attribute -->
-				<img src="Mwenzi.png" class="h-14 pb-2" alt="..." />
-			</nav>
-
-			<a
-				class="flex order-first lg:order-none lg:w-1/5 title-font font-medium items-center text-gray-900 lg:items-center lg:justify-center mb-4 md:mb-0"
-			>
-				<select
-					bind:value={selecTSub}
-					on:change={change}
-					class="select select-bordered focus:border-none border-gray-200 w-full h-5 max-w-xs rounded-3xl shadow-sm"
-				>
-					<option disabled selected hidden class="rounded-3xl">Select Class</option>
-					{#each subjects as subject (subject)}
-						<option class="rounded-xl" value={subject}>{subject}</option>
-					{/each}
-				</select></a
-			>
-			<div class="lg:w-2/5 inline-flex lg:justify-end ml-5 lg:ml-0 ou">
-				<p class="font-medium text-md mr-5 mt-1" id="userName">Hi, Mwenzi Student</p>
-				<button class="dropdown dropdown-end">
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						width="28"
-						height="28"
-						fill="green"
-						class="bi bi-person-circle"
-						viewBox="0 0 16 16"
-					>
-						<path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" />
-						<path
-							fill-rule="evenodd"
-							d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"
-						/>
-					</svg>
-					<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-					<ul
-						tabindex="0"
-						class="text-center rounded-2xl mt-2 dropdown-content shadow bg-base-100 w-40"
-					>
-						<li class="rounded-2xl hover:bg-gray-200">
-							<a href="/Login" class="ml-12 py-1 flex text-center font-medium">Log out</a>
-						</li>
-					</ul>
-				</button>
+			<div class="w-full flex flex-row justify-between">
+				<nav class="flex items-center text-base">
+					<!-- svelte-ignore a11y-missing-attribute -->
+					<img src="Mwenzi5.png" class="h-14 pb-2" alt="..." />
+				</nav>
+				<div class="flex flex-row">
+					<p class="font-medium text-md my-auto mr-3" id="userName">Hi, Mwenzi Student</p>
+					<button class="dropdown dropdown-end">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="28"
+							height="28"
+							fill="green"
+							class="bi bi-person-circle"
+							viewBox="0 0 16 16"
+						>
+							<path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" />
+							<path
+								fill-rule="evenodd"
+								d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"
+							/>
+						</svg>
+						<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
+						<ul
+							tabindex="0"
+							class="text-center rounded-2xl mt-2 dropdown-content shadow bg-base-100 w-40"
+						>
+							<li class="rounded-2xl hover:bg-gray-200">
+								<a href="/Login" class="ml-12 py-1 flex text-center font-medium">Log out</a>
+							</li>
+						</ul>
+					</button>
+				</div>
 			</div>
 
 			<div class="flex justify-between w-full">
 				<!--ATTENDANCE SUMMARY-->
 				<div class="flex flex-row">
 					<div
-						class="container h-8 my-6 mx-2 pr-3 pl-1 border border-gray-200 rounded-3xl w-auto flex flex-row justify-center items-center"
-					>
-						<!-- svelte-ignore a11y-missing-attribute -->
-						<a class="font-medium text-sm p-2">Total Present: </a>
-						<a id="presentCount" class="font-semibold text-sm text-green-500">0</a>
-						<a class="font-medium text-sm p-2">Total Absent: </a>
-						<a id="absentCount" class="font-semibold text-sm text-red-500">0</a>
-					</div>
-				</div>
-				<!--END SUMMARY ATTENDANCE -->
-
-				<!--RFID STATUS, DATE, SUBJECT TIME -->
-				<div class="flex flex-row w-1/3 justify-end">
-					<div
-						class="container h-8 my-6 mx-1 px-2 border border-gray-200 rounded-3xl w-1/2 flex justify-center items-center"
-					>
-						<svg
-							viewBox="0 0 24 24"
-							fill="#ADADAD"
-							width="20"
-							height="20"
-							xmlns="http://www.w3.org/2000/svg"
-							><g id="SVGRepo_bgCarrier" stroke-width="0" /><g
-								id="SVGRepo_tracerCarrier"
-								stroke-linecap="round"
-								stroke-linejoin="round"
-							/><g id="SVGRepo_iconCarrier">
-								<path
-									d="M23 12C23 18.0751 18.0751 23 12 23C5.92487 23 1 18.0751 1 12C1 5.92487 5.92487 1 12 1C18.0751 1 23 5.92487 23 12ZM3.00683 12C3.00683 16.9668 7.03321 20.9932 12 20.9932C16.9668 20.9932 20.9932 16.9668 20.9932 12C20.9932 7.03321 16.9668 3.00683 12 3.00683C7.03321 3.00683 3.00683 7.03321 3.00683 12Z"
-									fill="#ADADAD"
-								/>
-								<path
-									d="M12 5C11.4477 5 11 5.44771 11 6V12.4667C11 12.4667 11 12.7274 11.1267 12.9235C11.2115 13.0898 11.3437 13.2343 11.5174 13.3346L16.1372 16.0019C16.6155 16.278 17.2271 16.1141 17.5032 15.6358C17.7793 15.1575 17.6155 14.5459 17.1372 14.2698L13 11.8812V6C13 5.44772 12.5523 5 12 5Z"
-									fill="#ADADAD"
-								/>
-							</g></svg
-						>
-						<!-- svelte-ignore a11y-missing-attribute -->
-						<a class="font-medium text-sm p-2"> Subject Time: </a>
-						<a class="font-semibold text-sm"> 8:00 AM - 10:00 AM</a>
-					</div>
-
-					<div
-						class="container h-8 my-6 mx-1 border border-gray-200 rounded-3xl w-48 flex justify-center items-center"
+						class="container h-10 my-6 mx-1 border border-gray-200 rounded-3xl w-48 flex justify-center items-center"
 					>
 						<!-- svelte-ignore a11y-missing-attribute -->
 						<svg
@@ -386,9 +329,66 @@
 								/></g
 							></svg
 						>
-						<!-- svelte-ignore a11y-missing-content -->
-						<a class="font-medium text-sm p-2">09/29/23</a>
+						<a class="font-medium text-sm p-2">{currentDatee}</a>
 					</div>
+
+					<div
+						class="container h-10 w-80 my-6 mx-1 px-2 border border-gray-200 rounded-3xl flex justify-center items-center"
+					>
+						<svg
+							viewBox="0 0 24 24"
+							fill="#ADADAD"
+							width="20"
+							height="20"
+							xmlns="http://www.w3.org/2000/svg"
+							><g id="SVGRepo_bgCarrier" stroke-width="0" /><g
+								id="SVGRepo_tracerCarrier"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+							/><g id="SVGRepo_iconCarrier">
+								<path
+									d="M23 12C23 18.0751 18.0751 23 12 23C5.92487 23 1 18.0751 1 12C1 5.92487 5.92487 1 12 1C18.0751 1 23 5.92487 23 12ZM3.00683 12C3.00683 16.9668 7.03321 20.9932 12 20.9932C16.9668 20.9932 20.9932 16.9668 20.9932 12C20.9932 7.03321 16.9668 3.00683 12 3.00683C7.03321 3.00683 3.00683 7.03321 3.00683 12Z"
+									fill="#ADADAD"
+								/>
+								<path
+									d="M12 5C11.4477 5 11 5.44771 11 6V12.4667C11 12.4667 11 12.7274 11.1267 12.9235C11.2115 13.0898 11.3437 13.2343 11.5174 13.3346L16.1372 16.0019C16.6155 16.278 17.2271 16.1141 17.5032 15.6358C17.7793 15.1575 17.6155 14.5459 17.1372 14.2698L13 11.8812V6C13 5.44772 12.5523 5 12 5Z"
+									fill="#ADADAD"
+								/>
+							</g></svg
+						>
+						<!-- svelte-ignore a11y-missing-attribute -->
+						<a class="font-medium text-sm p-2"> Subject Time: </a>
+						<a id="subjectTime" class="font-semibold text-sm"> 8:00 AM - 10:00 AM</a>
+					</div>
+
+					<div
+						class="container h-10 my-6 mx-2 pr-3 pl-1 border border-gray-200 rounded-3xl w-auto flex flex-row justify-center items-center"
+					>
+						<!-- svelte-ignore a11y-missing-attribute -->
+						<a class="font-medium text-sm p-2">Total Present: </a>
+						<a id="present1" class="font-semibold text-sm text-green-500"> 0</a>
+						<a class="font-medium text-sm p-2">Total Absent: </a>
+						<a id="absent1" class="font-semibold text-sm text-red-500">0</a>
+					</div>
+				</div>
+				<!--END SUMMARY ATTENDANCE -->
+
+				<!--RFID STATUS, DATE, SUBJECT TIME -->
+				<div class="flex flex-row w-64">
+					<a
+						class="flex order-first title-font font-medium items-center text-gray-900 lg:items-center lg:justify-center md:mb-0"
+					>
+						<select
+							bind:value={selecTSub}
+							on:change={change}
+							class="select select-bordered focus:border-none border-gray-200 w-64 h-5 rounded-3xl shadow-sm"
+						>
+							<option disabled selected hidden class="rounded-3xl">Select Class</option>
+							{#each subjects as subject (subject)}
+							<option class="rounded-xl" value={subject}>{subject}</option>
+						{/each}
+						</select>
+					</a>
 				</div>
 				<!--END RFID STATUS, DATE, SUBJECT TIME -->
 			</div>
@@ -498,10 +498,14 @@
 								<td class="text-sm text-gray-500 font-medium px-6 py-4 whitespace-nowrap">
 									{data.ranking}
 								</td>
-								<td class="text-center text-md text-gray-900 font-medium px-6 py-3 whitespace-nowrap">
+								<td
+									class="text-center text-md text-gray-900 font-medium px-6 py-3 whitespace-nowrap"
+								>
 									{data.name}
 								</td>
-								<td class="text-center text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
+								<td
+									class="text-center text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap"
+								>
 									{data.totalPoints}
 								</td>
 							</tr>
@@ -602,7 +606,6 @@
 												>
 											</td>
 										</tr>
-
 									</tbody>
 								</table>
 							</div>
@@ -688,7 +691,7 @@
 
 			<div class="w-full bg-white bg-opacity-75 rounded-3xl text-center shadow-lg h-1/2">
 				<div class="flex flex-row pt-4">
-					<img src="todo.png" class="h-7 pl-6" alt="..." />
+					<img src="lessonplan.png" class="h-7 pl-6" alt="..." />
 					<h1 class="pl-1 font-medium text-md text-gray-700">Learning Materials</h1>
 				</div>
 				<div class="px-5">

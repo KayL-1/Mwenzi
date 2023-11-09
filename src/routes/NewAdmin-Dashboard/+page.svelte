@@ -24,7 +24,7 @@
 	function handleSelectChange(event) {
 		const selectedOption = event.target.value;
 
-		if (selectedOption === '/Class-Subject') {
+		if (selectedOption === '/Section-Subject') {
 			window.location.href = selectedOption;
 		}
 
@@ -110,8 +110,8 @@
 					on:change={handleSelectChange}
 				>
 					<option disabled selected hidden class="rounded-3xl">Dashboard</option>
-					<option value="/Class-Subject" id="Class-Subject" class="rounded-3xl"
-						>Class - Subject</option
+					<option value="/Section-Subject" id="Section-Subject" class="rounded-3xl"
+						>Section - Subject</option
 					>
 					<option value="/Student-List" id="Student-List" class="rounded-xl">Students</option>
 					<option value="/Teacher-List" id="Teacher-List">Teachers</option>
@@ -208,7 +208,7 @@
 				<div class="flex flex-row justify-between w-full">
 					<div class="flex flex-row">
 						<img src="class.png" class="h-8 pl-6 mt-2" alt="..." />
-						<h1 class="pt-2 pl-1 mt-1 font-medium text-md text-gray-700">Class - Subject List</h1>
+						<h1 class="pt-2 pl-1 mt-1 font-medium text-md text-gray-700">Section - Subject List</h1>
 					</div>
 					<select
 						id="sort1"
@@ -227,7 +227,7 @@
 						class="text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 sticky top-0"
 					>
 						<tr>
-							<th scope="col" class="px-6 py-4 text-center">Class - Subject </th>
+							<th scope="col" class="px-6 py-4 text-center">Section - Subject </th>
 							<th scope="col" class="px-6 py-4 text-center">Total Students</th>
 							<th scope="col" class="px-6 py-4 text-center">Teacher</th>
 							<th scope="col" class="px-6 py-4 text-center">Time</th>

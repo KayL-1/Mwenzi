@@ -29,7 +29,7 @@
 		if (selectedOption === '/NewAdmin-Dashboard') {
 			window.location.href = selectedOption;
 		}
-		if (selectedOption === '/Class-Subject') {
+		if (selectedOption === '/Section-Subject') {
 			window.location.href = selectedOption;
 		}
 		if (selectedOption === '/Student-List') {
@@ -126,8 +126,8 @@
 					<option value="/NewAdmin-Dashboard" id="NewAdmin-Dashboard" class="rounded-3xl"
 						>Dashboard</option
 					>
-					<option value="/Class-Subject" id="Class-Subject" class="rounded-xl"
-						>Class - Subject</option
+					<option value="/Section-Subject" id="Section-Subject" class="rounded-xl"
+						>Section - Subject</option
 					>
 					<option value="/Student-List" id="Student-List" class="rounded-xl">Students</option>
 				</select>
@@ -152,11 +152,8 @@
 					<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
 					<ul
 						tabindex="0"
-						class="text-center rounded-2xl mt-2 dropdown-content shadow bg-base-100 w-40 h-16"
+						class="text-center rounded-2xl mt-2 dropdown-content shadow bg-base-100 w-40"
 					>
-						<li class="rounded-2xl hover:bg-gray-200">
-							<a href="/" class="ml-12 py-1 flex align-center font-medium">Settings</a>
-						</li>
 						<li class="rounded-2xl hover:bg-gray-200">
 							<a href="/Login" class="ml-12 py-1 flex text-center font-medium">Log out</a>
 						</li>
@@ -354,7 +351,7 @@
 						class="mt-2 border-gray-200 w-56 h-6 font-medium text-sm text-center mr-6 border border-gray focus:none rounded-3xl shadow-sm"
 					>
 						<option disabled selected hidden class="rounded-3xl">Sort by</option>
-						<option class="rounded-xl">Class</option>
+						<option class="rounded-xl">Section</option>
 						<option class="rounded-xl">Recently Added</option>
 						<option class="rounded-xl">Alphabetical</option>
 					</select>
@@ -369,7 +366,7 @@
 						<tr>
 							<th scope="col" class="px-6 py-4 text-center">Teacher Name</th>
 							<th scope="col" class="px-6 py-4 text-center">Email</th>
-							<th scope="col" class="px-6 py-4 text-center">Subject Class</th>
+							<th scope="col" class="px-6 py-4 text-center">Subject Section</th>
 						</tr>
 					</thead>
 					<tbody>

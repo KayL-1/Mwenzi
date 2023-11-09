@@ -260,7 +260,7 @@
 					class="select select-bordered focus:border-none border-gray-200 w-full h-5 max-w-xs rounded-3xl shadow-sm"
 					on:change={handleSelectChange}
 				>
-					<option disabled selected hidden class="rounded-3xl">Class - Subject</option>
+					<option disabled selected hidden class="rounded-3xl">Section - Subject</option>
 					<option value="/NewAdmin-Dashboard" id="NewAdmin-Dashboard" class="rounded-3xl"
 						>Dashboard</option
 					>
@@ -288,11 +288,8 @@
 					<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
 					<ul
 						tabindex="0"
-						class="text-center rounded-2xl mt-2 dropdown-content shadow bg-base-100 w-40 h-16"
+						class="text-center rounded-2xl mt-2 dropdown-content shadow bg-base-100 w-40"
 					>
-						<li class="rounded-2xl hover:bg-gray-200">
-							<a href="/" class="ml-12 py-1 flex align-center font-medium">Settings</a>
-						</li>
 						<li class="rounded-2xl hover:bg-gray-200">
 							<a href="/Login" class="ml-12 py-1 flex text-center font-medium">Log out</a>
 						</li>
@@ -359,7 +356,7 @@
 			<div class="flex flex-row justify-between mt-2">
 				<div class="flex flex-row">
 					<img src="class.png" class="h-8 pl-6 mt-2" alt="..." />
-					<h1 class="pt-2 pl-1 mt-1 font-medium text-md text-gray-700">Class List</h1>
+					<h1 class="pt-2 pl-1 mt-1 font-medium text-md text-gray-700">Section List</h1>
 				</div>
 
 				<div class="flex flex-row">
@@ -368,14 +365,14 @@
 						for="AddClass"
 						class="text-sm cursor-pointer px-4 h-8 mt-2 mr-1 bg-blue-500 hover:bg-blue-700 flex items-center text-white font-medium rounded-3xl transform transition-transform focus:scale-100 active:scale-95"
 					>
-						Add Class</label
+						Add Sectioin</label
 					>
 					<input type="checkbox" id="AddClass" class="modal-toggle" />
 					<div class="modal">
 						<div class="modal-box relative h-80 max-w-xl">
 							<label for="AddClass" class="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
 							<div class="text-xl font-bold text-center w-full justify-center flex flex-row">
-								<p>Add Class</p>
+								<p>Add Section</p>
 							</div>
 
 							<div
@@ -383,10 +380,10 @@
 							>
 								<div class="mx-auto w-full">
 									<h1 class="text-left my-2 mx-5">
-										Class Name
+										Section Name
 										<input
 											class="mt-2 border rounded-3xl px-2 focus:ring-0 text-sm block bg-white w-full h-7 border-slate-300 shadow-sm focus:outline-none"
-											placeholder="Class Name"
+											placeholder="Section Name"
 											type="text"
 											bind:value={className}
 										/>
@@ -397,7 +394,7 @@
 										<input
 											bind:value={gradeLevel}
 											class="mt-2 border rounded-3xl px-2 focus:ring-0 text-sm block bg-white w-full h-7 border-slate-300 shadow-sm focus:outline-none"
-											placeholder="Class Name"
+											placeholder="Section Name"
 											type="number"
 										/>
 									</h1>
@@ -421,7 +418,7 @@
 						for="DeleteClass"
 						class="cursor-pointer px-4 h-8 mt-2 mr-6 bg-red-500 hover:bg-red-700 flex text-sm items-center text-white font-medium rounded-3xl transform transition-transform focus:scale-100 active:scale-95"
 					>
-						Delete Class</label
+						Delete Section</label
 					>
 					<input type="checkbox" id="DeleteClass" class="modal-toggle" />
 					<div class="modal">
@@ -429,7 +426,7 @@
 							<label for="DeleteClass" class="btn btn-sm btn-circle absolute right-2 top-2">✕</label
 							>
 							<div class="text-xl font-bold text-center w-full justify-center flex flex-row mb-5">
-								<p>Delete Class</p>
+								<p>Delete Section</p>
 								<span />
 							</div>
 
@@ -438,12 +435,12 @@
 							>
 								<div class="mx-auto w-full">
 									<h1 class="text-left my-2 mx-5">
-										Select Class Name:
+										Select Section Name:
 
 										<select
 											class="select select-sm select-bordered focus:border-none border-gray-200 w-full h-5 rounded-3xl shadow-sm mt-2"
 										>
-											<option disabled selected hidden class="rounded-3xl">Select Class</option>
+											<option disabled selected hidden class="rounded-3xl">Select Section</option>
 											{#each classArray as item1 (item1.id)}
 												<option class="rounded-3xl" value={item1.id}>{item1.id}</option>
 											{/each}
@@ -471,7 +468,7 @@
 						class="text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 sticky top-0"
 					>
 						<tr>
-							<th scope="col" class="px-6 py-4 text-center">Class Name</th>
+							<th scope="col" class="px-6 py-4 text-center">Section Name</th>
 							<th scope="col" class="px-6 py-4 text-center">Total Students</th>
 							<th scope="col" class="px-6 py-4 text-center">Grade Level</th>
 						</tr>
@@ -584,12 +581,12 @@
 									</h1>
 
 									<h1 class="text-left my-2 mx-5">
-										Class
+										Section
 										<select
 											class="mt-2 select select-bordered select-sm w-full focus:border-none rounded-3xl"
 											bind:value={classSet}
 										>
-											<option disabled selected hidden>Add to Class</option>
+											<option disabled selected hidden>Add to Section</option>
 											{#each classArray as item1 (item1.id)}
 												<option value={item1.id}>{item1.id}</option>
 											{/each}
@@ -687,7 +684,7 @@
 						class="text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 sticky top-0"
 					>
 						<tr>
-							<th scope="col" class="px-6 py-4 text-center">Class Name - Subject Name</th>
+							<th scope="col" class="px-6 py-4 text-center">Section Name - Subject Name</th>
 							<th scope="col" class="px-6 py-4 text-center">Total Students</th>
 							<th scope="col" class="px-6 py-4 text-center">Teacher</th>
 							<th scope="col" class="px-6 py-4 text-center">Time</th>
