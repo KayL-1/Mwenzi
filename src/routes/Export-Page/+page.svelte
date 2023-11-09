@@ -81,7 +81,7 @@
 		<div class="mx-12 flex pt-5 justify-between">
 			<div>
 				<a href="/NewTeacher-Dashboard">
-					<img src="Mwenzi.png" class="h-14 pb-2" alt="..." />
+					<img src="Mwenzi5.png" class="h-14 pb-2" alt="..." />
 				</a>
 			</div>
 			<div class="flex items-end mb-2">

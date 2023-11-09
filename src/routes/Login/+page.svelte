@@ -5,7 +5,7 @@
 				<a href="/..">
 					<!-- svelte-ignore a11y-missing-attribute -->
 					<img
-						src="Mwenzi.png"
+						src="Mwenzi5.png"
 						class="h-auto max-w-full mb-5 duration-500 hover:scale-105 hover:-translate-10"
 					/>
 				</a>

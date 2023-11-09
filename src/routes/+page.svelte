@@ -11,7 +11,7 @@
 				<!-- svelte-ignore a11y-missing-attribute -->
 				<a class="py-3">
 					<!-- svelte-ignore a11y-missing-attribute -->
-					<img src="/Mwenzi.png" class="w-full h-12" />
+					<img src="/Mwenzi5.png" class="w-full h-12" />
 				</a>
 				<div class="ml-[50px] hidden space-x-10 lg:block">
 					<!-- svelte-ignore a11y-invalid-attribute -->
@@ -28,24 +28,24 @@
 
 	<!--BODY1-->
 	<section class="bg-gray-100 text-gray-600 body-font mt-10">
-		<div class="mt-12 container mx-auto flex flex-start px-8 md:flex-row flex-col items-center">
+		<!-- <div class="mt-12 container mx-auto flex flex-start px-8 md:flex-row flex-col items-center">
 			<div class="flex flex-col align-middle text-left pr-10 mt-36">
 				<h1 class="title-font sm:text-4xl text-3xl mb-4 font-medium text-gray-900">
 					Mwenzi Classroom Management Tool
 					<br class="hidden lg:inline-block" />
 				</h1>
 				<p class="mb-8 leading-relaxed w-4/5">
-					<!-- svelte-ignore a11y-missing-attribute -->
+				
 					Experience seamless classroom management with <a class="font-bold"> Mwenzi </a>:
 					Revolutionize your teaching experience
-					<!-- svelte-ignore a11y-missing-attribute -->
+		
 					with our web-based application, designed exclusively for
 					<a
 						class="underline"
 						href="https://www.facebook.com/coloongelementaryschoolvalenzuelacity/"
 						>Coloong Elementary School</a
 					>, that integrates
-					<!-- svelte-ignore a11y-missing-attribute -->
+			
 					<a class="font-bold"> RFID </a> for attendance tracking, group creation, and recitation points
 					feature.
 				</p>
@@ -60,10 +60,28 @@
 				</div>
 			</div>
 
-			<div class="w-full scale-125 mt-32 mr-10">
+			 <div class="w-full scale-125 mt-32 mr-10">
 				<img src="/carousel1.png" class="rounded-3xl shadow-lg" alt=".." />
+			</div> 
+			
+		</div> -->
+
+		<div class="hero min-h-screen">
+			<video autoplay muted loop class="background-video">
+				<source src="/video.mp4" type="video/mp4">
+				<!-- Add more source elements for different video formats if needed -->
+				Your browser does not support the video tag.
+			</video>
+			<div class="hero-overlay bg-opacity-60"></div>
+			<div class="hero-content text-center text-neutral-content">
+				<div class="max-w-md">
+					<h1 class="mb-5 text-5xl font-bold">Hello there</h1>
+					<p class="mb-5">Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda excepturi exercitationem quasi. In deleniti eaque aut repudiandae et a id nisi.</p>
+					<button class="btn btn-primary">Get Started</button>
+				</div>
 			</div>
 		</div>
+		
 	</section>
 	<!--END BODY 1-->
 

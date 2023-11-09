@@ -65,7 +65,7 @@
 			<div class="text-center">
 				<a href="/Login">
 					<img
-						src="Mwenzi.png"
+						src="Mwenzi5.png"
 						class="h-auto max-w-full duration-500 hover:scale-105 hover:-translate-10"
 						alt="..."
 					/>

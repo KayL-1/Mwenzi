@@ -17,9 +17,8 @@
 	import { goto } from '$app/navigation';
 	import { firebase, firestore, functions } from '$lib/firebase';
 	import { getDatabase, ref, onValue, get, child } from 'firebase/database';
-	import { subjectSelected1, userId, timeFrom, timeTo } from '../../lib/userStorage';
+	import { userId } from '../../lib/userStorage';
 	import { onMount } from 'svelte';
-	import { current_component } from 'svelte/internal';
 
 	let userUID = '';
 	let selecTSub;
@@ -74,15 +73,13 @@
 		// Remove the first element from the array
 		attendanceDates.shift();
 
-		const dateInput = document.getElementById('dateSelector1');
-		dateInput.value = currentDatee;
-		// const selectElement = document.querySelector('#dateSelector1'); // Select by id
+		const selectElement = document.querySelector('#dateSelector1'); // Select by id
 
-		// attendanceDates.forEach((date) => {
-		// 	const optionElement = document.createElement('option');
-		// 	optionElement.textContent = date;
-		// 	selectElement.appendChild(optionElement);
-		// });
+		attendanceDates.forEach((date) => {
+			const optionElement = document.createElement('option');
+			optionElement.textContent = date;
+			selectElement.appendChild(optionElement);
+		});
 	}
 
 	async function classCheck() {
@@ -1243,30 +1240,6 @@
 		recitationCheck();
 	}
 
-	let timeFrom1;
-	let timeTo1;
-
-	async function newPage() {
-		if (timeFrom1 === null || timeFrom1 === undefined) {
-			console.log('Please select a date');
-			return;
-		}
-
-		if (timeTo1 === null || timeTo1 === undefined) {
-			console.log('Please select a date');
-			return;
-		}
-
-		const subjectSelected1 = selecTSub; // Assuming selecTSub is a value you want to store
-		localStorage.setItem('subjectSelected1', subjectSelected1);
-		localStorage.setItem('timeTo', timeTo1);
-		localStorage.setItem('timeFrom', timeFrom1);
-			const testing = localStorage.getItem('subjectSelected1');
-		console.log(testing);
-		location.window
-		window.location.href = "/Export-Page";
-	}
-
 	onMount(() => {
 		const unsubscribe = userId.subscribe((value) => {
 			// Use the value of userId here
@@ -1278,124 +1251,54 @@
 				unsubscribe();
 			};
 		});
-
-		subjectSelected1.subscribe((val) => {
-			if (browser) localStorage.subjectSelected1 = val;
-		});
-
-		timeFrom.subscribe((val) => {
-			if (browser) localStorage.timeFrom = val;
-		});
-
-		timeTo.subscribe((val) => {
-			if (browser) localStorage.timeTo = val;
-		});
-
-		// newPage();
 	});
 	getDate();
 </script>
 
-<body class=" bg-gray-50 min-h-screen">
+<body class=" bg-gray-50 h-screen ">
 	<header class="text-gray-600 body-font">
 		<!-- svelte-ignore a11y-missing-attribute -->
 		<div class="mx-12 flex flex-wrap pt-5 flex-col md:flex-row items-center">
-			<nav class="flex lg:w-2/5 flex-wrap items-center text-base md:ml-auto">
-				<!-- svelte-ignore a11y-missing-attribute -->
-				<img src="Mwenzi.png" class="h-14 pb-2" alt="..." />
-			</nav>
-
-			<a
-				class="flex order-first lg:order-none lg:w-1/5 title-font font-medium items-center text-gray-900 lg:items-center lg:justify-center mb-4 md:mb-0"
-			>
-				<select
-					bind:value={selecTSub}
-					on:change={change}
-					class="select select-bordered focus:border-none border-gray-200 w-full h-5 max-w-xs rounded-3xl shadow-sm"
-				>
-					<option disabled selected hidden class="rounded-3xl">Select Class</option>
-					{#each docsArray as item1}
-						<option class="rounded-xl" value={item1.id}>{item1.id}</option>
-					{/each}
-				</select>
-			</a>
-			<div class="lg:w-2/5 inline-flex lg:justify-end ml-5 lg:ml-0 ou">
-				<p class="font-medium text-md mr-5 mt-1" id="userName" />
-				<button class="dropdown dropdown-end">
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						width="28"
-						height="28"
-						fill="green"
-						class="bi bi-person-circle"
-						viewBox="0 0 16 16"
-					>
-						<path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" />
-						<path
-							fill-rule="evenodd"
-							d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"
-						/>
-					</svg>
-					<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-					<ul
-						tabindex="0"
-						class="text-center rounded-2xl mt-2 dropdown-content shadow bg-base-100 w-40"
-					>
-						<li class="rounded-2xl hover:bg-gray-200">
-							<a href="/Login" class="ml-12 py-1 flex text-center font-medium">Log out</a>
-						</li>
-					</ul>
-				</button>
+			<div class="w-full flex flex-row justify-between">
+				<nav class="flex items-center text-base">
+					<!-- svelte-ignore a11y-missing-attribute -->
+					<img src="Mwenzi5.png" class="h-14 pb-2" alt="..." />
+				</nav>
+				<div class="flex flex-row">
+					<p class="font-medium text-md my-auto mr-3" id="userName" />
+					<button class="dropdown dropdown-end">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="28"
+							height="28"
+							fill="green"
+							class="bi bi-person-circle"
+							viewBox="0 0 16 16"
+						>
+							<path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" />
+							<path
+								fill-rule="evenodd"
+								d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"
+							/>
+						</svg>
+						<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
+						<ul
+							tabindex="0"
+							class="text-center rounded-2xl mt-2 dropdown-content shadow bg-base-100 w-40"
+						>
+							<li class="rounded-2xl hover:bg-gray-200">
+								<a href="/Login" class="ml-12 py-1 flex text-center font-medium">Log out</a>
+							</li>
+						</ul>
+					</button>
+				</div>
 			</div>
 
 			<div class="flex justify-between w-full">
 				<!--ATTENDANCE SUMMARY-->
 				<div class="flex flex-row">
 					<div
-						class="container h-8 my-6 mx-2 pr-3 pl-1 border border-gray-200 rounded-3xl w-auto flex flex-row justify-center items-center"
-					>
-						<!-- svelte-ignore a11y-missing-attribute -->
-						<a class="font-medium text-sm p-2">Total Present: </a>
-						<a id="present1" class="font-semibold text-sm text-green-500"> 0</a>
-						<a class="font-medium text-sm p-2">Total Absent: </a>
-						<a id="absent1" class="font-semibold text-sm text-red-500">0</a>
-					</div>
-				</div>
-				<!--END SUMMARY ATTENDANCE -->
-
-				<!--RFID STATUS, DATE, SUBJECT TIME -->
-				<div class="flex flex-row">
-					<div
-						class="container h-8 w-80 my-6 mx-1 px-2 border border-gray-200 rounded-3xl flex justify-center items-center"
-					>
-						<svg
-							viewBox="0 0 24 24"
-							fill="#ADADAD"
-							width="20"
-							height="20"
-							xmlns="http://www.w3.org/2000/svg"
-							><g id="SVGRepo_bgCarrier" stroke-width="0" /><g
-								id="SVGRepo_tracerCarrier"
-								stroke-linecap="round"
-								stroke-linejoin="round"
-							/><g id="SVGRepo_iconCarrier">
-								<path
-									d="M23 12C23 18.0751 18.0751 23 12 23C5.92487 23 1 18.0751 1 12C1 5.92487 5.92487 1 12 1C18.0751 1 23 5.92487 23 12ZM3.00683 12C3.00683 16.9668 7.03321 20.9932 12 20.9932C16.9668 20.9932 20.9932 16.9668 20.9932 12C20.9932 7.03321 16.9668 3.00683 12 3.00683C7.03321 3.00683 3.00683 7.03321 3.00683 12Z"
-									fill="#ADADAD"
-								/>
-								<path
-									d="M12 5C11.4477 5 11 5.44771 11 6V12.4667C11 12.4667 11 12.7274 11.1267 12.9235C11.2115 13.0898 11.3437 13.2343 11.5174 13.3346L16.1372 16.0019C16.6155 16.278 17.2271 16.1141 17.5032 15.6358C17.7793 15.1575 17.6155 14.5459 17.1372 14.2698L13 11.8812V6C13 5.44772 12.5523 5 12 5Z"
-									fill="#ADADAD"
-								/>
-							</g></svg
-						>
-						<!-- svelte-ignore a11y-missing-attribute -->
-						<a class="font-medium text-sm p-2"> Subject Time: </a>
-						<a id="subjectTime" class="font-semibold text-sm"> 8:00 AM - 10:00 AM</a>
-					</div>
-
-					<div
-						class="container h-8 my-6 mx-1 border border-gray-200 rounded-3xl w-48 flex justify-center items-center"
+						class="container h-10 my-6 mx-1 border border-gray-200 rounded-3xl w-48 flex justify-center items-center"
 					>
 						<!-- svelte-ignore a11y-missing-attribute -->
 						<svg
@@ -1437,13 +1340,71 @@
 						>
 						<a class="font-medium text-sm p-2">{currentDatee}</a>
 					</div>
+
+					<div
+						class="container h-10 w-80 my-6 mx-1 px-2 border border-gray-200 rounded-3xl flex justify-center items-center"
+					>
+						<svg
+							viewBox="0 0 24 24"
+							fill="#ADADAD"
+							width="20"
+							height="20"
+							xmlns="http://www.w3.org/2000/svg"
+							><g id="SVGRepo_bgCarrier" stroke-width="0" /><g
+								id="SVGRepo_tracerCarrier"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+							/><g id="SVGRepo_iconCarrier">
+								<path
+									d="M23 12C23 18.0751 18.0751 23 12 23C5.92487 23 1 18.0751 1 12C1 5.92487 5.92487 1 12 1C18.0751 1 23 5.92487 23 12ZM3.00683 12C3.00683 16.9668 7.03321 20.9932 12 20.9932C16.9668 20.9932 20.9932 16.9668 20.9932 12C20.9932 7.03321 16.9668 3.00683 12 3.00683C7.03321 3.00683 3.00683 7.03321 3.00683 12Z"
+									fill="#ADADAD"
+								/>
+								<path
+									d="M12 5C11.4477 5 11 5.44771 11 6V12.4667C11 12.4667 11 12.7274 11.1267 12.9235C11.2115 13.0898 11.3437 13.2343 11.5174 13.3346L16.1372 16.0019C16.6155 16.278 17.2271 16.1141 17.5032 15.6358C17.7793 15.1575 17.6155 14.5459 17.1372 14.2698L13 11.8812V6C13 5.44772 12.5523 5 12 5Z"
+									fill="#ADADAD"
+								/>
+							</g></svg
+						>
+						<!-- svelte-ignore a11y-missing-attribute -->
+						<a class="font-medium text-sm p-2"> Subject Time: </a>
+						<a id="subjectTime" class="font-semibold text-sm"> 8:00 AM - 10:00 AM</a>
+					</div>
+
+					<div
+						class="container h-10 my-6 mx-2 pr-3 pl-1 border border-gray-200 rounded-3xl w-auto flex flex-row justify-center items-center"
+					>
+						<!-- svelte-ignore a11y-missing-attribute -->
+						<a class="font-medium text-sm p-2">Total Present: </a>
+						<a id="present1" class="font-semibold text-sm text-green-500"> 0</a>
+						<a class="font-medium text-sm p-2">Total Absent: </a>
+						<a id="absent1" class="font-semibold text-sm text-red-500">0</a>
+					</div>
+				</div>
+				<!--END SUMMARY ATTENDANCE -->
+
+				<!--RFID STATUS, DATE, SUBJECT TIME -->
+				<div class="flex flex-row w-64">
+					<a
+						class="flex order-first title-font font-medium items-center text-gray-900 lg:items-center lg:justify-center md:mb-0"
+					>
+						<select
+							bind:value={selecTSub}
+							on:change={change}
+							class="select select-bordered focus:border-none border-gray-200 w-64 h-5 rounded-3xl shadow-sm"
+						>
+							<option disabled selected hidden class="rounded-3xl">Select Class</option>
+							{#each docsArray as item1}
+								<option class="rounded-xl" value={item1.id}>{item1.id}</option>
+							{/each}
+						</select>
+					</a>
 				</div>
 				<!--END RFID STATUS, DATE, SUBJECT TIME -->
 			</div>
 		</div>
 	</header>
 
-	<div class="flex flex-row card mx-10 my-auto">
+	<div class="flex flex-row card h-3/4 mx-10">
 		<!--ATTENDANCE-->
 		<div class="w-3/5 bg-white bg-opacity-75 rounded-3xl text-center shadow-lg mr-2">
 			<div class="flex flex-row justify-between mt-2">
@@ -1472,17 +1433,9 @@
 
 						<p class="mt-7 mb-2 font-medium">Export Record:</p>
 						<div class="w-full mt-3 justify-center flex flex-row">
-							<input
-								bind:value={timeFrom1}
-								type="date"
-								class="mx-2 rounded-xl border border-gray-400 px-2"
-							/>
+							<input type="date" class="mx-2 rounded-xl border border-gray-400 px-2" />
 							<p class="font-medium">to</p>
-							<input
-								bind:value={timeTo1}
-								type="date"
-								class="mx-2 rounded-xl border border-gray-400 px-2"
-							/>
+							<input type="date" class="mx-2 rounded-xl border border-gray-400 px-2" />
 							<!-- <select
 								class="w-48 border-gray-200 h-6 font-medium text-sm mx-2 text-center border border-gray focus:none rounded-3xl shadow-sm"
 							>
@@ -1497,22 +1450,19 @@
 								<option class="rounded-3xl">September 14, 2023</option>
 							</select> -->
 						</div>
-						<!-- <a href="/Export-Page"> -->
-						<button class="btn btn-success mt-4 rounded-3xl text-white w-48" on:click={newPage}
-							>Export Selected</button
-						>
-						<!-- </a> -->
+						<a href="/Export-Page">
+							<button class="btn btn-success mt-4 rounded-3xl text-white w-48"
+								>Export Selected</button
+							>
+						</a>
 					</div>
 				</div>
 			</div>
 			<!--END EXPORT ATT-->
 
 			<input
-				id="dateSelector1"
 				type="date"
 				class="w-56 h-6 font-medium text-sm text-center mx-2 rounded-xl border border-gray-400 px-2 focus:outline-1"
-				value="{current_component};"
-				on:change={() => attendanceCheck(2)}
 			/>
 			<!-- <select
 				id="dateSelector1"
@@ -1523,7 +1473,7 @@
 				<option class="rounded-xl" value={currentDatee} selected>Today</option>
 			</select> -->
 
-			<div class="relative overflow-y-auto shadow-sm rounded-xl mx-5 my-5 h-96 max-h-96">
+			<div class="relative overflow-y-auto shadow-sm rounded-xl mx-5 my-5 h-5/6">
 				<table class="w-full text-sm text-gray-500 dark:text-gray-400">
 					<thead
 						class="text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 sticky top-0"
@@ -1696,577 +1646,591 @@
 			</div>
 		</div>
 
-		<!--POINTS-->
-		<div class="w-2/5 bg-white bg-opacity-75 pb-12 rounded-3xl text-center shadow-lg mr-2">
-			<div class="flex flex-row justify-between mt-2">
-				<div class="flex flex-row mt-2">
-					<img src="leaderboard.png" class="h-8 pl-6 pr-1 mt-1" alt="..." />
-					<h1 class="pl-1 pt-2 font-medium text-md text-gray-700">Points</h1>
+
+
+		<!--2ND COL-->
+		<div class="flex flex-col w-full h-full">
+		<!--POINTS AND NOTES DIV-->
+		<div class="flex flex-row h-4/5">
+			<!--POINTS-->
+			<div class="w-1/2 bg-white bg-opacity-75 pb-12 rounded-3xl text-center shadow-lg mr-2">
+				<div class="flex flex-row justify-between mt-2">
+					<div class="flex flex-row mt-2">
+						<img src="leaderboard.png" class="h-8 pl-6 pr-1 mt-1" alt="..." />
+						<h1 class="pl-1 pt-2 font-medium text-md text-gray-700">Points</h1>
+					</div>
+
+					<label for="" class="mr-8 mt-4 rounded-3xl cursor-pointer">
+						<svg
+							fill="#3d3d3d"
+							viewBox="0 0 1920 1920"
+							xmlns="http://www.w3.org/2000/svg"
+							transform="matrix(1, 0, 0, -1, 0, 0)"
+							width="19"
+							height="19"
+							><g id="SVGRepo_bgCarrier" stroke-width="0" /><g
+								id="SVGRepo_tracerCarrier"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+							/><g id="SVGRepo_iconCarrier">
+								<path
+									d="M960 0v213.333c411.627 0 746.667 334.934 746.667 746.667S1371.627 1706.667 960 1706.667 213.333 1371.733 213.333 960c0-197.013 78.4-382.507 213.334-520.747v254.08H640V106.667H53.333V320h191.04C88.64 494.08 0 720.96 0 960c0 529.28 430.613 960 960 960s960-430.72 960-960S1489.387 0 960 0"
+									fill-rule="evenodd"
+									class="fill-current text-gray-600 hover:text-yellow-500"
+								/>
+							</g></svg
+						>
+					</label>
 				</div>
-
-				<label for="" class="mr-8 mt-4 rounded-3xl cursor-pointer">
-					<svg
-						fill="#3d3d3d"
-						viewBox="0 0 1920 1920"
-						xmlns="http://www.w3.org/2000/svg"
-						transform="matrix(1, 0, 0, -1, 0, 0)"
-						width="19"
-						height="19"
-						><g id="SVGRepo_bgCarrier" stroke-width="0" /><g
-							id="SVGRepo_tracerCarrier"
-							stroke-linecap="round"
-							stroke-linejoin="round"
-						/><g id="SVGRepo_iconCarrier">
-							<path
-								d="M960 0v213.333c411.627 0 746.667 334.934 746.667 746.667S1371.627 1706.667 960 1706.667 213.333 1371.733 213.333 960c0-197.013 78.4-382.507 213.334-520.747v254.08H640V106.667H53.333V320h191.04C88.64 494.08 0 720.96 0 960c0 529.28 430.613 960 960 960s960-430.72 960-960S1489.387 0 960 0"
-								fill-rule="evenodd"
-								class="fill-current text-gray-600 hover:text-yellow-500"
-							/>
-						</g></svg
-					>
-				</label>
-			</div>
-			<select
-				id="SortRec"
-				class="mt-2 border-gray-200 w-56 h-6 font-medium text-sm text-center mr-3 border border-gray focus:none rounded-3xl shadow-sm"
-				on:change={sortRecitation}
-			>
-				<option selected class="rounded-3xl">Total Points</option>
-				<option class="rounded-xl">Daily</option>
-				<option class="rounded-xl">Weekly</option>
-			</select>
-			<div class="relative overflow-y-auto shadow-sm rounded-xl mx-5 my-4 max-h-96">
-				<table class="w-full text-sm text-gray-500 dark:text-gray-400">
-					<thead
-						class="text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 sticky top-0"
-					>
-						<tr>
-							<th scope="col" class="px-6 py-4 text-left"> Rank </th>
-							<th scope="col" class="px-6 py-4 text-left"> Name </th>
-							<th scope="col" class="px-6 py-4 text-left"> Points </th>
-							<th scope="col" class=" py-4 text-left"> Update Points </th>
-						</tr>
-					</thead>
-					<tbody>
-						{#each recitation as data}
-							<!-- Table row for each recitation item -->
-							<tr class="border-b bg-white">
-								<!-- Display the data for each recitation item -->
-								<td class="text-sm text-gray-500 font-medium px-6 py-4 whitespace-nowrap">
-									{data.ranking}
-								</td>
-								<td class="text-md text-gray-900 font-medium px-6 py-3 whitespace-nowrap text-left">
-									{data.name}
-								</td>
-								<td
-									id="pointsDisplay1"
-									class="pointsDisplay1 text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap"
-								>
-									{data.totalPoints}
-								</td>
-								<td
-									hidden
-									id="pointsDisplay2"
-									class="pointsDisplay2 text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap"
-								>
-									{data.day}
-								</td>
-								<td
-									hidden
-									id="pointsDisplay3"
-									class="pointsDisplay3 text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap"
-								>
-									{data.week}
-								</td>
-
-								<td class="flex mt-2 justify-center">
-									<!-- svelte-ignore a11y-click-events-have-key-events -->
-									<img
-										src="minus.png"
-										class="btn btn-sm px-1 bg-transparent hover:bg-transparent border-none"
-										alt="..."
-										on:click={() => changeDocumentID('minus', data.id)}
-									/>
-									<!-- svelte-ignore a11y-click-events-have-key-events -->
-									<img
-										src="add.png"
-										class="btn btn-sm px-1 bg-transparent hover:bg-transparent border-none"
-										alt="..."
-										on:click={() => changeDocumentID('add', data.id)}
-									/>
-								</td>
+				<select
+					id="SortRec"
+					class="mt-2 border-gray-200 w-56 h-6 font-medium text-sm text-center mr-3 border border-gray focus:none rounded-3xl shadow-sm"
+					on:change={sortRecitation}
+				>
+					<option selected class="rounded-3xl">Total Points</option>
+					<option class="rounded-xl">Daily</option>
+					<option class="rounded-xl">Weekly</option>
+				</select>
+				<div class="relative overflow-y-auto shadow-sm rounded-xl mx-5 my-4 max-h-96">
+					<table class="w-full text-sm text-gray-500 dark:text-gray-400">
+						<thead
+							class="text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 sticky top-0"
+						>
+							<tr>
+								<th scope="col" class="px-6 py-4 text-left"> Rank </th>
+								<th scope="col" class="px-6 py-4 text-left"> Name </th>
+								<th scope="col" class="px-6 py-4 text-left"> Points </th>
+								<th scope="col" class=" py-4 text-left"> Update Points </th>
 							</tr>
-						{/each}
-					</tbody>
-				</table>
+						</thead>
+						<tbody>
+							{#each recitation as data}
+								<!-- Table row for each recitation item -->
+								<tr class="border-b bg-white">
+									<!-- Display the data for each recitation item -->
+									<td class="text-sm text-gray-500 font-medium px-6 py-4 whitespace-nowrap">
+										{data.ranking}
+									</td>
+									<td
+										class="text-md text-gray-900 font-medium px-6 py-3 whitespace-nowrap text-left"
+									>
+										{data.name}
+									</td>
+									<td
+										id="pointsDisplay1"
+										class="pointsDisplay1 text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap"
+									>
+										{data.totalPoints}
+									</td>
+									<td
+										hidden
+										id="pointsDisplay2"
+										class="pointsDisplay2 text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap"
+									>
+										{data.day}
+									</td>
+									<td
+										hidden
+										id="pointsDisplay3"
+										class="pointsDisplay3 text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap"
+									>
+										{data.week}
+									</td>
+
+									<td class="flex mt-2 justify-center">
+										<!-- svelte-ignore a11y-click-events-have-key-events -->
+										<img
+											src="minus.png"
+											class="btn btn-sm px-1 bg-transparent hover:bg-transparent border-none"
+											alt="..."
+											on:click={() => changeDocumentID('minus', data.id)}
+										/>
+										<!-- svelte-ignore a11y-click-events-have-key-events -->
+										<img
+											src="add.png"
+											class="btn btn-sm px-1 bg-transparent hover:bg-transparent border-none"
+											alt="..."
+											on:click={() => changeDocumentID('add', data.id)}
+										/>
+									</td>
+								</tr>
+							{/each}
+						</tbody>
+					</table>
+				</div>
+			</div>
+
+			<!--TO DO-->
+			<div class="w-1/2 bg-white bg-opacity-75 pb-12 rounded-3xl text-center shadow-lg">
+				<div class="flex flex-row justify-between mt-2">
+					<div class="flex flex-row">
+						<img src="todo.png" class="h-7 pl-6 mt-2" alt="..." />
+						<h1 class="pl-1 pt-2 font-medium text-md text-gray-700">Notes</h1>
+					</div>
+					<!--NOTE ARCHIVES -->
+					<label for="NotesArchives" class="mr-8 mt-2 rounded-3xl cursor-pointer">
+						<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="26"
+							><g id="SVGRepo_bgCarrier" stroke-width="0" /><g
+								id="SVGRepo_tracerCarrier"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+							/><g id="SVGRepo_iconCarrier" ble-fi
+								><path
+									d="M8.707 6.707a1 1 0 0 0-1.414-1.414L4 8.586 2.707 7.293a1 1 0 0 0-1.414 1.414l2 2a1 1 0 0 0 1.414 0l4-4ZM12 7a1 1 0 1 0 0 2h10a1 1 0 1 0 0-2H12ZM8.707 13.293a1 1 0 0 1 0 1.414l-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 1 1 1.414-1.414L4 16.586l3.293-3.293a1 1 0 0 1 1.414 0ZM12 15a1 1 0 1 0 0 2h10a1 1 0 1 0 0-2H12Z"
+									fill="#currentColor"
+									class="fill-current text-gray-600 hover:text-blue-500"
+								/></g
+							></svg
+						>
+					</label>
+
+					<input type="checkbox" id="NotesArchives" class="modal-toggle" />
+					<div class="modal">
+						<div class="modal-box relative h-4/6 max-w-3xl text-left">
+							<label for="NotesArchives" class="btn btn-sm btn-circle absolute right-2 top-2"
+								>✕</label
+							>
+							<h3 class="text-xl font-bold text-center">Note Archives</h3>
+
+							<div class="relative overflow-y-auto shadow-sm rounded-xl mx-5 my-5 h-4/5 max-h-4/5">
+								<table class="w-full text-sm text-gray-500 dark:text-gray-400">
+									<thead
+										class="text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 sticky top-0"
+									>
+										<tr>
+											<th scope="col" class="px-6 py-4 text-center">Date</th>
+											<th scope="col" class="px-6 py-4 text-left">Notes</th>
+											<th scope="col" class="py-4 text-center">Status</th>
+											<th scope="col" class="px-6 py-4 text-center">Action</th>
+										</tr>
+									</thead>
+									<tbody id="note-archive" />
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="flex flex-row items-center mt-2 justify-center">
+					<input
+						class="pl-4 border border-r-0 rounded-l-3xl focus:ring-0 text-sm block bg-white w-64 h-7 border-slate-300 shadow-sm focus:outline-none"
+						placeholder="Add Notes"
+						type="text"
+						name="search12"
+						bind:value={title}
+					/>
+					<button
+						id="addButton"
+						class="add-button w-12 h-7 border border-slate-300 rounded-r-3xl bg-blue-500 hover:bg-blue-700 border-none transform transition-transform focus:scale-100 active:scale-95"
+						on:click={addNote}
+					>
+						<svg
+							width="20px"
+							height="20px"
+							viewBox="0 0 20 20"
+							xmlns="http://www.w3.org/2000/svg"
+							fill="none"
+							class="ml-3"
+							><g id="SVGRepo_bgCarrier" stroke-width="0" /><g
+								id="SVGRepo_tracerCarrier"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+							/><g id="SVGRepo_iconCarrier">
+								<path
+									fill="#f2f2f2"
+									fill-rule="evenodd"
+									d="M9 17a1 1 0 102 0v-6h6a1 1 0 100-2h-6V3a1 1 0 10-2 0v6H3a1 1 0 000 2h6v6z"
+								/>
+							</g></svg
+						>
+					</button>
+				</div>
+				<div class="divider mb-1" />
+
+				<!--TO DO LIST-->
+				<div id="notes-container" />
 			</div>
 		</div>
 
-		<!--TO DO-->
-		<div class="w-2/5 bg-white bg-opacity-75 pb-12 rounded-3xl text-center shadow-lg">
-			<div class="flex flex-row justify-between mt-2">
-				<div class="flex flex-row">
-					<img src="todo.png" class="h-7 pl-6 mt-2" alt="..." />
-					<h1 class="pl-1 pt-2 font-medium text-md text-gray-700">Notes</h1>
+		<!--ACTIONS DIV-->
+		<div class="flex flex-row h-48 mt-2">
+			<!--RANDOMIZER-->
+			<div class="w-2/5 bg-white bg-opacity-75 rounded-3xl text-center shadow-lg mr-2">
+				<div class="flex flex-row mt-2">
+					<img src="randomizer.png" class="h-7 mt-1 pl-6" alt="..." />
+					<h1 class="pl-1 pt-2 font-medium text-md text-gray-700">Randomizer</h1>
 				</div>
-				<!--NOTE ARCHIVES -->
-				<label for="NotesArchives" class="mr-8 mt-2 rounded-3xl cursor-pointer">
-					<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="26"
-						><g id="SVGRepo_bgCarrier" stroke-width="0" /><g
-							id="SVGRepo_tracerCarrier"
-							stroke-linecap="round"
-							stroke-linejoin="round"
-						/><g id="SVGRepo_iconCarrier" ble-fi
-							><path
-								d="M8.707 6.707a1 1 0 0 0-1.414-1.414L4 8.586 2.707 7.293a1 1 0 0 0-1.414 1.414l2 2a1 1 0 0 0 1.414 0l4-4ZM12 7a1 1 0 1 0 0 2h10a1 1 0 1 0 0-2H12ZM8.707 13.293a1 1 0 0 1 0 1.414l-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 1 1 1.414-1.414L4 16.586l3.293-3.293a1 1 0 0 1 1.414 0ZM12 15a1 1 0 1 0 0 2h10a1 1 0 1 0 0-2H12Z"
-								fill="#currentColor"
-								class="fill-current text-gray-600 hover:text-blue-500"
-							/></g
-						></svg
-					>
-				</label>
-
-				<input type="checkbox" id="NotesArchives" class="modal-toggle" />
+				<!--RAN MODAL-->
+				<label
+					for="randomizer"
+					class="my-5 btn h-20 w-56 bg-[#EF5051] border-transparent hover:bg-red-600 hover:border-none text-lg rounded-3xl"
+					>Randomizer</label
+				>
+				<input type="checkbox" id="randomizer" class="modal-toggle" />
 				<div class="modal">
-					<div class="modal-box relative h-4/6 max-w-3xl text-left">
-						<label for="NotesArchives" class="btn btn-sm btn-circle absolute right-2 top-2">✕</label
-						>
-						<h3 class="text-xl font-bold text-center">Note Archives</h3>
+					<div class="modal-box relative h-96">
+						<label for="randomizer" class="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
+						<h3 class="text-xl font-bold text-center">Randomizer</h3>
+						<div class="mt-6 mb-1">
+							<select
+								bind:value={recitationType}
+								class="w-1/2 mr-1 border-gray-200 h-6 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
+							>
+								<option class="rounded-3xl" selected>Present Only</option>
+								<option class="rounded-3xl">All Students</option>
+							</select>
+						</div>
+						<div class="divider mt-5" />
+						<p class="font-medium text-lg text-center" id="randomizerName">STUDENT NAME</p>
+						<div class="divider" />
 
-						<div class="relative overflow-y-auto shadow-sm rounded-xl mx-5 my-5 h-4/5 max-h-4/5">
+						<div class="flex flex-row justify-center">
+							<button
+								on:click={resetRecitation}
+								id="resetButton"
+								class="start-button btn mt-8 w-40 mx-1 rounded-3xl bg-[#EF5051] hover:bg-red-600 border-none"
+								>Reset</button
+							>
+							<button
+								on:click={getRandomName}
+								class="start-button btn mt-8 w-40 mx-1 rounded-3xl bg-[#EF5051] hover:bg-red-600 border-none"
+								>START</button
+							>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!--END RAN MODAL-->
+
+			<!--GROUP CREATOR-->
+			<div class="w-2/5 bg-white bg-opacity-75 rounded-3xl text-center shadow-lg mr-2">
+				<div class="flex flex-row mt-2">
+					<img src="group.png" class="h-7 mt-1 pl-6" alt="..." />
+					<h1 class="pl-2 pt-2 font-medium text-md text-gray-700">Group Creator</h1>
+				</div>
+
+				<!--GRP CREATOR MODAL-->
+				<label
+					for="GroupCreator"
+					class="my-5 btn h-20 w-56 bg-green-500 border-transparent hover:bg-green-700 hover:border-none text-lg rounded-3xl"
+					>Create Group</label
+				>
+				<input type="checkbox" id="GroupCreator" class="modal-toggle" />
+				<div class="modal">
+					<div class="modal-box relative h-auto">
+						<label for="GroupCreator" class="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
+						<h3 class="text-xl font-bold text-center">Group Creator</h3>
+						<p class="mt-7 mb-2 font-medium">Group By</p>
+						<div class="mt-3 mb-1 flex flex-row mx-10">
+							<select
+								bind:value={groupType}
+								class="w-1/2 mr-1 border-gray-200 h-6 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
+								id=""
+							>
+								<option disabled selected class="rounded-3xl">Select</option>
+								<option class="rounded-3xl">Present Only</option>
+								<option class="rounded-3xl">All Students</option>
+							</select>
+							<select
+								class="w-1/2 ml-1 border-gray-200 h-6 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
+								id="groupSize"
+							>
+								<option disabled selected class="rounded-3xl">Number of Members</option>
+								<option class="rounded-3xl" value="2">2 Members Each</option>
+								<option class="rounded-3xl" value="3">3 Members Each</option>
+								<option class="rounded-3xl" value="4">4 Members Each</option>
+								<option class="rounded-3xl" value="5">5 Members Each</option>
+								<option class="rounded-3xl" value="6">6 Members Each</option>
+								<option class="rounded-3xl" value="7">7 Members Each</option>
+								<option class="rounded-3xl" value="8">8 Members Each</option>
+								<option class="rounded-3xl" value="9">9 Members Each</option>
+								<option class="rounded-3xl" value="10">10 Members Each</option>
+							</select>
+						</div>
+						<button
+							class="start-button btn mt-4 w-1/2 rounded-3xl bg-green-500 hover:bg-green-700 border-none transform transition-transform focus:scale-100 active:scale-95"
+							on:click={groupStudents}>Create</button
+						>
+
+						<div class="divider" />
+						<div class="relative overflow-y-auto shadow-sm rounded-xl mx-5 my-7 max-h-80">
 							<table class="w-full text-sm text-gray-500 dark:text-gray-400">
 								<thead
 									class="text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 sticky top-0"
 								>
 									<tr>
-										<th scope="col" class="px-6 py-4 text-center">Date</th>
-										<th scope="col" class="px-6 py-4 text-left">Notes</th>
-										<th scope="col" class="py-4 text-center">Status</th>
-										<th scope="col" class="px-6 py-4 text-center">Action</th>
+										<th scope="col" class="px-6 py-4 text-center">Group #</th>
+										<th scope="col" class="px-6 py-4 text-center">Members</th>
 									</tr>
 								</thead>
-								<tbody id="note-archive" />
+								<tbody id="groupTableBody" />
 							</table>
 						</div>
 					</div>
 				</div>
+				<!--GRP CREATOR MODAL-->
 			</div>
-			<div class="flex flex-row items-center mt-2 justify-center">
-				<input
-					class="pl-4 border border-r-0 rounded-l-3xl focus:ring-0 text-sm block bg-white w-64 h-7 border-slate-300 shadow-sm focus:outline-none"
-					placeholder="Add Notes"
-					type="text"
-					name="search12"
-					bind:value={title}
-				/>
-				<button
-					id="addButton"
-					class="add-button w-12 h-7 border border-slate-300 rounded-r-3xl bg-blue-500 hover:bg-blue-700 border-none transform transition-transform focus:scale-100 active:scale-95"
-					on:click={addNote}
-				>
-					<svg
-						width="20px"
-						height="20px"
-						viewBox="0 0 20 20"
-						xmlns="http://www.w3.org/2000/svg"
-						fill="none"
-						class="ml-3"
-						><g id="SVGRepo_bgCarrier" stroke-width="0" /><g
-							id="SVGRepo_tracerCarrier"
-							stroke-linecap="round"
-							stroke-linejoin="round"
-						/><g id="SVGRepo_iconCarrier">
-							<path
-								fill="#f2f2f2"
-								fill-rule="evenodd"
-								d="M9 17a1 1 0 102 0v-6h6a1 1 0 100-2h-6V3a1 1 0 10-2 0v6H3a1 1 0 000 2h6v6z"
-							/>
-						</g></svg
-					>
-				</button>
-			</div>
-			<div class="divider mb-1" />
 
-			<!--TO DO LIST-->
-			<div id="notes-container" />
+			<!--JAMBOARD-->
+			<div class="w-2/5 bg-white bg-opacity-75 rounded-3xl text-center shadow-lg mr-2">
+				<div class="flex flex-row mt-2">
+					<img src="jamboard.png" class="h-7 mt-1 pl-6" alt="..." />
+					<h1 class="pl-1 pt-2 font-medium text-md text-gray-700">Jamboard</h1>
+				</div>
+
+				<!--JAM MODAL-->
+				<label
+					for="Jamboard"
+					class="my-5 btn h-20  w-56 bg-purple-500 hover:bg-purple-700 border-transparent hover:border-none text-lg rounded-3xl"
+					>Jamboard</label
+				>
+				<input type="checkbox" id="Jamboard" class="modal-toggle" />
+				<div class="modal">
+					<div class="modal-box relative h-5/6 max-w-6xl">
+						<label for="Jamboard" class="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
+						<h3 class="mt-5 text-xl font-bold text-center">Jamboard</h3>
+						<iframe
+							title="Jamboard"
+							class="mt-14 w-full h-4/5"
+							src="https://www.web-whiteboard.io/"
+						/>
+					</div>
+				</div>
+			</div>
+			<!--END JAM MODAL-->
+
+			<!--LESSON PLAN-->
+			<div class="w-2/5 bg-white bg-opacity-75 rounded-3xl text-center shadow-lg mr-1">
+				<div class="flex flex-row mt-2">
+					<img src="lessonplan.png" class="h-7 mt-1 pl-6" alt="..." />
+					<h1 class="pl-1 pt-2 font-medium text-md text-gray-700">Learning Materials</h1>
+				</div>
+
+				<label
+					for="lessonplan"
+					class="my-5 btn h-20 w-56 bg-blue-500 border-transparent hover:bg-blue-700 hover:border-none text-lg rounded-3xl"
+					>Open</label
+				>
+				<input type="checkbox" id="lessonplan" class="modal-toggle" />
+				<div class="modal">
+					<div class="modal-box relative h-4/6 max-w-3xl">
+						<label for="lessonplan" class="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
+
+						<div class="text-xl font-bold text-center w-full justify-center flex flex-row">
+							<p>Learning Materials</p>
+							<span />
+						</div>
+
+						<div
+							class="w-full flex flex-col mx-auto
+					 py-3 px-4 outline rounded-3xl outline-gray-50 mt-5"
+						>
+							<div class="mx-auto w-4/5 mt-3">
+								<!--WEEK-->
+								<!--WEEK-->
+								<div class="flex flex-row justify-center">
+									<select
+										id="weekSelector"
+										class="w-40 border-gray-200 h-8 font-medium text-sm text-center mr-3 border border-gray focus:none rounded-3xl shadow-sm"
+										bind:value={weekStatus}
+										on:change={updateLessonText}
+									>
+										<option disabled selected class="rounded-3xl">Select Week</option>
+										<option class="rounded-3xl">Week 1</option>
+										<option class="rounded-3xl">Week 2</option>
+										<option class="rounded-3xl">Week 3</option>
+										<option class="rounded-3xl">Week 4</option>
+										<option class="rounded-3xl">Week 5</option>
+										<option class="rounded-3xl">Week 6</option>
+										<option class="rounded-3xl">Week 7</option>
+										<option class="rounded-3xl">Week 8</option>
+									</select>
+								</div>
+								<div class="divider my-0 mt-3" />
+
+								<h1 class="text-left mt-2 ml-5 text-sm">Day 1</h1>
+								<div class="flex items-center mt-1 pl-4">
+									<select
+										id="day1Select"
+										class="w-32 border-gray-200 h-8 font-medium text-xs text-center mr-3 border border-gray focus:none rounded-3xl shadow-sm"
+										bind:value={day1status2}
+									>
+										<option disabled selected class="rounded-3xl">Share</option>
+										<option class="rounded-3xl">Only Me</option>
+										<option class="rounded-3xl">Current Class</option>
+									</select>
+									<input
+										id="day1input"
+										bind:value={day1x}
+										type="text"
+										placeholder="www.googledrive.com/lesson1/"
+										class="input input-bordered w-11/12 focus:border-none cursor-pointer text-sm"
+										readonly
+									/>
+									<button on:click={() => redirectToLink('day1input')}>Redirect to url</button>
+									<input
+										id="day1checkbox"
+										bind:value={day1status}
+										type="checkbox"
+										class="checkbox h-8 w-8 ml-2"
+										on:change={() => {
+											day1status = day1status === 'finish' ? '' : 'finish';
+										}}
+									/>
+								</div>
+
+								<h1 class="text-left mt-2 ml-5 text-sm">Day 2</h1>
+								<div class="flex items-center mt-1 pl-4">
+									<select
+										id="day2Select"
+										class="w-32 border-gray-200 h-8 font-medium text-xs text-center mr-3 border border-gray focus:none rounded-3xl shadow-sm"
+										bind:value={day2status2}
+									>
+										<option disabled selected class="rounded-3xl">Share</option>
+										<option class="rounded-3xl">Only Me</option>
+										<option class="rounded-3xl">Current Class</option>
+									</select>
+									<input
+										id="day2input"
+										bind:value={day2x}
+										type="text"
+										placeholder="www.googledrive.com/lesson1/"
+										class="input input-bordered w-11/12 focus:border-none cursor-pointer text-sm"
+										readonly
+									/>
+									<button on:click={() => redirectToLink('day12nput')}>Redirect to url</button>
+									<input
+										id="day2checkbox"
+										bind:value={day2status}
+										type="checkbox"
+										class="checkbox h-8 w-8 ml-2"
+										disabled="disabled"
+									/>
+								</div>
+
+								<h1 class="text-left mt-2 ml-5 text-sm">Day 3</h1>
+								<div class="flex items-center mt-1 pl-4">
+									<select
+										id="day3Select"
+										class="w-32 border-gray-200 h-8 font-medium text-xs text-center mr-3 border border-gray focus:none rounded-3xl shadow-sm"
+										bind:value={day3status2}
+									>
+										<option disabled selected class="rounded-3xl">Share</option>
+										<option class="rounded-3xl">Only Me</option>
+										<option class="rounded-3xl">Current Class</option>
+									</select>
+									<input
+										id="day3input"
+										bind:value={day3x}
+										type="text"
+										placeholder="www.googledrive.com/lesson1/"
+										class="input input-bordered w-11/12 focus.border-none cursor-pointer text-sm"
+										readonly
+									/>
+									<button on:click={() => redirectToLink('day13nput')}>Redirect to url</button>
+									<input
+										id="day3checkbox"
+										bind:value={day3status}
+										type="checkbox"
+										class="checkbox h-8 w-8 ml-2"
+										disabled="disabled"
+									/>
+								</div>
+
+								<h1 class="text-left mt-2 ml-5 text-sm">Day 4</h1>
+								<div class="flex items-center mt-1 pl-4">
+									<select
+										id="day4Select"
+										class="w-32 border-gray-200 h-8 font-medium text-xs text-center mr-3 border border-gray focus:none rounded-3xl shadow-sm"
+										bind:value={day4status2}
+									>
+										<option disabled selected class="rounded-3xl">Share</option>
+										<option class="rounded-3xl">Only Me</option>
+										<option class="rounded-3xl">Current Class</option>
+									</select>
+									<input
+										id="day4input"
+										bind:value={day4x}
+										type="text"
+										placeholder="www.googledrive.com/lesson1/"
+										class="input input-bordered w-11/12 focus:border-none cursor-pointer text-sm"
+										readonly
+									/>
+									<button on:click={() => redirectToLink('day14nput')}>Redirect to url</button>
+									<input
+										id="day4checkbox"
+										bind:value={day4status}
+										type="checkbox"
+										class="checkbox h-8 w-8 ml-2"
+										disabled="disabled"
+									/>
+								</div>
+
+								<h1 class="text-left mt-2 ml-5 text-sm">Day 5</h1>
+								<div class="flex items-center mt-1 pl-4">
+									<select
+										id="day5Select"
+										class="w-32 border-gray-200 h-8 font-medium text-xs text-center mr-3 border border-gray focus:none rounded-3xl shadow-sm"
+										bind:value={day5status2}
+									>
+										<option disabled selected class="rounded-3xl">Share</option>
+										<option class="rounded-3xl">Only Me</option>
+										<option class="rounded-3xl">Current Class</option>
+									</select>
+									<input
+										id="day5input"
+										bind:value={day5x}
+										type="text"
+										placeholder="www.googledrive.com/lesson1/"
+										class="input input-bordered w-11/12 focus.border-none cursor-pointer text-sm"
+										readonly
+									/>
+									<button on:click={() => redirectToLink('day15nput')}>Redirect to url</button>
+									<input
+										id="day5checkbox"
+										bind:value={day5status}
+										type="checkbox"
+										class="checkbox h-8 w-8 ml-2"
+										disabled="disabled"
+									/>
+								</div>
+								<!--END WEEK-->
+							</div>
+
+							<div class="justify-between flex mt-9 mb-2 mx-4">
+								<button
+									on:click={toggleEditButton}
+									id=""
+									class="text-sm font-medium bg-red-500 hover:bg-red-600 text-white px-6 ml-1 py-1 rounded-3xl"
+								>
+									Reset</button
+								>
+								<div class="flex flex-row">
+									<button
+										on:click={toggleEditButton}
+										id="editButton"
+										class="text-sm font-medium bg-blue-500 hover:bg-blue-600 text-white px-6 ml-1 py-1 rounded-3xl"
+									>
+										Edit</button
+									>
+									<button
+										on:click={createWeeklyLesson}
+										id="saveButton1"
+										class="text-sm font-medium bg-green-500 hover:bg-green-600 text-white px-6 ml-1 py-1 rounded-3xl pointer-events-none"
+									>
+										Save
+									</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
+	</div>
 	</div>
 
 	<!--ACTIONS-->
-	<div class="flex flex-row card mx-10 my-auto pt-3">
-		<!--RANDOMIZER-->
-		<div class="w-2/5 pb-5 bg-white bg-opacity-75 rounded-3xl text-center shadow-lg mr-2">
-			<div class="flex flex-row mt-2">
-				<img src="randomizer.png" class="h-8 mt-2 pl-6" alt="..." />
-				<h1 class="pl-1 pt-2 font-medium text-md text-gray-700">Randomizer</h1>
-			</div>
-			<!--RAN MODAL-->
-			<label
-				for="randomizer"
-				class="my-10 btn h-24 w-56 bg-[#EF5051] border-transparent hover:bg-red-600 hover:border-none text-lg rounded-3xl"
-				>Randomizer</label
-			>
-			<input type="checkbox" id="randomizer" class="modal-toggle" />
-			<div class="modal">
-				<div class="modal-box relative h-96">
-					<label for="randomizer" class="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
-					<h3 class="text-xl font-bold text-center">Randomizer</h3>
-					<div class="mt-6 mb-1">
-						<select
-							bind:value={recitationType}
-							class="w-1/2 mr-1 border-gray-200 h-6 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
-						>
-							<option class="rounded-3xl" selected>Present Only</option>
-							<option class="rounded-3xl">All Students</option>
-						</select>
-					</div>
-					<div class="divider mt-5" />
-					<p class="font-medium text-lg text-center" id="randomizerName">STUDENT NAME</p>
-					<div class="divider" />
-
-					<div class="flex flex-row justify-center">
-						<button
-							on:click={resetRecitation}
-							id="resetButton"
-							class="start-button btn mt-8 w-40 mx-1 rounded-3xl bg-[#EF5051] hover:bg-red-600 border-none"
-							>Reset</button
-						>
-						<button
-							on:click={getRandomName}
-							class="start-button btn mt-8 w-40 mx-1 rounded-3xl bg-[#EF5051] hover:bg-red-600 border-none"
-							>START</button
-						>
-					</div>
-				</div>
-			</div>
-		</div>
-		<!--END RAN MODAL-->
-
-		<!--GROUP CREATOR-->
-		<div class="w-2/5 pb-5 bg-white bg-opacity-75 rounded-3xl text-center shadow-lg mr-2">
-			<div class="flex flex-row mt-2">
-				<img src="group.png" class="h-7 mt-1 pl-6" alt="..." />
-				<h1 class="pl-2 pt-2 font-medium text-md text-gray-700">Group Creator</h1>
-			</div>
-
-			<!--GRP CREATOR MODAL-->
-			<label
-				for="GroupCreator"
-				class="my-10 btn h-24 w-56 bg-green-500 border-transparent hover:bg-green-700 hover:border-none text-lg rounded-3xl"
-				>Create Group</label
-			>
-			<input type="checkbox" id="GroupCreator" class="modal-toggle" />
-			<div class="modal">
-				<div class="modal-box relative h-auto">
-					<label for="GroupCreator" class="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
-					<h3 class="text-xl font-bold text-center">Group Creator</h3>
-					<p class="mt-7 mb-2 font-medium">Group By</p>
-					<div class="mt-3 mb-1 flex flex-row mx-10">
-						<select
-							bind:value={groupType}
-							class="w-1/2 mr-1 border-gray-200 h-6 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
-							id=""
-						>
-							<option disabled selected class="rounded-3xl">Select</option>
-							<option class="rounded-3xl">Present Only</option>
-							<option class="rounded-3xl">All Students</option>
-						</select>
-						<select
-							class="w-1/2 ml-1 border-gray-200 h-6 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
-							id="groupSize"
-						>
-							<option disabled selected class="rounded-3xl">Number of Members</option>
-							<option class="rounded-3xl" value="2">2 Members Each</option>
-							<option class="rounded-3xl" value="3">3 Members Each</option>
-							<option class="rounded-3xl" value="4">4 Members Each</option>
-							<option class="rounded-3xl" value="5">5 Members Each</option>
-							<option class="rounded-3xl" value="6">6 Members Each</option>
-							<option class="rounded-3xl" value="7">7 Members Each</option>
-							<option class="rounded-3xl" value="8">8 Members Each</option>
-							<option class="rounded-3xl" value="9">9 Members Each</option>
-							<option class="rounded-3xl" value="10">10 Members Each</option>
-						</select>
-					</div>
-					<button
-						class="start-button btn mt-4 w-1/2 rounded-3xl bg-green-500 hover:bg-green-700 border-none transform transition-transform focus:scale-100 active:scale-95"
-						on:click={groupStudents}>Create</button
-					>
-
-					<div class="divider" />
-					<div class="relative overflow-y-auto shadow-sm rounded-xl mx-5 my-7 max-h-80">
-						<table class="w-full text-sm text-gray-500 dark:text-gray-400">
-							<thead
-								class="text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 sticky top-0"
-							>
-								<tr>
-									<th scope="col" class="px-6 py-4 text-center">Group #</th>
-									<th scope="col" class="px-6 py-4 text-center">Members</th>
-								</tr>
-							</thead>
-							<tbody id="groupTableBody" />
-						</table>
-					</div>
-				</div>
-			</div>
-			<!--GRP CREATOR MODAL-->
-		</div>
-
-		<!--JAMBOARD-->
-		<div class="w-2/5 pb-5 bg-white bg-opacity-75 rounded-3xl text-center shadow-lg mr-2">
-			<div class="flex flex-row mt-2">
-				<img src="jamboard.png" class="h-7 mt-1 pl-6" alt="..." />
-				<h1 class="pl-1 pt-2 font-medium text-md text-gray-700">Jamboard</h1>
-			</div>
-
-			<!--JAM MODAL-->
-			<label
-				for="Jamboard"
-				class="my-10 btn h-24 w-56 bg-purple-500 hover:bg-purple-700 border-transparent hover:border-none text-lg rounded-3xl"
-				>Jamboard</label
-			>
-			<input type="checkbox" id="Jamboard" class="modal-toggle" />
-			<div class="modal">
-				<div class="modal-box relative h-5/6 max-w-6xl">
-					<label for="Jamboard" class="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
-					<h3 class="mt-5 text-xl font-bold text-center">Jamboard</h3>
-					<iframe
-						title="Jamboard"
-						class="mt-14 w-full h-4/5"
-						src="https://www.web-whiteboard.io/"
-					/>
-				</div>
-			</div>
-		</div>
-		<!--END JAM MODAL-->
-
-		<!--LESSON PLAN-->
-		<div class="w-2/5 pb-5 bg-white bg-opacity-75 rounded-3xl text-center shadow-lg mr-1">
-			<div class="flex flex-row mt-2">
-				<img src="lessonplan.png" class="h-7 mt-1 pl-6" alt="..." />
-				<h1 class="pl-1 pt-2 font-medium text-md text-gray-700">Learning Materials</h1>
-			</div>
-
-			<label
-				for="lessonplan"
-				class="my-10 btn h-24 w-56 bg-blue-500 border-transparent hover:bg-blue-700 hover:border-none text-lg rounded-3xl"
-				>Open</label
-			>
-			<input type="checkbox" id="lessonplan" class="modal-toggle" />
-			<div class="modal">
-				<div class="modal-box relative h-4/6 max-w-3xl">
-					<label for="lessonplan" class="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
-
-					<div class="text-xl font-bold text-center w-full justify-center flex flex-row">
-						<p>Learning Materials</p>
-						<span />
-					</div>
-
-					<div
-						class="w-full flex flex-col mx-auto
-					 py-3 px-4 outline rounded-3xl outline-gray-50 mt-5"
-					>
-						<div class="mx-auto w-4/5 mt-3">
-							<!--WEEK-->
-							<!--WEEK-->
-							<div class="flex flex-row justify-center">
-								<select
-									id="weekSelector"
-									class="w-40 border-gray-200 h-8 font-medium text-sm text-center mr-3 border border-gray focus:none rounded-3xl shadow-sm"
-									bind:value={weekStatus}
-									on:change={updateLessonText}
-								>
-									<option disabled selected class="rounded-3xl">Select Week</option>
-									<option class="rounded-3xl">Week 1</option>
-									<option class="rounded-3xl">Week 2</option>
-									<option class="rounded-3xl">Week 3</option>
-									<option class="rounded-3xl">Week 4</option>
-									<option class="rounded-3xl">Week 5</option>
-									<option class="rounded-3xl">Week 6</option>
-									<option class="rounded-3xl">Week 7</option>
-									<option class="rounded-3xl">Week 8</option>
-								</select>
-							</div>
-							<div class="divider my-0 mt-3" />
-
-							<h1 class="text-left mt-2 ml-5 text-sm">Day 1</h1>
-							<div class="flex items-center mt-1 pl-4">
-								<select
-									id="day1Select"
-									class="w-32 border-gray-200 h-8 font-medium text-xs text-center mr-3 border border-gray focus:none rounded-3xl shadow-sm"
-									bind:value={day1status2}
-								>
-									<option disabled selected class="rounded-3xl">Share</option>
-									<option class="rounded-3xl">Only Me</option>
-									<option class="rounded-3xl">Current Class</option>
-								</select>
-								<input
-									id="day1input"
-									bind:value={day1x}
-									type="text"
-									placeholder="www.googledrive.com/lesson1/"
-									class="input input-bordered w-11/12 focus:border-none cursor-pointer text-sm"
-									readonly
-								/>
-								<button on:click={() => redirectToLink('day1input')}>Redirect to url</button>
-								<input
-									id="day1checkbox"
-									bind:value={day1status}
-									type="checkbox"
-									class="checkbox h-8 w-8 ml-2"
-									on:change={() => {
-										day1status = day1status === 'finish' ? '' : 'finish';
-									}}
-								/>
-							</div>
-
-							<h1 class="text-left mt-2 ml-5 text-sm">Day 2</h1>
-							<div class="flex items-center mt-1 pl-4">
-								<select
-									id="day2Select"
-									class="w-32 border-gray-200 h-8 font-medium text-xs text-center mr-3 border border-gray focus:none rounded-3xl shadow-sm"
-									bind:value={day2status2}
-								>
-									<option disabled selected class="rounded-3xl">Share</option>
-									<option class="rounded-3xl">Only Me</option>
-									<option class="rounded-3xl">Current Class</option>
-								</select>
-								<input
-									id="day2input"
-									bind:value={day2x}
-									type="text"
-									placeholder="www.googledrive.com/lesson1/"
-									class="input input-bordered w-11/12 focus:border-none cursor-pointer text-sm"
-									readonly
-								/>
-								<button on:click={() => redirectToLink('day12nput')}>Redirect to url</button>
-								<input
-									id="day2checkbox"
-									bind:value={day2status}
-									type="checkbox"
-									class="checkbox h-8 w-8 ml-2"
-									disabled="disabled"
-								/>
-							</div>
-
-							<h1 class="text-left mt-2 ml-5 text-sm">Day 3</h1>
-							<div class="flex items-center mt-1 pl-4">
-								<select
-									id="day3Select"
-									class="w-32 border-gray-200 h-8 font-medium text-xs text-center mr-3 border border-gray focus:none rounded-3xl shadow-sm"
-									bind:value={day3status2}
-								>
-									<option disabled selected class="rounded-3xl">Share</option>
-									<option class="rounded-3xl">Only Me</option>
-									<option class="rounded-3xl">Current Class</option>
-								</select>
-								<input
-									id="day3input"
-									bind:value={day3x}
-									type="text"
-									placeholder="www.googledrive.com/lesson1/"
-									class="input input-bordered w-11/12 focus.border-none cursor-pointer text-sm"
-									readonly
-								/>
-								<button on:click={() => redirectToLink('day13nput')}>Redirect to url</button>
-								<input
-									id="day3checkbox"
-									bind:value={day3status}
-									type="checkbox"
-									class="checkbox h-8 w-8 ml-2"
-									disabled="disabled"
-								/>
-							</div>
-
-							<h1 class="text-left mt-2 ml-5 text-sm">Day 4</h1>
-							<div class="flex items-center mt-1 pl-4">
-								<select
-									id="day4Select"
-									class="w-32 border-gray-200 h-8 font-medium text-xs text-center mr-3 border border-gray focus:none rounded-3xl shadow-sm"
-									bind:value={day4status2}
-								>
-									<option disabled selected class="rounded-3xl">Share</option>
-									<option class="rounded-3xl">Only Me</option>
-									<option class="rounded-3xl">Current Class</option>
-								</select>
-								<input
-									id="day4input"
-									bind:value={day4x}
-									type="text"
-									placeholder="www.googledrive.com/lesson1/"
-									class="input input-bordered w-11/12 focus:border-none cursor-pointer text-sm"
-									readonly
-								/>
-								<button on:click={() => redirectToLink('day14nput')}>Redirect to url</button>
-								<input
-									id="day4checkbox"
-									bind:value={day4status}
-									type="checkbox"
-									class="checkbox h-8 w-8 ml-2"
-									disabled="disabled"
-								/>
-							</div>
-
-							<h1 class="text-left mt-2 ml-5 text-sm">Day 5</h1>
-							<div class="flex items-center mt-1 pl-4">
-								<select
-									id="day5Select"
-									class="w-32 border-gray-200 h-8 font-medium text-xs text-center mr-3 border border-gray focus:none rounded-3xl shadow-sm"
-									bind:value={day5status2}
-								>
-									<option disabled selected class="rounded-3xl">Share</option>
-									<option class="rounded-3xl">Only Me</option>
-									<option class="rounded-3xl">Current Class</option>
-								</select>
-								<input
-									id="day5input"
-									bind:value={day5x}
-									type="text"
-									placeholder="www.googledrive.com/lesson1/"
-									class="input input-bordered w-11/12 focus.border-none cursor-pointer text-sm"
-									readonly
-								/>
-								<button on:click={() => redirectToLink('day15nput')}>Redirect to url</button>
-								<input
-									id="day5checkbox"
-									bind:value={day5status}
-									type="checkbox"
-									class="checkbox h-8 w-8 ml-2"
-									disabled="disabled"
-								/>
-							</div>
-							<!--END WEEK-->
-						</div>
-
-						<div class="justify-between flex mt-9 mb-2 mx-4">
-							<button
-								on:click={toggleEditButton}
-								id=""
-								class="text-sm font-medium bg-red-500 hover:bg-red-600 text-white px-6 ml-1 py-1 rounded-3xl"
-							>
-								Reset</button
-							>
-							<div class="flex flex-row">
-								<button
-									on:click={toggleEditButton}
-									id="editButton"
-									class="text-sm font-medium bg-blue-500 hover:bg-blue-600 text-white px-6 ml-1 py-1 rounded-3xl"
-								>
-									Edit</button
-								>
-								<button
-									on:click={createWeeklyLesson}
-									id="saveButton1"
-									class="text-sm font-medium bg-green-500 hover:bg-green-600 text-white px-6 ml-1 py-1 rounded-3xl pointer-events-none"
-								>
-									Save
-								</button>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+	<div class="flex flex-row card mx-10 my-auto pt-3" />
 </body>
 
 <style>
