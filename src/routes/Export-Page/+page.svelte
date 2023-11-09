@@ -1,3 +1,58 @@
+<script>
+	import { auth, database } from '$lib/firebase';
+	import {
+		doc,
+		setDoc,
+		query,
+		where,
+		getDocs,
+		collection,
+		getDoc,
+		onSnapshot,
+		updateDoc,
+		addDoc,
+		deleteDoc
+	} from 'firebase/firestore';
+	import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
+	import { goto } from '$app/navigation';
+	import { firebase, firestore, functions } from '$lib/firebase';
+	import { getDatabase, ref, onValue, get, child } from 'firebase/database';
+	import { subjectSelected1, userId, timeFrom, timeTo } from '../../lib/userStorage';
+	import { onMount } from 'svelte';
+	import { current_component, text } from 'svelte/internal';
+
+	async function setDetails() {
+		const timeDate = document.getElementById('timeDuration');
+
+		const subject = localStorage.getItem('subjectSelected1');
+		const timeIn = localStorage.getItem('timeIn');
+		const timeFrom = localStorage.getItem('timeFrom');
+		console.log(timeIn);
+		console.log(timeFrom);
+		const text1 = timeFrom + ' - ' + timeIn;
+		timeDate.textContent = text1;
+	}
+	setDetails();
+	onMount(() => {
+		userId.subscribe((val) => {
+			if (browser) localStorage.userId = val;
+		});
+
+		subjectSelected1.subscribe((val) => {
+			if (browser) localStorage.subjectSelected1 = val;
+		});
+
+		timeFrom.subscribe((val) => {
+			if (browser) localStorage.timeFrom = val;
+		});
+
+		timeTo.subscribe((val) => {
+			if (browser) localStorage.timeTo = val;
+		});
+		setDetails();
+	});
+</script>
+
 <!DOCTYPE html>
 <html lang="en" class="bg-gray-50">
 	<head>
@@ -46,7 +101,7 @@
 					<div class="flex items-center flex-col mb-5 mt-2">
 						<p class="text-center text-lg font-medium">Attendance Record</p>
 						<p class="text-center text-md font-medium">6 Rambutan - Science | Ruffa May Monis</p>
-						<p class="text-center text-md">January 1, 2023 - January 29, 2023</p>
+						<p id="timeDuration" class="text-center text-md">January 1, 2023 - January 29, 2023</p>
 					</div>
 					<table class="w-full mt-3 border text-sm">
 						<thead>
@@ -69,7 +124,6 @@
 								<td class="border border-black text-sm">1 </td>
 								<td class="border border-black text-sm">20</td>
 							</tr>
-							
 						</tbody>
 					</table>
 				</div>

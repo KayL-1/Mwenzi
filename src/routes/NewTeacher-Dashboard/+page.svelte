@@ -17,8 +17,9 @@
 	import { goto } from '$app/navigation';
 	import { firebase, firestore, functions } from '$lib/firebase';
 	import { getDatabase, ref, onValue, get, child } from 'firebase/database';
-	import { userId } from '../../lib/userStorage';
+	import { subjectSelected1, userId, timeFrom, timeTo } from '../../lib/userStorage';
 	import { onMount } from 'svelte';
+	import { current_component } from 'svelte/internal';
 
 	let userUID = '';
 	let selecTSub;
@@ -73,13 +74,15 @@
 		// Remove the first element from the array
 		attendanceDates.shift();
 
-		const selectElement = document.querySelector('#dateSelector1'); // Select by id
+		const dateInput = document.getElementById('dateSelector1');
+		dateInput.value = currentDatee;
+		// const selectElement = document.querySelector('#dateSelector1'); // Select by id
 
-		attendanceDates.forEach((date) => {
-			const optionElement = document.createElement('option');
-			optionElement.textContent = date;
-			selectElement.appendChild(optionElement);
-		});
+		// attendanceDates.forEach((date) => {
+		// 	const optionElement = document.createElement('option');
+		// 	optionElement.textContent = date;
+		// 	selectElement.appendChild(optionElement);
+		// });
 	}
 
 	async function classCheck() {
@@ -1240,6 +1243,30 @@
 		recitationCheck();
 	}
 
+	let timeFrom1;
+	let timeTo1;
+
+	async function newPage() {
+		if (timeFrom1 === null || timeFrom1 === undefined) {
+			console.log('Please select a date');
+			return;
+		}
+
+		if (timeTo1 === null || timeTo1 === undefined) {
+			console.log('Please select a date');
+			return;
+		}
+
+		const subjectSelected1 = selecTSub; // Assuming selecTSub is a value you want to store
+		localStorage.setItem('subjectSelected1', subjectSelected1);
+		localStorage.setItem('timeTo', timeTo1);
+		localStorage.setItem('timeFrom', timeFrom1);
+			const testing = localStorage.getItem('subjectSelected1');
+		console.log(testing);
+		location.window
+		window.location.href = "/Export-Page";
+	}
+
 	onMount(() => {
 		const unsubscribe = userId.subscribe((value) => {
 			// Use the value of userId here
@@ -1251,6 +1278,20 @@
 				unsubscribe();
 			};
 		});
+
+		subjectSelected1.subscribe((val) => {
+			if (browser) localStorage.subjectSelected1 = val;
+		});
+
+		timeFrom.subscribe((val) => {
+			if (browser) localStorage.timeFrom = val;
+		});
+
+		timeTo.subscribe((val) => {
+			if (browser) localStorage.timeTo = val;
+		});
+
+		// newPage();
 	});
 	getDate();
 </script>
@@ -1431,9 +1472,17 @@
 
 						<p class="mt-7 mb-2 font-medium">Export Record:</p>
 						<div class="w-full mt-3 justify-center flex flex-row">
-							<input type="date" class="mx-2 rounded-xl border border-gray-400 px-2" />
+							<input
+								bind:value={timeFrom1}
+								type="date"
+								class="mx-2 rounded-xl border border-gray-400 px-2"
+							/>
 							<p class="font-medium">to</p>
-							<input type="date" class="mx-2 rounded-xl border border-gray-400 px-2" />
+							<input
+								bind:value={timeTo1}
+								type="date"
+								class="mx-2 rounded-xl border border-gray-400 px-2"
+							/>
 							<!-- <select
 								class="w-48 border-gray-200 h-6 font-medium text-sm mx-2 text-center border border-gray focus:none rounded-3xl shadow-sm"
 							>
@@ -1448,19 +1497,22 @@
 								<option class="rounded-3xl">September 14, 2023</option>
 							</select> -->
 						</div>
-						<a href="/Export-Page">
-							<button class="btn btn-success mt-4 rounded-3xl text-white w-48"
-								>Export Selected</button
-							>
-						</a>
+						<!-- <a href="/Export-Page"> -->
+						<button class="btn btn-success mt-4 rounded-3xl text-white w-48" on:click={newPage}
+							>Export Selected</button
+						>
+						<!-- </a> -->
 					</div>
 				</div>
 			</div>
 			<!--END EXPORT ATT-->
 
 			<input
+				id="dateSelector1"
 				type="date"
 				class="w-56 h-6 font-medium text-sm text-center mx-2 rounded-xl border border-gray-400 px-2 focus:outline-1"
+				value="{current_component};"
+				on:change={() => attendanceCheck(2)}
 			/>
 			<!-- <select
 				id="dateSelector1"
@@ -1658,7 +1710,8 @@
 						viewBox="0 0 1920 1920"
 						xmlns="http://www.w3.org/2000/svg"
 						transform="matrix(1, 0, 0, -1, 0, 0)"
-						width="19" height="19"
+						width="19"
+						height="19"
 						><g id="SVGRepo_bgCarrier" stroke-width="0" /><g
 							id="SVGRepo_tracerCarrier"
 							stroke-linecap="round"
