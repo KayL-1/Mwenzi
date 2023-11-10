@@ -9,7 +9,7 @@ userId.subscribe((val) => {
 
 export const subjectSelected1 = writable(browser && localStorage.getItem("subjectSelected1") || "webjeda")
 export const timeFrom = writable(browser && localStorage.getItem("timeFrom") || "webjeda")
-export const timeTo = writable(browser && localStorage.getItem("timeIn") || "webjeda")
+export const timeTo = writable(browser && localStorage.getItem("timeTo") || "webjeda")
 
 subjectSelected1.subscribe((val) => {
   if (browser) return (localStorage.subjectSelected1 = val)

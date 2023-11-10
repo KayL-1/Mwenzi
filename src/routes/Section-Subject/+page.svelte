@@ -21,6 +21,42 @@
 	import { onMount } from 'svelte';
 	import toast, { Toaster } from 'svelte-french-toast';
 
+	let deleteClass;
+	async function removeClass() {
+		const collectionRef = collection(firestore, 'classes');
+		const docRef = doc(collectionRef, deleteClass);
+		deleteDoc(docRef)
+			.then(() => {
+				console.log('Document successfully deleted!');
+			})
+			.catch((error) => {
+				console.error('Error deleting document: ', error);
+			});
+		removeSubject();
+	}
+	async function removeSubject() {
+		const collectionRef = collection(firestore, 'Subject');
+		const query1 = query(collectionRef, where('className', '==', deleteClass));
+		const querySnapshot = await getDocs(query1);
+		querySnapshot.forEach(async (doc) => {
+			// Delete the document
+			await deleteDoc(doc.ref);
+			console.log('Document deleted:', doc.id);
+		});
+	}
+	let deleteSubject;
+	async function removeSubject2() {
+		const collectionRef = collection(firestore, 'Subject');
+		const docRef = doc(collectionRef, deleteSubject);
+		deleteDoc(docRef)
+			.then(() => {
+				console.log('Document successfully deleted!');
+			})
+			.catch((error) => {
+				console.error('Error deleting document: ', error);
+			});
+	}
+
 	// Function to handle changes in the selected option
 	function handleSelectChange(event) {
 		const selectedOption = event.target.value;
@@ -100,7 +136,7 @@
 		if (querySnapshot.empty) {
 			const docRef = doc(firestore, 'classes', classNewName);
 			const classData = {
-				className: className,
+				className: classNewName,
 				grade: gradeLevel,
 				teachers: [],
 				students: []
@@ -438,6 +474,7 @@
 										Select Section Name:
 
 										<select
+											bind:value={deleteClass}
 											class="select select-sm select-bordered focus:border-none border-gray-200 w-full h-5 rounded-3xl shadow-sm mt-2"
 										>
 											<option disabled selected hidden class="rounded-3xl">Select Section</option>
@@ -449,6 +486,7 @@
 
 									<div class="justify-end flex mt-5 mb-3">
 										<button
+											on:click={removeClass}
 											id="delete"
 											class="py-2 text-sm font-medium bg-red-500 hover:bg-red-600 text-white px-6 ml-1 rounded-3xl transform transition-transform focus:scale-100 active:scale-95"
 										>
@@ -652,19 +690,19 @@
 										Select Subject Name:
 
 										<select
+											bind:value={deleteSubject}
 											class="select select-sm select-bordered focus:border-none border-gray-200 w-full h-5 rounded-3xl shadow-sm mt-2"
 										>
 											<option disabled selected hidden class="rounded-3xl">Select Subject</option>
-											<option
-												value="/NewAdmin-Dashboard"
-												id="NewAdmin-Dashboard"
-												class="rounded-3xl"
-											/>
+											{#each subjectArray as item1 (item1.id)}
+												<option>{item1.id}</option>
+											{/each}
 										</select>
 									</h1>
 
 									<div class="justify-end flex mt-5 mb-3">
 										<button
+											on:click={removeSubject2}
 											id="delete"
 											class="py-2 text-sm font-medium bg-red-500 hover:bg-red-600 text-white px-6 ml-1 rounded-3xl transform transition-transform focus:scale-100 active:scale-95"
 										>

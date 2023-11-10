@@ -1474,9 +1474,9 @@
 
 						<p class="mt-7 mb-2 font-medium">Export Record:</p>
 						<div class="w-full mt-3 justify-center flex flex-row">
-							<input type="date" class="mx-2 rounded-xl border border-gray-400 px-2" />
+							<input bind:value={timeFrom1} type="date" class="mx-2 rounded-xl border border-gray-400 px-2" />
 							<p class="font-medium">to</p>
-							<input type="date" class="mx-2 rounded-xl border border-gray-400 px-2" />
+							<input bind:value={timeTo1} type="date" class="mx-2 rounded-xl border border-gray-400 px-2" />
 							<!-- <select
 								class="w-48 border-gray-200 h-6 font-medium text-sm mx-2 text-center border border-gray focus:none rounded-3xl shadow-sm"
 							>
