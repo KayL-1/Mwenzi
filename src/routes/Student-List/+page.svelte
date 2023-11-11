@@ -23,7 +23,79 @@
 	import Papa from 'papaparse';
 	import toast, { Toaster } from 'svelte-french-toast';
 
-	// Function to handle changes in the selected option
+	async function deleteStudents() {
+		const deleteStudent = document.getElementById('selectDelete').value;
+
+		const collectionRef2 = collection(firestore, 'classes');
+		const query3 = query(collectionRef2, where('students', 'array-contains', deleteStudent));
+
+		getDocs(query3)
+			.then((querySnapshot12) => {
+				querySnapshot12.forEach((doc) => {
+					const docRef = doc.ref; // Reference to the document
+
+					// Get the current 'students' array from the document data
+					const studentsArray = doc.data().students;
+
+					// Remove idToSearch from the 'students' array
+					const updatedStudentsArray = studentsArray.filter(
+						(studentId) => studentId !== deleteStudent
+					);
+
+					// Update the document in Firestore with the modified 'students' array
+					updateDoc(docRef, { students: updatedStudentsArray })
+						.then(() => {
+							console.log(`Removed ${deleteStudent} from document ID: ${doc.id}`);
+						})
+						.catch((error) => {
+							console.error(`Error updating document: ${error}`);
+						});
+				});
+			})
+			.catch((error) => {
+				console.error('Error getting documents: ', error);
+			});
+
+		const collectionRef23 = collection(firestore, 'Subject');
+		const query43 = query(collectionRef23, where('students', 'array-contains', deleteStudent));
+
+		getDocs(query43)
+			.then((querySnapshot123) => {
+				querySnapshot123.forEach((doc) => {
+					const docRef = doc.ref; // Reference to the document
+
+					// Get the current 'students' array from the document data
+					const studentsArray = doc.data().students;
+
+					// Remove idToSearch from the 'students' array
+					const updatedStudentsArray = studentsArray.filter(
+						(studentId) => studentId !== deleteStudent
+					);
+
+					// Update the document in Firestore with the modified 'students' array
+					updateDoc(docRef, { students: updatedStudentsArray })
+						.then(() => {
+							console.log(`Removed ${deleteStudent} from document ID: ${doc.id}`);
+						})
+						.catch((error) => {
+							console.error(`Error updating document: ${error}`);
+						});
+				});
+			})
+			.catch((error) => {
+				console.error('Error getting documents: ', error);
+			});
+
+		const collectionRef = collection(firestore, 'users');
+		const query1 = query(collectionRef, where('studentRFID', '==', deleteStudent));
+		const querySnapshot = await getDocs(query1);
+		querySnapshot.forEach(async (doc) => {
+			// Delete the document
+			await deleteDoc(doc.ref);
+			console.log('Document deleted:', doc.id);
+		});
+	}
+
 	function handleSelectChange(event) {
 		const selectedOption = event.target.value;
 
@@ -38,18 +110,132 @@
 		}
 	}
 
+	let studentInformation;
+
+	async function updateStudentDetail() {
+		const id = document.getElementById('studentRFID').value;
+		const queryRef1 = collection(firestore, 'users');
+		const queryRef2 = query(queryRef1, where('studentRFID', '==', id));
+
+		const firstName1 = document.getElementById('firstName').value;
+		const lastName1 = document.getElementById('lastName').value;
+		const birthday1 = document.getElementById('bday').value;
+		const studentID1 = document.getElementById('studentID').value;
+		const studentRFID1 = document.getElementById('studentRFID').value;
+
+		try {
+			const querySnapshot = await getDocs(queryRef2);
+
+			querySnapshot.forEach(async (doc) => {
+				// Assuming docRef is the reference to the document you want to update
+				await updateDoc(doc.ref, {
+					firstName: firstName1,
+					lastName: lastName1,
+					birthday: birthday1,
+					studentID: studentID1,
+					studentRFID: studentRFID1
+				});
+
+				console.log('success');
+			});
+		} catch (error) {
+			console.error('Error updating documents:', error);
+		}
+	}
+
+	function toggleEdit() {
+		const firstName = document.getElementById('firstName');
+		const lastName = document.getElementById('lastName');
+		const bday = document.getElementById('bday');
+		const studentID = document.getElementById('studentID');
+		const studentRFID = document.getElementById('studentRFID');
+		const saveButton = document.getElementById('saveButton12');
+
+		if (firstName.readOnly) {
+			// Fields are currently read-only, so enable editing
+			firstName.readOnly = false;
+			lastName.readOnly = false;
+			bday.readOnly = false;
+			studentID.readOnly = false;
+			studentRFID.readOnly = false;
+			saveButton.classList.remove('pointer-events-none');
+		} else {
+			// Fields are currently editable, so disable editing
+			firstName.readOnly = true;
+			lastName.readOnly = true;
+			bday.readOnly = true;
+			studentID.readOnly = true;
+			studentRFID.readOnly = true;
+			saveButton.classList.add('pointer-events-none');
+		}
+	}
+
+	async function getStudentDetail(id) {
+		const collectionRef = collection(firestore, 'users');
+		const query1 = query(collectionRef, where('studentRFID', '==', id));
+		const querySnapshot = await getDocs(query1);
+
+		if (!querySnapshot.empty) {
+			const doc = querySnapshot.docs[0]; // Access the first (and only) document in the result
+			studentInformation = {
+				id: doc.id,
+				data: doc.data()
+			};
+			// Now, studentInformation contains the data of the matching document
+		} else {
+			// Handle the case where no matching document was found
+		}
+		document.getElementById('firstName').value = studentInformation.data.firstName;
+		document.getElementById('lastName').value = studentInformation.data.lastName;
+		document.getElementById('bday').value = studentInformation.data.birthday;
+		document.getElementById('studentID').value = studentInformation.data.studentID;
+		document.getElementById('studentID2').textContent = studentInformation.data.studentID;
+		document.getElementById('studentName').textContent =
+			studentInformation.data.firstName + ' ' + studentInformation.data.lastName;
+		document.getElementById('studentRFID').value = studentInformation.data.studentRFID;
+	}
+
 	let students = [];
 	let subjectArray = [];
+	let firstName;
+	let lastName;
 
-	async function studentCheck() {
-		const collectionRef = collection(firestore, 'users');
-		const filter = query(collectionRef, where('userRole', '==', 'student'));
-		const querySnapshot = await getDocs(filter);
+	async function studentCheck(option) {
+		if (option === 'Alphabetical') {
+			const collectionRef = collection(firestore, 'users');
+			const filter = query(collectionRef, where('userRole', '==', 'student'));
+			const querySnapshot = await getDocs(filter);
 
-		students = querySnapshot.docs.map((doc) => ({
-			id: doc.id,
-			data: doc.data()
-		}));
+			students = querySnapshot.docs.map((doc) => ({
+				id: doc.id,
+				data: doc.data()
+			}));
+
+			students = students.sort((a, b) => {
+				const lastNameA = a.data.lastName || ''; // Handle cases where lastName might be undefined
+				const lastNameB = b.data.lastName || ''; // Handle cases where lastName might be undefined
+
+				return lastNameA.localeCompare(lastNameB);
+			});
+		}
+
+		if (option === 'Section') {
+			const collectionRef = collection(firestore, 'users');
+			const filter = query(collectionRef, where('userRole', '==', 'student'));
+			const querySnapshot = await getDocs(filter);
+
+			students = querySnapshot.docs.map((doc) => ({
+				id: doc.id,
+				data: doc.data()
+			}));
+
+			students = students.sort((a, b) => {
+				const lastNameA = a.data.class || ''; // Handle cases where lastName might be undefined
+				const lastNameB = b.data.class || ''; // Handle cases where lastName might be undefined
+
+				return lastNameA.localeCompare(lastNameB);
+			});
+		}
 	}
 
 	async function classCheck() {
@@ -62,7 +248,7 @@
 		}));
 	}
 
-	studentCheck();
+	studentCheck('Alphabetical');
 	classCheck();
 
 	let studentName;
@@ -75,6 +261,29 @@
 	let myVariable = '';
 	let rfidMode = '';
 	let modeSwitch;
+
+	let currentDatee;
+	function getDate() {
+		fetch('http://worldtimeapi.org/api/timezone/Asia/Manila')
+			.then((response) => response.json())
+			.then((data) => {
+				// Extract the date components
+				var currentDate = new Date(data.datetime);
+				var year = currentDate.getFullYear();
+				var month = currentDate.getMonth() + 1;
+				var day = currentDate.getDate();
+
+				// Format the date as desired (e.g., YYYY-MM-DD)
+				currentDatee =
+					year + '-' + month.toString().padStart(2, '0') + '-' + day.toString().padStart(2, '0');
+
+				console.log(currentDatee); // Output: 2023-05-26
+			})
+			.catch((error) => {
+				console.log('Error:', error);
+			});
+	}
+	getDate();
 
 	function handleCSVUpload() {
 		const inp_file = document.getElementById('csvUpload');
@@ -102,7 +311,8 @@
 			const docRef = await setDoc(doc(firestore, 'users', userID), {
 				UID: userID,
 				userRole: 'student',
-				Name: student.Name,
+				firstName: student.FirstName,
+				lastName: student.LastName,
 				studentID: student.StudentID,
 				studentRFID: student.StudentRFID,
 				class: classSelect2,
@@ -120,12 +330,12 @@
 
 	async function createStudent() {
 		if (
-			studentName == null ||
+			firstName == null ||
+			lastName == null ||
 			bday == null ||
 			studentID == null ||
 			studentRFID == null ||
-			classSelect1 == null ||
-			classSelect2 == null
+			classSelect1 == null
 		) {
 			// At least one of the variables is null
 			toast.error('One or more input/s are empty');
@@ -142,7 +352,8 @@
 					const docRef = await setDoc(doc(firestore, 'users', userID), {
 						UID: userID,
 						userRole: 'student',
-						Name: studentName,
+						firstName: firstName,
+						lastName: lastName,
 						studentID: studentID,
 						studentRFID: myVariable,
 						class: classSelect1,
@@ -152,6 +363,28 @@
 					const docRef2 = doc(firestore, 'classes', classSelect1);
 					await updateDoc(docRef2, {
 						students: arrayUnion(myVariable)
+					});
+
+					const collectionRef1 = collection(firestore, 'Subject');
+					const query3 = query(collectionRef1, where('className', '==', classSelect1));
+
+					// Get the documents that match the query
+					const querySnapshot34 = await getDocs(query3);
+
+					// Update the matching documents
+					querySnapshot34.forEach((doc) => {
+						const docRef12 = doc.ref; // Reference to the document
+
+						// Append the data to the 'students' array
+						updateDoc(docRef12, {
+							students: arrayUnion(myVariable)
+						})
+							.then(() => {
+								console.log('Document successfully updated!');
+							})
+							.catch((error) => {
+								console.error('Error updating document: ', error);
+							});
 					});
 
 					writeUserData1();
@@ -171,7 +404,8 @@
 					const docRef = await setDoc(doc(firestore, 'users', userID), {
 						UID: userID,
 						userRole: 'student',
-						Name: studentName,
+						firstName: firstName,
+						lastName: lastName,
 						studentID: studentID,
 						studentRFID: studentRFID,
 						class: classSelect1,
@@ -181,6 +415,28 @@
 					const docRef2 = doc(firestore, 'classes', classSelect1);
 					await updateDoc(docRef2, {
 						students: arrayUnion(studentRFID)
+					});
+
+					const collectionRef1 = collection(firestore, 'Subject');
+					const query3 = query(collectionRef1, where('className', '==', classSelect1));
+
+					// Get the documents that match the query
+					const querySnapshot3 = await getDocs(query3);
+
+					// Update the matching documents
+					querySnapshot3.forEach((doc) => {
+						const docRef6 = doc.ref; // Reference to the document
+
+						// Append the data to the 'students' array
+						updateDoc(docRef6, {
+							students: arrayUnion(myVariable)
+						})
+							.then(() => {
+								console.log('Document successfully updated!');
+							})
+							.catch((error) => {
+								console.error('Error updating document: ', error);
+							});
 					});
 
 					writeUserData2();
@@ -293,23 +549,12 @@
 		});
 	}
 
-	let selectedOption = ''; // Create a reactive variable to store the selected option
-	function sortStudents(option) {
-
-		if (option === 'Section') {
-			return students.sort((a, b) => a.data.class.localeCompare(b.data.class));
-        } else if (option === "Alphabetical") { // Changed the option value to "alphabetical"
-            return students.sort((a, b) => a.data.Name.localeCompare(b.data.Name)); // Sort alphabetically by student name
-        } else {
-            return students;
-        }
-	}
+	let selectedOption; // Create a reactive variable to store the selected option
+	let sortedStudents;
 
 	function handleSortChange(event) {
 		selectedOption = event.target.value;
 	}
-
-	$: sortedStudents = sortStudents(selectedOption);
 
 	listenForChanges();
 	displayData();
@@ -399,11 +644,20 @@
 								>
 									<div class="mx-auto w-full">
 										<h1 class="text-left my-2 mx-5">
-											Student Name
+											First Name
 											<input
-												bind:value={studentName}
+												bind:value={firstName}
 												class="mt-2 border rounded-3xl px-2 py-1 focus:ring-0 text-sm block bg-white w-full h-7 border-slate-300 shadow-sm focus:outline-none"
-												placeholder="Full Name"
+												placeholder="First Name"
+												type="text"
+											/>
+										</h1>
+										<h1 class="text-left my-2 mx-5">
+											Last Name
+											<input
+												bind:value={lastName}
+												class="mt-2 border rounded-3xl px-2 py-1 focus:ring-0 text-sm block bg-white w-full h-7 border-slate-300 shadow-sm focus:outline-none"
+												placeholder="Last Name"
 												type="text"
 											/>
 										</h1>
@@ -480,7 +734,9 @@
 												class="select select-sm select-bordered focus:border-none border-gray-200 w-full h-5 rounded-3xl shadow-sm mt-2"
 											>
 												{#each subjectArray as item1 (item1.id)}
-													<option disabled selected hidden class="rounded-3xl">Select Section</option>
+													<option disabled selected hidden class="rounded-3xl"
+														>Select Section</option
+													>
 													<option class="rounded-3xl" value={item1.id}>{item1.id}</option>
 												{/each}
 											</select>
@@ -518,7 +774,9 @@
 												class="select select-sm select-bordered focus:border-none border-gray-200 w-full h-5 rounded-3xl shadow-sm mt-2"
 											>
 												{#each subjectArray as item1 (item1.id)}
-													<option disabled selected hidden class="rounded-3xl">Select Section</option>
+													<option disabled selected hidden class="rounded-3xl"
+														>Select Section</option
+													>
 													<option class="rounded-3xl" value={item1.id}>{item1.id}</option>
 												{/each}
 											</select>
@@ -564,19 +822,21 @@
 											Select Student Name:
 
 											<select
+												id="selectDelete"
 												class="select select-sm select-bordered focus:border-none border-gray-200 w-full h-5 rounded-3xl shadow-sm mt-2"
 											>
 												<option disabled selected hidden class="rounded-3xl">Select Student</option>
-												<option
-													value="/NewAdmin-Dashboard"
-													id="NewAdmin-Dashboard"
-													class="rounded-3xl"
-												/>
+												{#each students as item1 (item1.id)}
+													<option value={item1.data.studentRFID}
+														>{item1.data.firstName} {item1.data.lastName}</option
+													>
+												{/each}
 											</select>
 										</h1>
 
 										<div class="justify-end flex mt-5 mb-3">
 											<button
+												on:click={deleteStudents}
 												id="saveButton"
 												class="py-2 text-sm font-medium bg-red-500 hover:bg-red-600 text-white px-6 ml-1 rounded-3xl transform transition-transform focus:scale-100 active:scale-95"
 											>
@@ -630,7 +890,7 @@
 							></svg
 						>
 						<!-- svelte-ignore a11y-missing-content -->
-						<a class="font-medium text-sm p-2">09/29/23</a>
+						<a class="font-medium text-sm p-2">{currentDatee}</a>
 					</div>
 				</div>
 				<!--END DATE -->
@@ -649,12 +909,12 @@
 					</div>
 					<select
 						id="sortSelect"
-						on:change={handleSortChange}
+						on:change={(event) => studentCheck(event.target.value)}
 						class="mt-2 border-gray-200 w-56 h-6 font-medium text-sm text-center mr-6 border border-gray focus:none rounded-3xl shadow-sm"
 					>
 						<option disabled selected hidden class="rounded-3xl">Sort by</option>
-						<option class="rounded-xl" selected>Alphabetical</option>
-						<option class="rounded-xl" >Section</option>
+						<option class="rounded-xl" value="Alphabetical">Alphabetical</option>
+						<option class="rounded-xl" value="Section">Section</option>
 					</select>
 				</div>
 			</div>
@@ -673,15 +933,20 @@
 						</tr>
 					</thead>
 					<tbody>
-						{#each sortedStudents as item1 (item1.id)}
+						{#each students as item1 (item1.id)}
 							<tr
 								class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
 							>
 								<td class="px-6 py-2">{item1.data.class}</td>
 								<td class="text-center">
-									<label for="StudentInformation" class="cursor-pointer">{item1.data.Name}</label>
+									<label
+										for="StudentInformation"
+										class="cursor-pointer"
+										on:click={() => getStudentDetail(item1.data.studentRFID)}
+										>{item1.data.firstName} {item1.data.lastName}</label
+									>
 								</td>
-								<td class="px-6 py-2">{item1.data.studentID}</td>
+								<td class="px-6 py-2">{item1.data.birthday}</td>
 								<td class="px-6 py-2">{item1.data.studentID}</td>
 								<td class="px-6 py-2">{item1.data.studentRFID}</td>
 							</tr>
@@ -704,15 +969,28 @@
 								>
 									<div class="mx-auto w-full">
 										<div class="flex flex-row justify-between mt-5 mx-2">
-											<h1 class="text-left font-medium text-lg">Ace Dela Cuesta</h1>
-											<h1 class="text-left font-medium text-lg">19-1064</h1>
+											<h1 id="studentName" class="text-left font-medium text-lg">
+												Ace Dela Cuesta
+											</h1>
+											<h1 id="studentID2" class="text-left font-medium text-lg">19-1064</h1>
 										</div>
 										<div class="divider mt-0" />
 										<h1 class="text-left my-2 mx-5">
-											Full Name
+											First Name
 											<input
+												id="firstName"
 												class="mt-1 border rounded-3xl px-2 focus:ring-0 text-sm block bg-white w-full h-7 border-slate-300 shadow-sm focus:outline-none"
-												placeholder="Ace Dela Cuesta"
+												placeholder="Ace"
+												type="text"
+												readonly
+											/>
+										</h1>
+										<h1 class="text-left my-2 mx-5">
+											Last Name
+											<input
+												id="lastName"
+												class="mt-1 border rounded-3xl px-2 focus:ring-0 text-sm block bg-white w-full h-7 border-slate-300 shadow-sm focus:outline-none"
+												placeholder="Dela Cuesta"
 												type="text"
 												readonly
 											/>
@@ -721,6 +999,7 @@
 										<h1 class="text-left my-2 mx-5">
 											Birthdate
 											<input
+												id="bday"
 												class="mt-1 border rounded-3xl px-2 focus:ring-0 text-sm block bg-white w-full h-7 border-slate-300 shadow-sm focus:outline-none"
 												placeholder="01/01/2001"
 												type="date"
@@ -731,18 +1010,9 @@
 										<h1 class="text-left my-2 mx-5">
 											Student ID
 											<input
+												id="studentID"
 												class="mt-1 border rounded-3xl px-2 focus:ring-0 text-sm block bg-white w-full h-7 border-slate-300 shadow-sm focus:outline-none"
 												placeholder="19-1064"
-												type="text"
-												readonly
-											/>
-										</h1>
-
-										<h1 class="text-left my-2 mx-5">
-											Section
-											<input
-												class="mt-1 border rounded-3xl px-2 focus:ring-0 text-sm block bg-white w-full h-7 border-slate-300 shadow-sm focus:outline-none"
-												placeholder="6-Rambutan"
 												type="text"
 												readonly
 											/>
@@ -752,11 +1022,7 @@
 											Student RFID
 											<div class="flex flex-row items-center">
 												<input
-													type="checkbox"
-													class="toggle toggle-sm mt-2 mr-2 checked:bg-green-500"
-													checked
-												/>
-												<input
+													id="studentRFID"
 													class="mt-2 border rounded-3xl px-2 py-1 focus:ring-0 text-sm block bg-white w-full h-7 border-slate-300 shadow-sm focus:outline-none"
 													placeholder="4e2abbab"
 													type="text"
@@ -767,14 +1033,16 @@
 
 										<div class="justify-end flex mt-5 mb-2">
 											<button
+												on:click={toggleEdit}
 												id="editButton"
 												class="text-sm font-medium bg-blue-500 hover:bg-blue-600 text-white px-6 py-1 ml-1 rounded-3xl transform transition-transform focus:scale-100 active:scale-95"
 											>
 												Edit</button
 											>
 											<button
-												id="saveButton"
-												class="text-sm font-medium bg-green-500 hover:bg-green-600 text-white px-6 py-1 ml-1 rounded-3xl transform transition-transform focus:scale-100 active:scale-95"
+												on:click={updateStudentDetail}
+												id="saveButton12"
+												class="text-sm font-medium bg-green-500 hover:bg-green-600 text-white px-6 py-1 ml-1 rounded-3xl transform transition-transform focus:scale-100 active:scale-95 pointer-events-none"
 											>
 												Save</button
 											>

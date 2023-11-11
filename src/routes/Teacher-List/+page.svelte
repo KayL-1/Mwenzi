@@ -22,6 +22,29 @@
 	import { onMount } from 'svelte';
 	import toast, { Toaster } from 'svelte-french-toast';
 	import { each } from 'svelte/internal';
+
+	let currentDatee;
+	function getDate() {
+		fetch('http://worldtimeapi.org/api/timezone/Asia/Manila')
+			.then((response) => response.json())
+			.then((data) => {
+				// Extract the date components
+				var currentDate = new Date(data.datetime);
+				var year = currentDate.getFullYear();
+				var month = currentDate.getMonth() + 1;
+				var day = currentDate.getDate();
+
+				// Format the date as desired (e.g., YYYY-MM-DD)
+				currentDatee =
+					year + '-' + month.toString().padStart(2, '0') + '-' + day.toString().padStart(2, '0');
+
+				console.log(currentDatee); // Output: 2023-05-26
+			})
+			.catch((error) => {
+				console.log('Error:', error);
+			});
+	}
+	getDate();
 	// Function to handle changes in the selected option
 	function handleSelectChange(event) {
 		const selectedOption = event.target.value;
@@ -330,7 +353,7 @@
 							></svg
 						>
 						<!-- svelte-ignore a11y-missing-content -->
-						<a class="font-medium text-sm p-2">09/29/23</a>
+						<a class="font-medium text-sm p-2">{currentDatee}</a>
 					</div>
 				</div>
 				<!--END DATE -->

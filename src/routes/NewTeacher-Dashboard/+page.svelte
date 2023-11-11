@@ -154,7 +154,7 @@
 	let presentCount = 0;
 	let absentCount = 0;
 
-	function attendanceCheck(type) {
+	async function attendanceCheck(type) {
 		presentCount = 0;
 		absentCount = 0;
 		const date123 = document.getElementById('dateSelector1').value;
@@ -236,7 +236,7 @@
 
 		snapshot.forEach((doc) => {
 			const id = doc.data().studentRFID;
-			const name = doc.data().Name;
+			const name = doc.data().firstName + " " + doc.data().lastName;
 
 			// Find the item in the recitation array with the matching ID
 			const item = recitation.find((el) => el.id === id);
@@ -258,7 +258,7 @@
 
 		snapshot.forEach((doc) => {
 			const id = doc.data().studentRFID;
-			const name = doc.data().Name;
+			const name = doc.data().firstName + " " + doc.data().lastName;
 
 			// Find the item in the attendance array with the matching ID
 			const item = attendance.find((el) => el.id === id);
@@ -971,7 +971,7 @@
 		if (querySnapshot.docs.length > 0) {
 			const doc = querySnapshot.docs[0];
 			console.log(doc.data().Name);
-			document.getElementById('userName').textContent = doc.data().Name;
+			document.getElementById('userName').textContent = doc.data().firstName + " " + doc.data().lastName;
 		} else {
 			return 'Teacher not found';
 		}

@@ -29,6 +29,7 @@
 
 	let dateArray = {};
 	let dateArrayAsArray = [];
+
 	function getDate() {
 		fetch('http://worldtimeapi.org/api/timezone/Asia/Manila')
 			.then((response) => response.json())
@@ -112,8 +113,8 @@
 			}
 		}
 
-		document.getElementById('presentCount').textContent = presentCount.toString();
-		document.getElementById('absentCount').textContent = absentCount.toString();
+		document.getElementById('present1').textContent = presentCount.toString();
+		document.getElementById('absent1').textContent = absentCount.toString();
 
 		console.log('Present Count:', presentCount);
 		console.log('Absent Count:', absentCount);
@@ -225,7 +226,8 @@
 		const querySnapshot = await getDocs(queryRef2);
 		if (querySnapshot.docs.length > 0) {
 			const doc = querySnapshot.docs[0];
-			document.getElementById('userName').textContent = doc.data().Name;
+			document.getElementById('userName').textContent =
+				doc.data().firstName + ' ' + doc.data().lastName;
 		} else {
 			return 'Student not found';
 		}
@@ -385,8 +387,8 @@
 						>
 							<option disabled selected hidden class="rounded-3xl">Select Class</option>
 							{#each subjects as subject (subject)}
-							<option class="rounded-xl" value={subject}>{subject}</option>
-						{/each}
+								<option class="rounded-xl" value={subject}>{subject}</option>
+							{/each}
 						</select>
 					</a>
 				</div>
