@@ -28,26 +28,24 @@
 
 	<!--BODY1-->
 	<section class="bg-gray-100 text-gray-600 body-font mt-10">
-		<!-- <div class="mt-12 container mx-auto flex flex-start px-8 md:flex-row flex-col items-center">
-			<div class="flex flex-col align-middle text-left pr-10 mt-36">
+		<div class="mt-12 container mx-auto flex flex-start px-8 md:flex-row flex-col items-center">
+			<div class="flex flex-col align-middle text-left mr-8 mt-36 w-9/12">
 				<h1 class="title-font sm:text-4xl text-3xl mb-4 font-medium text-gray-900">
 					Mwenzi Classroom Management Tool
 					<br class="hidden lg:inline-block" />
 				</h1>
-				<p class="mb-8 leading-relaxed w-4/5">
-				
+				<p class="mb-8 leading-relaxed text-justify">
 					Experience seamless classroom management with <a class="font-bold"> Mwenzi </a>:
-					Revolutionize your teaching experience
-		
-					with our web-based application, designed exclusively for
+					Revolutionize your teaching experience with our web-based application, designed
+					exclusively for
 					<a
 						class="underline"
 						href="https://www.facebook.com/coloongelementaryschoolvalenzuelacity/"
 						>Coloong Elementary School</a
 					>, that integrates
-			
-					<a class="font-bold"> RFID </a> for attendance tracking, group creation, and recitation points
-					feature.
+
+					<a class="font-bold"> RFID </a> for attendance tracking, points, notes taking, randomizer,
+					group creation, jamboard, and learning materials feature.
 				</p>
 				<div class="flex justify-left">
 					<a href="/Login">
@@ -60,28 +58,13 @@
 				</div>
 			</div>
 
-			 <div class="w-full scale-125 mt-32 mr-10">
-				<img src="/carousel1.png" class="rounded-3xl shadow-lg" alt=".." />
-			</div> 
-			
-		</div> -->
-
-		<div class="hero min-h-screen">
-			<video autoplay muted loop class="background-video">
-				<source src="/video.mp4" type="video/mp4">
-				<!-- Add more source elements for different video formats if needed -->
-				Your browser does not support the video tag.
-			</video>
-			<div class="hero-overlay bg-opacity-60"></div>
-			<div class="hero-content text-center text-neutral-content">
-				<div class="max-w-md">
-					<h1 class="mb-5 text-5xl font-bold">Hello there</h1>
-					<p class="mb-5">Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda excepturi exercitationem quasi. In deleniti eaque aut repudiandae et a id nisi.</p>
-					<button class="btn btn-primary">Get Started</button>
-				</div>
+			<div class="w-full mt-24">
+				<video autoplay muted loop class="background-video rounded-3xl ml-4 shadow-md w-full" >
+					<source src="/Slideshows.mp4" type="video/mp4">
+					Your browser does not support the video tag.
+				</video>
 			</div>
 		</div>
-		
 	</section>
 	<!--END BODY 1-->
 
@@ -131,7 +114,24 @@
 							<path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
 							<path d="M22 4L12 14.01l-3-3" />
 						</svg>
-						<span class="title-font font-medium">Timer Templates</span>
+						<span class="title-font font-medium">Points</span>
+					</div>
+				</div>
+				<div class="p-2 sm:w-1/2 w-full">
+					<div class="bg-gray-200 rounded-lg flex p-4 h-full items-center">
+						<svg
+							fill="none"
+							stroke="currentColor"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="3"
+							class="text-indigo-500 w-6 h-6 flex-shrink-0 mr-4"
+							viewBox="0 0 24 24"
+						>
+							<path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
+							<path d="M22 4L12 14.01l-3-3" />
+						</svg>
+						<span class="title-font font-medium">Notes</span>
 					</div>
 				</div>
 				<div class="p-2 sm:w-1/2 w-full">
@@ -165,23 +165,6 @@
 							<path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
 							<path d="M22 4L12 14.01l-3-3" />
 						</svg>
-						<span class="title-font font-medium">Recitatioon Points</span>
-					</div>
-				</div>
-				<div class="p-2 sm:w-1/2 w-full">
-					<div class="bg-gray-200 rounded-lg flex p-4 h-full items-center">
-						<svg
-							fill="none"
-							stroke="currentColor"
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							stroke-width="3"
-							class="text-indigo-500 w-6 h-6 flex-shrink-0 mr-4"
-							viewBox="0 0 24 24"
-						>
-							<path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
-							<path d="M22 4L12 14.01l-3-3" />
-						</svg>
 						<span class="title-font font-medium">Group Creation</span>
 					</div>
 				</div>
@@ -199,7 +182,7 @@
 							<path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
 							<path d="M22 4L12 14.01l-3-3" />
 						</svg>
-						<span class="title-font font-medium">Easy Admin Tasks</span>
+						<span class="title-font font-medium">Jamboard</span>
 					</div>
 				</div>
 			</div>

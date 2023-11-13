@@ -138,10 +138,10 @@
 					<div class="h-full flex items-start">
 						<div class="flex-grow pl-6">
 							<h2 class="tracking-widest text-xs title-font font-medium text-orange-500 mb-1">
-								Capstone Adviser
+								Capstone 1 Adviser
 							</h2>
-							<h1 class="title-font text-xl font-medium text-gray-900 mb-3">Ruffa May C. Monis</h1>
-							<p class="leading-relaxed mb-5">
+							<h1 class="title-font text-xl font-medium text-gray-900 mb-3">Ruffa May Monis</h1>
+							<p class="leading-relaxed mb-5 text-justify">
 								A professional with extensive experience in the field of Information Technology.
 								With her guidance and expertise, we receive valuable insights and support throughout
 								the development of our capstone project. Professor Monis provides direction, reviews
@@ -155,12 +155,27 @@
 					<div class="h-full flex items-start">
 						<div class="flex-grow pl-6">
 							<h2 class="tracking-widest text-xs title-font font-medium text-orange-500 mb-1">
+								Capstone 2 Adviser
+							</h2>
+							<h1 class="title-font text-xl font-medium text-gray-900 mb-3">Kenmar Bernardino</h1>
+							<p class="leading-relaxed mb-5 text-justify">
+								A seasoned IT professional, Kenmar Bernardino brings a wealth of knowledge and practical experience to our Capstone 2 project. 
+								Mr. Bernardino serves as a dedicated adviser, providing insightful guidance and ensuring that our work adheres to industry standards. His commitment to excellence 
+								and passion for IT significantly enriches our Capstone 2 experience.
+							</p>
+						</div>
+					</div>
+				</div>
+				<div class="py-8 px-4 lg:w-1/3">
+					<div class="h-full flex items-start">
+						<div class="flex-grow pl-6">
+							<h2 class="tracking-widest text-xs title-font font-medium text-orange-500 mb-1">
 								Technical Adviser
 							</h2>
 							<h1 class="title-font text-xl font-medium text-gray-900 mb-3">
-								Patrick Luis M. Francisco
+								Patrick Luis Francisco
 							</h1>
-							<p class="leading-relaxed mb-5">
+							<p class="leading-relaxed mb-5 text-justify">
 								Brings a wealth of technical knowledge and expertise to our capstone project. Professor
 								Francisco offers valuable guidance and recommendations, he assists us in making
 								informed technical decisions, addresses complex challenges. Professor Francisco

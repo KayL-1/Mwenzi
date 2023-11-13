@@ -1339,7 +1339,7 @@
 				<!--ATTENDANCE SUMMARY-->
 				<div class="flex flex-row">
 					<div
-						class="container h-10 my-6 mx-1 border border-gray-200 rounded-3xl w-48 flex justify-center items-center"
+						class="container h-10 my-6 mx-1 border border-gray-200 rounded-3xl w-40 flex justify-center items-center"
 					>
 						<!-- svelte-ignore a11y-missing-attribute -->
 						<svg
@@ -1383,7 +1383,7 @@
 					</div>
 
 					<div
-						class="container h-10 w-80 my-6 mx-1 px-2 border border-gray-200 rounded-3xl flex justify-center items-center"
+						class="container h-10 w-64 my-6 mx-1 px-2 border border-gray-200 rounded-3xl flex justify-center items-center"
 					>
 						<svg
 							viewBox="0 0 24 24"
@@ -1613,10 +1613,7 @@
 								>
 									<div class="mx-auto w-full">
 										<div class="flex flex-row justify-between mt-5 mx-2">
-											<h1 id="studentNamex" class="text-left font-medium text-lg mt-3">
-												Ace Dela Cuesta
-											</h1>
-											<h1 id="studentIDx" class="text-left font-medium text-lg mt-3">19-1064</h1>
+											
 										</div>
 										<div class="divider mt-0" />
 										<h1 class="text-left my-2 mx-5">
@@ -1896,16 +1893,16 @@
 			<!--ACTIONS DIV-->
 			<div class="flex flex-row h-48 mt-2">
 				<!--RANDOMIZER-->
-				<div class="w-2/5 bg-white bg-opacity-75 rounded-3xl text-center shadow-lg mr-2">
+				<div class="w-2/5 bg-red-600 bg-opacity-75 rounded-3xl text-center shadow-lg mr-2">
 					<div class="flex flex-row mt-2">
 						<img src="randomizer.png" class="h-7 mt-1 pl-6" alt="..." />
-						<h1 class="pl-1 pt-2 font-medium text-md text-gray-700">Randomizer</h1>
+						<h1 class="pl-1 pt-2 font-medium text-md text-white">Randomizer</h1>
 					</div>
 					<!--RAN MODAL-->
 					<label
 						for="randomizer"
-						class="my-5 btn h-20 w-56 bg-[#EF5051] border-transparent hover:bg-red-600 hover:border-none text-lg rounded-3xl"
-						>Randomizer</label
+						class="my-5 btn h-20 w-56 bg-white text-red-600 border-transparent hover:bg-red-100 hover:border-none text-base rounded-3xl"
+						>Pick</label
 					>
 					<input type="checkbox" id="randomizer" class="modal-toggle" />
 					<div class="modal">
@@ -1944,17 +1941,17 @@
 				<!--END RAN MODAL-->
 
 				<!--GROUP CREATOR-->
-				<div class="w-2/5 bg-white bg-opacity-75 rounded-3xl text-center shadow-lg mr-2">
+				<div class="w-2/5 bg-green-500 bg-opacity-75 rounded-3xl text-center shadow-lg mr-2">
 					<div class="flex flex-row mt-2">
 						<img src="group.png" class="h-7 mt-1 pl-6" alt="..." />
-						<h1 class="pl-2 pt-2 font-medium text-md text-gray-700">Group Creator</h1>
+						<h1 class="pl-2 pt-2 font-medium text-md text-white">Group Creator</h1>
 					</div>
 
 					<!--GRP CREATOR MODAL-->
 					<label
 						for="GroupCreator"
-						class="my-5 btn h-20 w-56 bg-green-500 border-transparent hover:bg-green-700 hover:border-none text-lg rounded-3xl"
-						>Create Group</label
+						class="my-5 btn h-20 w-56 bg-white text-green-500 border-transparent hover:bg-green-100 hover:border-none text-base rounded-3xl"
+						>Create</label
 					>
 					<input type="checkbox" id="GroupCreator" class="modal-toggle" />
 					<div class="modal">
@@ -2015,17 +2012,17 @@
 				</div>
 
 				<!--JAMBOARD-->
-				<div class="w-2/5 bg-white bg-opacity-75 rounded-3xl text-center shadow-lg mr-2">
+				<div class="w-2/5 bg-purple-500 bg-opacity-75 rounded-3xl text-center shadow-lg mr-2">
 					<div class="flex flex-row mt-2">
 						<img src="jamboard.png" class="h-7 mt-1 pl-6" alt="..." />
-						<h1 class="pl-1 pt-2 font-medium text-md text-gray-700">Jamboard</h1>
+						<h1 class="pl-1 pt-2 font-medium text-md text-white">Jamboard</h1>
 					</div>
 
 					<!--JAM MODAL-->
 					<label
 						for="Jamboard"
-						class="my-5 btn h-20 w-56 bg-purple-500 hover:bg-purple-700 border-transparent hover:border-none text-lg rounded-3xl"
-						>Jamboard</label
+						class="my-5 btn h-20 w-56 bg-white text-purple-500 hover:bg-purple-100 border-transparent hover:border-none text-base rounded-3xl"
+						>Draw</label
 					>
 					<input type="checkbox" id="Jamboard" class="modal-toggle" />
 					<div class="modal">
@@ -2043,15 +2040,15 @@
 				<!--END JAM MODAL-->
 
 				<!--LESSON PLAN-->
-				<div class="w-2/5 bg-white bg-opacity-75 rounded-3xl text-center shadow-lg mr-1">
+				<div class="w-2/5 bg-blue-500 bg-opacity-75 rounded-3xl text-center shadow-lg mr-1">
 					<div class="flex flex-row mt-2">
 						<img src="lessonplan.png" class="h-7 mt-1 pl-6" alt="..." />
-						<h1 class="pl-1 pt-2 font-medium text-md text-gray-700">Learning Materials</h1>
+						<h1 class="pl-1 pt-2 font-medium text-md text-white">Learning Materials</h1>
 					</div>
 
 					<label
 						for="lessonplan"
-						class="my-5 btn h-20 w-56 bg-blue-500 border-transparent hover:bg-blue-700 hover:border-none text-lg rounded-3xl"
+						class="my-5 btn h-20 w-56 bg-white text-blue-500 border-transparent hover:bg-blue-100 hover:border-none text-base rounded-3xl"
 						>Open</label
 					>
 					<input type="checkbox" id="lessonplan" class="modal-toggle" />
@@ -2110,7 +2107,7 @@
 											class="input input-bordered w-11/12 focus:border-none cursor-pointer text-sm"
 											readonly
 										/>
-										<button on:click={() => redirectToLink('day1input')}>Redirect to url</button>
+										<button on:click={() => redirectToLink('day1input')} class="text-sm text-blue-500 hover:text-blue-400 ml-1">Open Link</button>
 										<input
 											id="day1checkbox"
 											bind:value={day1status}
@@ -2141,7 +2138,7 @@
 											class="input input-bordered w-11/12 focus:border-none cursor-pointer text-sm"
 											readonly
 										/>
-										<button on:click={() => redirectToLink('day12nput')}>Redirect to url</button>
+										<button on:click={() => redirectToLink('day12nput')} class="text-sm text-blue-500 hover:text-blue-400 ml-1">Open Link</button>
 										<input
 											id="day2checkbox"
 											bind:value={day2status}
@@ -2170,7 +2167,7 @@
 											class="input input-bordered w-11/12 focus.border-none cursor-pointer text-sm"
 											readonly
 										/>
-										<button on:click={() => redirectToLink('day13nput')}>Redirect to url</button>
+										<button on:click={() => redirectToLink('day13nput')} class="text-sm text-blue-500 hover:text-blue-400 ml-1">Open Link</button>
 										<input
 											id="day3checkbox"
 											bind:value={day3status}
@@ -2199,7 +2196,7 @@
 											class="input input-bordered w-11/12 focus:border-none cursor-pointer text-sm"
 											readonly
 										/>
-										<button on:click={() => redirectToLink('day14nput')}>Redirect to url</button>
+										<button on:click={() => redirectToLink('day14nput')} class="text-sm text-blue-500 hover:text-blue-400 ml-1">Open Link</button>
 										<input
 											id="day4checkbox"
 											bind:value={day4status}
@@ -2228,7 +2225,7 @@
 											class="input input-bordered w-11/12 focus.border-none cursor-pointer text-sm"
 											readonly
 										/>
-										<button on:click={() => redirectToLink('day15nput')}>Redirect to url</button>
+										<button on:click={() => redirectToLink('day15nput')} class="text-sm text-blue-500 hover:text-blue-400 ml-1">Open Link</button>
 										<input
 											id="day5checkbox"
 											bind:value={day5status}
