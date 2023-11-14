@@ -236,7 +236,7 @@
 
 		snapshot.forEach((doc) => {
 			const id = doc.data().studentRFID;
-			const name = doc.data().firstName + " " + doc.data().lastName;
+			const name = doc.data().firstName + ' ' + doc.data().lastName;
 
 			// Find the item in the recitation array with the matching ID
 			const item = recitation.find((el) => el.id === id);
@@ -258,7 +258,7 @@
 
 		snapshot.forEach((doc) => {
 			const id = doc.data().studentRFID;
-			const name = doc.data().firstName + " " + doc.data().lastName;
+			const name = doc.data().firstName + ' ' + doc.data().lastName;
 
 			// Find the item in the attendance array with the matching ID
 			const item = attendance.find((el) => el.id === id);
@@ -559,8 +559,10 @@
 			if (element) {
 				if (isEditing) {
 					element.removeAttribute('disabled');
+					element.removeAttribute('readonly');
 				} else {
 					element.setAttribute('disabled', 'disabled');
+					element.setAttribute('readonly', 'readonly');
 				}
 			}
 		}
@@ -971,7 +973,8 @@
 		if (querySnapshot.docs.length > 0) {
 			const doc = querySnapshot.docs[0];
 			console.log(doc.data().Name);
-			document.getElementById('userName').textContent = doc.data().firstName + " " + doc.data().lastName;
+			document.getElementById('userName').textContent =
+				doc.data().firstName + ' ' + doc.data().lastName;
 		} else {
 			return 'Teacher not found';
 		}
@@ -1271,6 +1274,7 @@
 		const unsubscribe = userId.subscribe((value) => {
 			// Use the value of userId here
 			userUID = localStorage.getItem('userId');
+			console.log(userUID);
 			getuserName(userUID);
 			classCheck();
 			attendanceCheck(1);
@@ -1280,15 +1284,21 @@
 		});
 
 		subjectSelected1.subscribe((val) => {
-			if (browser) localStorage.subjectSelected1 = val;
+			if (typeof localStorage !== 'undefined') {
+				localStorage.subjectSelected1 = val;
+			}
 		});
 
 		timeFrom.subscribe((val) => {
-			if (browser) localStorage.timeFrom = val;
+			if (typeof localStorage !== 'undefined') {
+				localStorage.timeFrom = val;
+			}
 		});
 
 		timeTo.subscribe((val) => {
-			if (browser) localStorage.timeTo = val;
+			if (typeof localStorage !== 'undefined') {
+				localStorage.timeTo = val;
+			}
 		});
 
 		// newPage();
@@ -1474,9 +1484,17 @@
 
 						<p class="mt-7 mb-2 font-medium">Export Record:</p>
 						<div class="w-full mt-3 justify-center flex flex-row">
-							<input bind:value={timeFrom1} type="date" class="mx-2 rounded-xl border border-gray-400 px-2" />
+							<input
+								bind:value={timeFrom1}
+								type="date"
+								class="mx-2 rounded-xl border border-gray-400 px-2"
+							/>
 							<p class="font-medium">to</p>
-							<input bind:value={timeTo1} type="date" class="mx-2 rounded-xl border border-gray-400 px-2" />
+							<input
+								bind:value={timeTo1}
+								type="date"
+								class="mx-2 rounded-xl border border-gray-400 px-2"
+							/>
 							<!-- <select
 								class="w-48 border-gray-200 h-6 font-medium text-sm mx-2 text-center border border-gray focus:none rounded-3xl shadow-sm"
 							>
@@ -1612,9 +1630,7 @@
 									class="w-full flex flex-col mx-auto px-4 pb-4 outline rounded-3xl outline-gray-50 mt-3"
 								>
 									<div class="mx-auto w-full">
-										<div class="flex flex-row justify-between mt-5 mx-2">
-											
-										</div>
+										<div class="flex flex-row justify-between mt-5 mx-2" />
 										<div class="divider mt-0" />
 										<h1 class="text-left my-2 mx-5">
 											Parent/Guardian Name:
@@ -2107,7 +2123,10 @@
 											class="input input-bordered w-11/12 focus:border-none cursor-pointer text-sm"
 											readonly
 										/>
-										<button on:click={() => redirectToLink('day1input')} class="text-sm text-blue-500 hover:text-blue-400 ml-1">Open Link</button>
+										<button
+											on:click={() => redirectToLink('day1input')}
+											class="text-sm text-blue-500 hover:text-blue-400 ml-1">Open Link</button
+										>
 										<input
 											id="day1checkbox"
 											bind:value={day1status}
@@ -2138,7 +2157,10 @@
 											class="input input-bordered w-11/12 focus:border-none cursor-pointer text-sm"
 											readonly
 										/>
-										<button on:click={() => redirectToLink('day12nput')} class="text-sm text-blue-500 hover:text-blue-400 ml-1">Open Link</button>
+										<button
+											on:click={() => redirectToLink('day12nput')}
+											class="text-sm text-blue-500 hover:text-blue-400 ml-1">Open Link</button
+										>
 										<input
 											id="day2checkbox"
 											bind:value={day2status}
@@ -2167,7 +2189,10 @@
 											class="input input-bordered w-11/12 focus.border-none cursor-pointer text-sm"
 											readonly
 										/>
-										<button on:click={() => redirectToLink('day13nput')} class="text-sm text-blue-500 hover:text-blue-400 ml-1">Open Link</button>
+										<button
+											on:click={() => redirectToLink('day13nput')}
+											class="text-sm text-blue-500 hover:text-blue-400 ml-1">Open Link</button
+										>
 										<input
 											id="day3checkbox"
 											bind:value={day3status}
@@ -2196,7 +2221,10 @@
 											class="input input-bordered w-11/12 focus:border-none cursor-pointer text-sm"
 											readonly
 										/>
-										<button on:click={() => redirectToLink('day14nput')} class="text-sm text-blue-500 hover:text-blue-400 ml-1">Open Link</button>
+										<button
+											on:click={() => redirectToLink('day14nput')}
+											class="text-sm text-blue-500 hover:text-blue-400 ml-1">Open Link</button
+										>
 										<input
 											id="day4checkbox"
 											bind:value={day4status}
@@ -2225,7 +2253,10 @@
 											class="input input-bordered w-11/12 focus.border-none cursor-pointer text-sm"
 											readonly
 										/>
-										<button on:click={() => redirectToLink('day15nput')} class="text-sm text-blue-500 hover:text-blue-400 ml-1">Open Link</button>
+										<button
+											on:click={() => redirectToLink('day15nput')}
+											class="text-sm text-blue-500 hover:text-blue-400 ml-1">Open Link</button
+										>
 										<input
 											id="day5checkbox"
 											bind:value={day5status}

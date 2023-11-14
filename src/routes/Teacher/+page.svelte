@@ -43,10 +43,10 @@
 					if (userData.password === password) {
 						console.log('User is a Teacher');
 						toast.success('Log In Successful');
-						const userUID = userData.studentRFID;
+						const userUID = userData.UID;
 						userId.set(userUID);
 						const userUID1 = localStorage.getItem('userId');
-						window.location.replace('../NewStudent-Dashboard');
+						window.location.replace('../NewTeacher-Dashboard');
 					} else {
 						console.log('Wrong Password');
 						toast.error('Wrong Password');
@@ -133,9 +133,6 @@
 						class=" w-full px-3 py-4 mt-1 text-white bg-[#2ea44f] focus:outline-none font-medium rounded-3xl hover:bg-[#1e7d3f] duration-300 hover:scale-105"
 						>Log In</button
 					>
-					<a href="#" class="mt-4 w-full justify-center text-indigo-600 font-medium flex"
-						><span>Forgot your password? </span>
-					</a>
 				</form>
 			</div>
 		</div>
