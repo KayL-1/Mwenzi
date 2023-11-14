@@ -20,7 +20,6 @@
 	import { userId } from '../../lib/userStorage';
 	import { onMount } from 'svelte';
 
-
 	let currentDatee;
 	function getDate() {
 		fetch('http://worldtimeapi.org/api/timezone/Asia/Manila')
@@ -65,8 +64,7 @@
 	let students = [];
 	let teachers = [];
 
-	async function classCheck(option) {
-
+	async function classCheck() {
 		const collectionRef = collection(firestore, 'Subject');
 		const querySnapshot = await getDocs(collectionRef);
 
@@ -74,17 +72,54 @@
 			id: doc.id,
 			data: doc.data()
 		}));
+
+		subjectArray.sort((a, b) => {
+			const idA = a.id.toLowerCase(); // Convert to lowercase for case-insensitive sorting
+			const idB = b.id.toLowerCase();
+
+			if (idA < idB) {
+				return -1;
+			}
+			if (idA > idB) {
+				return 1;
+			}
+			return 0;
+		});
 	}
 
-	async function studentCheck() {
+	async function studentCheck(option) {
 		const collectionRef = collection(firestore, 'users');
 		const filter = query(collectionRef, where('userRole', '==', 'student'));
 		const querySnapshot = await getDocs(filter);
-
 		students = querySnapshot.docs.map((doc) => ({
 			id: doc.id,
 			data: doc.data()
 		}));
+
+		if (option == 'Alphabetical') {
+			students.sort((a, b) => {
+				const lastNameA = a.data.lastName.toLowerCase(); // Convert to lowercase for case-insensitive sorting
+				const lastNameB = b.data.lastName.toLowerCase();
+
+				if (lastNameA < lastNameB) {
+					return -1;
+				}
+				if (lastNameA > lastNameB) {
+					return 1;
+				}
+				return 0;
+			});
+		}
+
+		if (option == 'Grade') {
+			students.sort((a, b) => {
+				const gradeLevelA = a.data.gradeLevel; // Assuming gradeLevel is a property in data
+				const gradeLevelB = b.data.gradeLevel;
+
+				// Use the localeCompare() method to compare the strings
+				return gradeLevelA.localeCompare(gradeLevelB);
+			});
+		}
 	}
 
 	async function teacherCheck() {
@@ -96,6 +131,18 @@
 			id: doc.id,
 			data: doc.data()
 		}));
+		teachers.sort((a, b) => {
+				const lastNameA = a.data.lastName.toLowerCase(); // Convert to lowercase for case-insensitive sorting
+				const lastNameB = b.data.lastName.toLowerCase();
+
+				if (lastNameA < lastNameB) {
+					return -1;
+				}
+				if (lastNameA > lastNameB) {
+					return 1;
+				}
+				return 0;
+			});
 	}
 
 	async function getTeacherName(teacherID) {
@@ -113,7 +160,7 @@
 	}
 
 	classCheck();
-	studentCheck();
+	studentCheck('Alphabetical');
 	teacherCheck();
 </script>
 
@@ -234,14 +281,14 @@
 						<img src="class.png" class="h-8 pl-6 mt-2" alt="..." />
 						<h1 class="pt-2 pl-1 mt-1 font-medium text-md text-gray-700">Section - Subject List</h1>
 					</div>
-					<select
+					<!-- <select
 						id="sort1"
 						class="mt-3 border-gray-200 w-40 h-6 font-medium text-sm text-center mr-6 border border-gray focus:none rounded-3xl shadow-sm"
 					>
 						<option disabled selected hidden class="rounded-3xl">Sort by</option>
 						<option class="rounded-xl">Teacher</option>
 						<option class="rounded-xl">Alphabetical</option>
-					</select>
+					</select> -->
 				</div>
 			</div>
 
@@ -295,10 +342,11 @@
 					</div>
 					<select
 						class="mt-3 border-gray-200 w-40 h-6 font-medium text-sm text-center mr-6 border border-gray focus:none rounded-3xl shadow-sm"
+						on:change={(event) => studentCheck(event.target.value)}
 					>
 						<option disabled selected hidden class="rounded-3xl">Sort by</option>
 						<option class="rounded-xl">Grade</option>
-						<option class="rounded-xl">Recently Added</option>
+						<option class="rounded-xl">Alphabetical</option>
 					</select>
 				</div>
 			</div>
@@ -320,8 +368,8 @@
 							<tr
 								class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
 							>
-								<td class="text-center">6</td>
-								<td class="text-center">{item1.data.firstName} {item1.data.lastName}</td>
+								<td class="text-center">{item1.data.gradeLevel}</td>
+								<td class="text-center">{item1.data.lastName}, {item1.data.firstName}</td>
 								<td class="px-6 py-2 text-center">{item1.data.studentRFID}</td>
 								<td class="py-1 px-6 text-center">{item1.data.studentID}</td>
 							</tr>
@@ -339,13 +387,13 @@
 						<img src="teacher.png" class="h-8 pl-6 mt-2" alt="..." />
 						<h1 class="pt-2 pl-1 mt-1 font-medium text-md text-gray-700">Teachers List</h1>
 					</div>
-					<select
+					<!-- <select
 						class="mt-3 border-gray-200 w-40 h-6 font-medium text-sm text-center mr-6 border border-gray focus:none rounded-3xl shadow-sm"
 					>
 						<option disabled selected hidden class="rounded-3xl">Sort by</option>
 						<option class="rounded-xl">Alphabetical</option>
 						<option class="rounded-xl">Recently Added</option>
-					</select>
+					</select> -->
 				</div>
 			</div>
 
@@ -364,7 +412,7 @@
 							<tr
 								class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
 							>
-								<td class="text-center">{item1.data.Name}</td>
+								<td class="text-center">{item1.data.lastName}, {item1.data.firstName}</td>
 								<td class="px-6 py-2 text-center">{item1.data.email}</td>
 							</tr>
 						{/each}

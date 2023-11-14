@@ -46,7 +46,6 @@
 					updateDoc(docRef, { students: updatedStudentsArray })
 						.then(() => {
 							toast.success(`Removed ${deleteStudent} from document ID: ${doc.id}`);
-							
 						})
 						.catch((error) => {
 							toast.error(`Error updating document: ${error}`);
@@ -329,6 +328,22 @@
 
 	async function createStudentImport(csvFile) {
 		for (const student of csvFile) {
+			const docRef2 = doc(firestore, 'classes', classSelect2);
+			let grade;
+			getDoc(docRef2)
+				.then((docSnapshot) => {
+					if (docSnapshot.exists()) {
+						const data = docSnapshot.data();
+						grade = data.grade;
+						console.log('Grade:', grade);
+					} else {
+						console.log('Document does not exist.');
+					}
+				})
+				.catch((error) => {
+					console.error('Error getting document:', error);
+				});
+
 			const userID = await generateAndCheckUID();
 			const docRef = await setDoc(doc(firestore, 'users', userID), {
 				UID: userID,
@@ -338,10 +353,10 @@
 				studentID: student.StudentID,
 				studentRFID: student.StudentRFID,
 				class: classSelect2,
+				gradeLevel: grade,
 				birthday: student.birthday
 			});
 
-			const docRef2 = doc(firestore, 'classes', classSelect2);
 			await updateDoc(docRef2, {
 				students: arrayUnion(student.StudentRFID)
 			});
@@ -371,6 +386,26 @@
 					console.log('createAccount');
 					console.log(userID);
 
+					const docRef2 = doc(firestore, 'classes', classSelect1);
+					let grade;
+					getDoc(docRef2)
+						.then((docSnapshot) => {
+							if (docSnapshot.exists()) {
+								const data = docSnapshot.data();
+								grade = data.grade;
+								console.log('Grade:', grade);
+							} else {
+								console.log('Document does not exist.');
+							}
+						})
+						.catch((error) => {
+							console.error('Error getting document:', error);
+						});
+
+					await updateDoc(docRef2, {
+						students: arrayUnion(myVariable)
+					});
+
 					const docRef = await setDoc(doc(firestore, 'users', userID), {
 						UID: userID,
 						userRole: 'student',
@@ -379,12 +414,8 @@
 						studentID: studentID,
 						studentRFID: myVariable,
 						class: classSelect1,
-						birthday: bday
-					});
-
-					const docRef2 = doc(firestore, 'classes', classSelect1);
-					await updateDoc(docRef2, {
-						students: arrayUnion(myVariable)
+						birthday: bday,
+						gradeLevel: grade
 					});
 
 					const collectionRef1 = collection(firestore, 'Subject');
@@ -423,6 +454,26 @@
 					console.log('createAccount');
 					console.log(userID);
 
+					const docRef2 = doc(firestore, 'classes', classSelect1);
+					let grade;
+					getDoc(docRef2)
+						.then((docSnapshot) => {
+							if (docSnapshot.exists()) {
+								const data = docSnapshot.data();
+								grade = data.grade;
+								console.log('Grade:', grade);
+							} else {
+								console.log('Document does not exist.');
+							}
+						})
+						.catch((error) => {
+							console.error('Error getting document:', error);
+						});
+
+					await updateDoc(docRef2, {
+						students: arrayUnion(myVariable)
+					});
+
 					const docRef = await setDoc(doc(firestore, 'users', userID), {
 						UID: userID,
 						userRole: 'student',
@@ -431,10 +482,10 @@
 						studentID: studentID,
 						studentRFID: studentRFID,
 						class: classSelect1,
+						gradeLevel: grade,
 						birthday: bday
 					});
 
-					const docRef2 = doc(firestore, 'classes', classSelect1);
 					await updateDoc(docRef2, {
 						students: arrayUnion(studentRFID)
 					});
