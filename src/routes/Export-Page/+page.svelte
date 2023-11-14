@@ -89,13 +89,15 @@
 				const userData = elementQuerySnapshot.docs[0].data();
 
 				// Add 'Name' and 'StudentID' to the elementCounts object for the current elementName
-				elementCounts[elementName].Name = userData.Name;
+				elementCounts[elementName].firstName = userData.firstName;
+				elementCounts[elementName].lastName = userData.lastName;
 				elementCounts[elementName].StudentID = userData.studentID;
 			}
 		}
 
 		elementCounts = Object.keys(elementCounts).map((elementName) => ({
-			Name: elementCounts[elementName].Name,
+			firstName: elementCounts[elementName].firstName,
+			lastName: elementCounts[elementName].lastName,
 			StudentID: elementCounts[elementName].StudentID,
 			Absent: elementCounts[elementName].Absent,
 			Present: elementCounts[elementName].Present
@@ -103,6 +105,13 @@
 
 		newData = elementCounts;
 		console.log(newData);
+
+		newData = students.sort((a, b) => {
+			const lastNameA = a.lastName || ''; // Handle cases where lastName might be undefined
+			const lastNameB = b.lastName || ''; // Handle cases where lastName might be undefined
+
+			return lastNameA.localeCompare(lastNameB);
+		});
 	}
 
 	function printDiv() {
@@ -201,12 +210,12 @@
 					</thead>
 					<tbody>
 						{#each newData as data (data.StudentID)}
-						<tr class="border border-black text-center text-sm">
-							<td class="border border-black text-sm">{data.StudentID}</td>
-							<td class="border border-black text-sm">{data.Name}</td>
-							<td class="border border-black text-sm">{data.Absent}</td>
-							<td class="border border-black text-sm">{data.Present}</td>
-						</tr>
+							<tr class="border border-black text-center text-sm">
+								<td class="border border-black text-sm">{data.StudentID}</td>
+								<td class="border border-black text-sm">{data.lastName}, {data.firstName}</td>
+								<td class="border border-black text-sm">{data.Absent}</td>
+								<td class="border border-black text-sm">{data.Present}</td>
+							</tr>
 						{/each}
 					</tbody>
 				</table>

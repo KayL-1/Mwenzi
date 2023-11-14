@@ -45,10 +45,11 @@
 					// Update the document in Firestore with the modified 'students' array
 					updateDoc(docRef, { students: updatedStudentsArray })
 						.then(() => {
-							console.log(`Removed ${deleteStudent} from document ID: ${doc.id}`);
+							toast.success(`Removed ${deleteStudent} from document ID: ${doc.id}`);
+							
 						})
 						.catch((error) => {
-							console.error(`Error updating document: ${error}`);
+							toast.error(`Error updating document: ${error}`);
 						});
 				});
 			})
@@ -136,10 +137,10 @@
 					studentRFID: studentRFID1
 				});
 
-				console.log('success');
+				toast.success('Student data updated successfully');
 			});
 		} catch (error) {
-			console.error('Error updating documents:', error);
+			toast.error('Error updating documents:', error);
 		}
 	}
 
@@ -204,37 +205,58 @@
 		if (option === 'Alphabetical') {
 			const collectionRef = collection(firestore, 'users');
 			const filter = query(collectionRef, where('userRole', '==', 'student'));
-			const querySnapshot = await getDocs(filter);
 
-			students = querySnapshot.docs.map((doc) => ({
-				id: doc.id,
-				data: doc.data()
-			}));
+			// Use onSnapshot to listen for real-time updates
+			const unsubscribe = onSnapshot(filter, (snapshot) => {
+				const studentsData = snapshot.docs.map((doc) => ({
+					id: doc.id,
+					data: doc.data()
+				}));
 
-			students = students.sort((a, b) => {
-				const lastNameA = a.data.lastName || ''; // Handle cases where lastName might be undefined
-				const lastNameB = b.data.lastName || ''; // Handle cases where lastName might be undefined
+				studentsData.sort((a, b) => {
+					const lastNameA = a.data.lastName || ''; // Handle cases where lastName might be undefined
+					const lastNameB = b.data.lastName || ''; // Handle cases where lastName might be undefined
 
-				return lastNameA.localeCompare(lastNameB);
+					return lastNameA.localeCompare(lastNameB);
+				});
+
+				students = [];
+				students = studentsData;
+				// You can update your UI or perform other actions with the updated data here
 			});
+
+			// To stop listening to updates, call the returned unsubscribe function
+			// Make sure to store this function if you need to unsubscribe later
+			// Example: unsubscribe();
 		}
 
+		// Handle the 'Section' case in a similar manner
 		if (option === 'Section') {
 			const collectionRef = collection(firestore, 'users');
 			const filter = query(collectionRef, where('userRole', '==', 'student'));
-			const querySnapshot = await getDocs(filter);
 
-			students = querySnapshot.docs.map((doc) => ({
-				id: doc.id,
-				data: doc.data()
-			}));
+			const unsubscribe = onSnapshot(filter, (snapshot) => {
+				const studentsData = snapshot.docs.map((doc) => ({
+					id: doc.id,
+					data: doc.data()
+				}));
 
-			students = students.sort((a, b) => {
-				const lastNameA = a.data.class || ''; // Handle cases where lastName might be undefined
-				const lastNameB = b.data.class || ''; // Handle cases where lastName might be undefined
+				studentsData.sort((a, b) => {
+					const lastNameA = a.data.class || ''; // Handle cases where class might be undefined
+					const lastNameB = b.data.class || ''; // Handle cases where class might be undefined
 
-				return lastNameA.localeCompare(lastNameB);
+					return lastNameA.localeCompare(lastNameB);
+				});
+
+				// Update your 'students' array with the sorted data
+				students = [];
+				students = studentsData;
+				// You can update your UI or perform other actions with the updated data here
 			});
+
+			// To stop listening to updates, call the returned unsubscribe function
+			// Make sure to store this function if you need to unsubscribe later
+			// Example: unsubscribe();
 		}
 	}
 
@@ -380,10 +402,10 @@
 							students: arrayUnion(myVariable)
 						})
 							.then(() => {
-								console.log('Document successfully updated!');
+								toast.success('Document successfully updated!');
 							})
 							.catch((error) => {
-								console.error('Error updating document: ', error);
+								toast.error('Error updating document: ', error);
 							});
 					});
 
@@ -432,10 +454,10 @@
 							students: arrayUnion(myVariable)
 						})
 							.then(() => {
-								console.log('Document successfully updated!');
+								toast.success('Document successfully updated!');
 							})
 							.catch((error) => {
-								console.error('Error updating document: ', error);
+								toast.error('Error updating document: ', error);
 							});
 					});
 

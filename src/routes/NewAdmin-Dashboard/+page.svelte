@@ -65,7 +65,8 @@
 	let students = [];
 	let teachers = [];
 
-	async function classCheck() {
+	async function classCheck(option) {
+
 		const collectionRef = collection(firestore, 'Subject');
 		const querySnapshot = await getDocs(collectionRef);
 
@@ -320,7 +321,7 @@
 								class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
 							>
 								<td class="text-center">6</td>
-								<td class="text-center">{item1.data.Name}</td>
+								<td class="text-center">{item1.data.firstName} {item1.data.lastName}</td>
 								<td class="px-6 py-2 text-center">{item1.data.studentRFID}</td>
 								<td class="py-1 px-6 text-center">{item1.data.studentID}</td>
 							</tr>

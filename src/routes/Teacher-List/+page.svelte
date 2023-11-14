@@ -24,6 +24,181 @@
 	import { each } from 'svelte/internal';
 
 	let currentDatee;
+	let teachers = [];
+	let firstName;
+	let lastName;
+
+	let studentInformation = [];
+
+	async function updateStudentDetail() {
+		const id = document.getElementById('uid').value;
+		const queryRef1 = collection(firestore, 'users');
+		const queryRef2 = query(queryRef1, where('UID', '==', id));
+
+		const firstName1 = document.getElementById('firstName').value;
+		const lastName1 = document.getElementById('lastName').value;
+		const birthday1 = document.getElementById('email').value;
+		const studentID1 = document.getElementById('password1').value;
+
+		try {
+			const querySnapshot = await getDocs(queryRef2);
+
+			querySnapshot.forEach(async (doc) => {
+				// Assuming docRef is the reference to the document you want to update
+				await updateDoc(doc.ref, {
+					firstName: firstName1,
+					lastName: lastName1,
+					birthday: birthday1,
+					studentID: studentID1
+				});
+
+				toast.success('Teacher Information Updated Successfully');
+			});
+		} catch (error) {
+			toast.error('Error updating documents:', error);
+		}
+	}
+
+	async function getStudentDetail(id) {
+		const collectionRef = collection(firestore, 'users');
+		const query1 = query(collectionRef, where('UID', '==', id));
+		const querySnapshot = await getDocs(query1);
+
+		if (!querySnapshot.empty) {
+			const doc = querySnapshot.docs[0]; // Access the first (and only) document in the result
+			studentInformation = {
+				id: doc.id,
+				data: doc.data()
+			};
+			// Now, studentInformation contains the data of the matching document
+		} else {
+			// Handle the case where no matching document was found
+		}
+		document.getElementById('firstName').value = studentInformation.data.firstName;
+		document.getElementById('lastName').value = studentInformation.data.lastName;
+		document.getElementById('email').value = studentInformation.data.email;
+		document.getElementById('password1').value = studentInformation.data.password;
+		document.getElementById('uid').value = studentInformation.data.UID;
+		document.getElementById('fullName').textContent =
+			studentInformation.data.firstName + ' ' + studentInformation.data.lastName;
+	}
+
+	function toggleEdit() {
+		const firstName = document.getElementById('firstName');
+		const lastName = document.getElementById('lastName');
+		const bday = document.getElementById('email');
+		const studentID = document.getElementById('password1');
+		const saveButton = document.getElementById('saveButton12');
+
+		if (firstName.readOnly) {
+			// Fields are currently read-only, so enable editing
+			firstName.readOnly = false;
+			lastName.readOnly = false;
+			bday.readOnly = false;
+			studentID.readOnly = false;
+			saveButton.classList.remove('pointer-events-none');
+		} else {
+			// Fields are currently editable, so disable editing
+			firstName.readOnly = true;
+			lastName.readOnly = true;
+			bday.readOnly = true;
+			studentID.readOnly = true;
+			saveButton.classList.add('pointer-events-none');
+		}
+	}
+
+	async function deleteTeacher() {
+		const deleteStudent = document.getElementById('selectDelete1').value;
+
+		const collectionRef2 = collection(firestore, 'classes');
+		const query3 = query(collectionRef2, where('teacher', '==', deleteStudent)); // Assuming 'deleteTeacher' is the teacher you want to remove
+
+		const docSnapshots = await getDocs(query3);
+
+		docSnapshots.forEach((doc) => {
+			const docRef = doc.ref;
+
+			// Update the document to remove the teacher by setting 'teachers' to an empty string
+			updateDoc(docRef, { teacher: '' })
+				.then(() => {
+					console.log('Teacher removed successfully.');
+				})
+				.catch((error) => {
+					console.error('Error removing teacher: ', error);
+				});
+		});
+
+		const collectionRef23 = collection(firestore, 'Subject');
+		const query43 = query(collectionRef23, where('teacher', '==', deleteStudent));
+
+		const docSnapshotsx = await getDocs(query43);
+
+		docSnapshotsx.forEach((doc) => {
+			const docRef = doc.ref;
+
+			// Update the document to remove the teacher by setting 'teachers' to an empty string
+			updateDoc(docRef, { teacher: '' })
+				.then(() => {
+					console.log('Teacher removed successfully.');
+				})
+				.catch((error) => {
+					console.error('Error removing teacher: ', error);
+				});
+		});
+
+		const collectionRef = collection(firestore, 'users');
+		const query1 = query(collectionRef, where('UID', '==', deleteStudent));
+		const querySnapshot = await getDocs(query1);
+		querySnapshot.forEach(async (doc) => {
+			// Delete the document
+			await deleteDoc(doc.ref);
+			toast.success('Document deleted:', doc.id);
+		});
+	}
+
+	async function teacherCheck(option) {
+		const collectionRef = collection(firestore, 'users');
+		const filter = query(collectionRef, where('userRole', '==', 'teacher'));
+
+		const unsubscribe = onSnapshot(filter, (querySnapshot) => {
+			// Initialize an array to store the teachers
+			const teachers1 = [];
+
+			querySnapshot.forEach((doc) => {
+				// Process each document
+				teachers1.push({
+					id: doc.id,
+					data: doc.data()
+				});
+			});
+
+			console.log(option);
+
+			if (option === 'Alphabetical') {
+				// Sort teachers alphabetically by last name
+				teachers.sort((a, b) => {
+					const lastNameA = a.data.lastName || '';
+					const lastNameB = b.data.lastName || '';
+					return lastNameA.localeCompare(lastNameB);
+				});
+			} else if (option === 'Section') {
+				// Sort teachers by their class or section
+				teachers.sort((a, b) => {
+					const classA = a.data.class || '';
+					const classB = b.data.class || '';
+					return classA.localeCompare(classB);
+				});
+			}
+
+			// Now you can access the sorted teachers here or update your UI with them
+			teachers = [];
+			teachers = teachers1;
+		});
+
+		// To stop listening to changes, you can call the unsubscribe function
+		// For example, to stop listening when the component unmounts or when needed
+	}
+
 	function getDate() {
 		fetch('http://worldtimeapi.org/api/timezone/Asia/Manila')
 			.then((response) => response.json())
@@ -60,19 +235,6 @@
 		}
 	}
 
-	let teachers = [];
-
-	async function teacherCheck() {
-		const collectionRef = collection(firestore, 'users');
-		const filter = query(collectionRef, where('userRole', '==', 'teacher'));
-		const querySnapshot = await getDocs(filter);
-
-		teachers = querySnapshot.docs.map((doc) => ({
-			id: doc.id,
-			data: doc.data()
-		}));
-	}
-
 	async function getSubjectName(id) {
 		const collectionRef = collection(firestore, 'Subject');
 		const filter = query(collectionRef, where('teacherID', '==', id));
@@ -90,15 +252,16 @@
 		return commaSeparatedString;
 	}
 
-	let teacherName;
 	let email;
 	let password;
 	let passwordCon;
 
 	async function createTeacher() {
 		if (
-			teacherName === null ||
-			teacherName === undefined ||
+			firstName === null ||
+			firstName === undefined ||
+			lastName === null ||
+			lastName === undefined ||
 			email === null ||
 			email === undefined ||
 			password === null ||
@@ -110,15 +273,14 @@
 			toast.error('At least one of the variables is null.');
 		} else {
 			if (password === passwordCon) {
-				const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-				const user = userCredential.user;
-				const userID = user.uid;
-
+				const userID = generateAndCheckUID();
 				const docRef = await setDoc(doc(firestore, 'users', userID), {
 					UID: userID,
 					email: email,
 					userRole: 'teacher',
-					Name: teacherName
+					firstName: firstName,
+					lastName: lastName,
+					password: password
 				});
 			} else {
 				toast.error('Password does not match');
@@ -126,7 +288,43 @@
 		}
 	}
 
-	teacherCheck();
+	async function generateAndCheckUID() {
+		// Define a set of characters and numbers to choose from
+		const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
+		// Set the desired length of your UID
+		const uidLength = 10;
+
+		let uid = '';
+
+		// Generate the UID by randomly selecting characters from the set
+		for (let i = 0; i < uidLength; i++) {
+			const randomIndex = Math.floor(Math.random() * characters.length);
+			uid += characters.charAt(randomIndex);
+		}
+
+		const collectionRef = collection(firestore, 'users');
+		const docRef = doc(collectionRef, uid);
+
+		try {
+			const docSnapshot = await getDoc(docRef);
+			if (docSnapshot.exists()) {
+				// If the document with this UID already exists, generate a new one
+				return generateAndCheckUID();
+			} else {
+				// If the document doesn't exist, return the unique UID
+				return uid;
+			}
+		} catch (error) {
+			console.error('Error checking document: ', error);
+			throw error; // Rethrow the error
+		}
+	}
+
+	onMount(() => {
+		// Call the teacherCheck function when the component is mounted
+		teacherCheck('Alphabetical'); // You can pass your initial option here
+	});
 </script>
 
 <body class=" bg-gray-50 h-screen w-full">
@@ -211,9 +409,18 @@
 								>
 									<div class="mx-auto w-full">
 										<h1 class="text-left my-2 mx-5">
-											Teacher Name
+											First Name
 											<input
-												bind:value={teacherName}
+												bind:value={firstName}
+												class="mt-2 border rounded-3xl px-2 py-1 focus:ring-0 text-sm block bg-white w-full h-7 border-slate-300 shadow-sm focus:outline-none"
+												placeholder="Full Name"
+												type="text"
+											/>
+										</h1>
+										<h1 class="text-left my-2 mx-5">
+											Last Name
+											<input
+												bind:value={lastName}
 												class="mt-2 border rounded-3xl px-2 py-1 focus:ring-0 text-sm block bg-white w-full h-7 border-slate-300 shadow-sm focus:outline-none"
 												placeholder="Full Name"
 												type="text"
@@ -287,19 +494,21 @@
 											Select Teacher Name:
 
 											<select
+												id="selectDelete1"
 												class="select select-sm select-bordered focus:border-none border-gray-200 w-full h-5 rounded-3xl shadow-sm mt-2"
 											>
 												<option disabled selected hidden class="rounded-3xl">Select Teacher</option>
-												<option
-													value="/NewAdmin-Dashboard"
-													id="NewAdmin-Dashboard"
-													class="rounded-3xl"
-												/>
+												{#each teachers as item1 (item1.id)}
+													<option value={item1.data.UID}
+														>{item1.data.firstName}, {item1.data.lastName}</option
+													>
+												{/each}
 											</select>
 										</h1>
 
 										<div class="justify-end flex mt-5 mb-3">
 											<button
+												on:click={deleteTeacher}
 												id="saveButton"
 												class="py-2 text-sm font-medium bg-red-500 hover:bg-red-600 text-white px-6 ml-1 rounded-3xl transform transition-transform focus:scale-100 active:scale-95"
 											>
@@ -370,14 +579,6 @@
 						<img src="teacher.png" class="h-8 pl-6 mt-2" alt="..." />
 						<h1 class="pt-2 pl-1 mt-1 font-medium text-md text-gray-700">Teacher List</h1>
 					</div>
-					<select
-						class="mt-2 border-gray-200 w-56 h-6 font-medium text-sm text-center mr-6 border border-gray focus:none rounded-3xl shadow-sm"
-					>
-						<option disabled selected hidden class="rounded-3xl">Sort by</option>
-						<option class="rounded-xl">Section</option>
-						<option class="rounded-xl">Recently Added</option>
-						<option class="rounded-xl">Alphabetical</option>
-					</select>
 				</div>
 			</div>
 
@@ -398,8 +599,11 @@
 								class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
 							>
 								<td class="text-center"
-									><!--FOR MODAL--><label for="StudentInformation" class="cursor-pointer"
-										>{item1.data.Name}</label
+									><!--FOR MODAL--><label
+										for="StudentInformation"
+										class="cursor-pointer"
+										on:click={() => getStudentDetail(item1.data.UID)}
+										>{item1.data.firstName} {item1.data.lastName}</label
 									>
 								</td>
 
@@ -429,12 +633,36 @@
 								>
 									<div class="mx-auto w-full">
 										<div class="flex flex-row justify-betweenmx-2">
-											<h1 class="text-left font-medium text-lg mt-3">Ruffa May Monis</h1>
+											<h1 class="text-left font-medium text-lg mt-3" id="fullName">
+												Ruffa May Monis
+											</h1>
 										</div>
 										<div class="divider mt-0" />
 										<h1 class="text-left my-2 mx-5">
-											Full Name
+											First Name
 											<input
+												id="firstName"
+												class="mt-1 border rounded-3xl px-2 focus:ring-0 text-sm block bg-white w-full h-7 border-slate-300 shadow-sm focus:outline-none"
+												placeholder="Ruffa May Monis"
+												type="text"
+												readonly
+											/>
+										</h1>
+										<h1 class="text-left my-2 mx-5" hidden>
+											First Name
+											<input
+												id="uid"
+												class="mt-1 border rounded-3xl px-2 focus:ring-0 text-sm block bg-white w-full h-7 border-slate-300 shadow-sm focus:outline-none"
+												placeholder="Ruffa May Monis"
+												type="text"
+												readonly
+											/>
+										</h1>
+
+										<h1 class="text-left my-2 mx-5">
+											Last Name
+											<input
+												id="lastName"
 												class="mt-1 border rounded-3xl px-2 focus:ring-0 text-sm block bg-white w-full h-7 border-slate-300 shadow-sm focus:outline-none"
 												placeholder="Ruffa May Monis"
 												type="text"
@@ -445,6 +673,7 @@
 										<h1 class="text-left my-2 mx-5">
 											Email
 											<input
+												id="email"
 												class="mt-1 border rounded-3xl px-2 focus:ring-0 text-sm block bg-white w-full h-7 border-slate-300 shadow-sm focus:outline-none"
 												placeholder="ruffamaymonis@gmail.com"
 												type="text"
@@ -455,21 +684,24 @@
 										<h1 class="text-left my-2 mx-5">
 											Password
 											<input
+												id="password1"
 												class="mt-1 border rounded-3xl px-2 focus:ring-0 text-sm block bg-white w-full h-7 border-slate-300 shadow-sm focus:outline-none"
 												placeholder="54321"
-												type="text"
+												type="password"
 												readonly
 											/>
 										</h1>
 										<div class="justify-end flex mt-5">
 											<button
+												on:click={toggleEdit}
 												id="editButton"
 												class="text-sm font-medium bg-blue-500 hover:bg-blue-600 text-white px-6 py-1 ml-1 rounded-3xl transform transition-transform focus:scale-100 active:scale-95"
 											>
 												Edit</button
 											>
 											<button
-												id="saveButton"
+												on:click={updateStudentDetail}
+												id="saveButton12"
 												class="text-sm font-medium bg-green-500 hover:bg-green-600 text-white px-6 py-1 ml-1 rounded-3xl transform transition-transform focus:scale-100 active:scale-95"
 											>
 												Save</button

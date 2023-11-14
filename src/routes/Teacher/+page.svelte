@@ -1,9 +1,18 @@
 <script>
-	import { goto } from '$app/navigation';
-	import { auth } from '$lib/firebase';
 	import { firebase, firestore, functions } from '$lib/firebase';
 	import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
-	import { Firestore, doc, getDoc } from 'firebase/firestore';
+	import {
+		doc,
+		setDoc,
+		query,
+		where,
+		getDocs,
+		getDoc,
+		collection,
+		addDoc,
+		updateDoc,
+		arrayUnion
+	} from 'firebase/firestore';
 	import { userId } from '../../lib/userStorage';
 	import { onMount } from 'svelte';
 	import { browser } from '$app/environment';
@@ -13,43 +22,66 @@
 	let password = '';
 	let userUID = '';
 
-	function login() {
+
+	async function login() {
 		if (email === '' || password === '') {
 			console.log('Email or password is empty');
 			toast.error('Email or Password is empty');
 			return; // Exit the function
 		}
-		signInWithEmailAndPassword(auth, email, password)
-			.then(async (userCredential) => {
-				const userID = userCredential.user.uid;
-				const docSnap = await getDoc(doc(firestore, 'users', userID));
 
-				if (docSnap.exists()) {
-					const userData = docSnap.data();
-					console.log('Document data:', userData);
+		const q = query(collection(firestore, 'users'), where('email', '==', email));
+		const querySnapshot = await getDocs(q);
 
-					if (userData.userRole === 'teacher') {
-						console.log('User is a teacher');
+		querySnapshot.forEach((doc) => {
+			if (doc.exists()) {
+				console.log(doc.data());
+				const userData = doc.data();
+				console.log('Document data:', userData);
+
+				if (userData.userRole === 'teacher') {
+					if (userData.password === password) {
+						console.log('User is a Teacher');
 						toast.success('Log In Successful');
-						userId.set(userID);
-						userUID = localStorage.getItem('userId');
-						console.log(userUID);
-						window.location.replace('../NewTeacher-Dashboard');
+						const userUID = userData.studentRFID;
+						userId.set(userUID);
+						const userUID1 = localStorage.getItem('userId');
+						window.location.replace('../NewStudent-Dashboard');
 					} else {
-						console.log('User is not a Teacher');
-						toast.error('User is not a Teacher');
+						console.log('Wrong Password');
+						toast.error('Wrong Password');
 						// Handle case when user is not a teacher
 					}
 				} else {
-					console.log('No such document!');
-					toast.error('No such document!');
+					console.log('User is not a Student');
+					toast.error('User is not a Student');
+					// Handle case when user is not a teacher
 				}
-			})
-			.catch((error) => {
-				const errorCode = error.code;
-				const errorMessage = error.message;
-				toast.error('Wrong User Credentials');
-			});
+			} else {
+				console.log('Document not found');
+			}
+		});
+
+		// if (querySnapshot.exists()) {
+		// 	const userData = docSnap.data();
+		// 	console.log('Document data:', userData);
+
+		// 	if (userData.userRole === 'student') {
+		// 		console.log('User is a Student');
+		// 		toast.success('Log In Successful');
+		// 		userId.set(userID);
+		// 		userUID = localStorage.getItem('userId');
+		// 		console.log(userUID);
+		// 		window.location.replace('../Student-Dashboard');
+		// 	} else {
+		// 		console.log('User is not a Student');
+		// 		toast.error('User is not a Student');
+		// 		// Handle case when user is not a teacher
+		// 	}
+		// } else {
+		// 	console.log('No such document!');
+		// 	toast.error('No such document!');
+		// }
 	}
 
 	onMount(() => {
@@ -95,14 +127,15 @@
 							placeholder="Password"
 							class="w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-3xl focus:outline-none"
 						/>
-						
 					</div>
 					<button
 						on:click={login}
 						class=" w-full px-3 py-4 mt-1 text-white bg-[#2ea44f] focus:outline-none font-medium rounded-3xl hover:bg-[#1e7d3f] duration-300 hover:scale-105"
 						>Log In</button
-					>	
-					<a href="#" class="mt-4 w-full justify-center text-indigo-600 font-medium flex"><span>Forgot your password? </span>
+					>
+					<a href="#" class="mt-4 w-full justify-center text-indigo-600 font-medium flex"
+						><span>Forgot your password? </span>
+					</a>
 				</form>
 			</div>
 		</div>

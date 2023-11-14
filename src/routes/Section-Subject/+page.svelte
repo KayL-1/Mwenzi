@@ -27,10 +27,10 @@
 		const docRef = doc(collectionRef, deleteClass);
 		deleteDoc(docRef)
 			.then(() => {
-				console.log('Document successfully deleted!');
+				toast.success('Document successfully deleted!');
 			})
 			.catch((error) => {
-				console.error('Error deleting document: ', error);
+				toast.error('Error deleting document: ', error);
 			});
 		removeSubject();
 	}
@@ -50,10 +50,10 @@
 		const docRef = doc(collectionRef, deleteSubject);
 		deleteDoc(docRef)
 			.then(() => {
-				console.log('Document successfully deleted!');
+				toast.success('Document successfully deleted!');
 			})
 			.catch((error) => {
-				console.error('Error deleting document: ', error);
+				toast.error('Error deleting document: ', error);
 			});
 	}
 
@@ -80,24 +80,41 @@
 	let subjectArray = [];
 	async function classCheck() {
 		const collectionRef = collection(firestore, 'classes');
-		const querySnapshot = await getDocs(collectionRef);
+		let classArray1 = [];
+		// Use onSnapshot to listen for real-time updates
+		const unsubscribe = onSnapshot(collectionRef, (snapshot) => {
+			classArray1 = snapshot.docs.map((doc) => ({
+				id: doc.id,
+				data: doc.data()
+			}));
+			classArray = [];
+			classArray = classArray1;
+		});
 
-		classArray = querySnapshot.docs.map((doc) => ({
-			id: doc.id,
-			data: doc.data()
-		}));
+		// To stop listening to updates, call the returned unsubscribe function
+		// Make sure to store this function if you need to unsubscribe later
+		// Example: unsubscribe();
 	}
 
 	async function subjectCheck() {
 		const collectionRef = collection(firestore, 'Subject');
-		const querySnapshot = await getDocs(collectionRef);
+		let subjectArray1 = [];
+		// Use onSnapshot to listen for real-time updates
+		const unsubscribe = onSnapshot(collectionRef, (snapshot) => {
+			subjectArray1 = snapshot.docs.map((doc) => ({
+				id: doc.id,
+				data: doc.data()
+			}));
 
-		subjectArray = querySnapshot.docs.map((doc) => ({
-			id: doc.id,
-			data: doc.data()
-		}));
+			subjectArray = [];
+			subjectArray = subjectArray1;
+			// You can update your UI or perform other actions with the updated data here
+		});
+
+		// To stop listening to updates, call the returned unsubscribe function
+		// Make sure to store this function if you need to unsubscribe later
+		// Example: unsubscribe();
 	}
-
 	async function getTeacherName(teacherID) {
 		const queryRef = collection(firestore, 'users');
 		const querySnapshot = await getDocs(query(queryRef, where('UID', '==', teacherID)));
@@ -264,7 +281,7 @@
 
 				const td1 = document.createElement('td');
 				td1.className = 'px-6 py-2 text-center';
-				td1.textContent = student1x.data.Name;
+				td1.textContent = student1x.data.firstName + ' ' + student1x.data.lastName;
 				tr.appendChild(td1);
 
 				const td2 = document.createElement('td');
