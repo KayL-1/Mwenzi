@@ -2285,6 +2285,7 @@
 											Edit</button
 										>
 										<button
+											on:click={toggleEditButton}
 											on:click={createWeeklyLesson}
 											id="saveButton1"
 											class="text-sm font-medium bg-green-500 hover:bg-green-600 text-white px-6 ml-1 py-1 rounded-3xl pointer-events-none"
