@@ -96,6 +96,23 @@
 		}));
 	}
 
+	async function resetRecitationPoints() {
+		const attendanceCollectionRef = collection(firestore, 'Subject', `${selecTSub}`, 'Recitation');
+
+		const querySnapshot = await getDocs(attendanceCollectionRef);
+
+		querySnapshot.forEach(async (doc) => {
+			const docRef = doc.ref;
+			await updateDoc(docRef, {
+				totalPoints: 0, // Set to the desired value for totalPoints
+				day: null, // Set to the desired value for day
+				week: null // Set to the desired value for week
+			});
+		});
+
+		toast.success('Fields reset successfully.');
+	}
+
 	async function recitationCheck() {
 		const selectOption = document.getElementById('SortRec').value;
 		const attendanceCollectionReflll = collection(
@@ -1039,6 +1056,46 @@
 		}
 	}
 
+	async function resetWeeklyLesson() {
+		console.log('test');
+		const collectionRef = collection(firestore, 'Subject', selecTSub, 'Lessons');
+		const week1DocRef = doc(collectionRef, weekStatus); // Create a document reference with 'week1' as the ID
+		const data1 = {
+			day1: {
+				Link: '',
+				Status: '',
+				Share: ''
+			},
+			day2: {
+				Link: '',
+				Status: '',
+				Share: ''
+			},
+			day3: {
+				Link: '',
+				Status: '',
+				Share: ''
+			},
+			day4: {
+				Link: '',
+				Status: '',
+				Share: ''
+			},
+			day5: {
+				Link: '',
+				Status: '',
+				Share: ''
+			}
+		};
+
+		try {
+			await setDoc(week1DocRef, data1);
+			console.log('Document written with ID: week1');
+		} catch (error) {
+			console.error('Error writing document: ', error);
+		}
+	}
+
 	async function redirectToURL() {}
 
 	async function updateLessonText() {
@@ -1713,7 +1770,12 @@
 							<h1 class="pl-1 pt-2 font-medium text-md text-gray-700">Points</h1>
 						</div>
 
-						<label for="" class="mr-8 mt-4 rounded-3xl cursor-pointer">
+						<!-- svelte-ignore a11y-click-events-have-key-events -->
+						<label
+							for=""
+							class="mr-8 mt-4 rounded-3xl cursor-pointer"
+							on:click={resetRecitationPoints}
+						>
 							<svg
 								fill="#3d3d3d"
 								viewBox="0 0 1920 1920"
@@ -2270,7 +2332,7 @@
 
 								<div class="justify-between flex mt-9 mb-2 mx-4">
 									<button
-										on:click={toggleEditButton}
+										on:click={resetWeeklyLesson}
 										id=""
 										class="text-sm font-medium bg-red-500 hover:bg-red-600 text-white px-6 ml-1 py-1 rounded-3xl"
 									>

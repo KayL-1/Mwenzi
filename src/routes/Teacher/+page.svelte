@@ -58,7 +58,8 @@
 					// Handle case when user is not a teacher
 				}
 			} else {
-				console.log('Document not found');
+				console.log('User not found');
+				toast.log('User not found');
 			}
 		});
 
