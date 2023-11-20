@@ -24,8 +24,7 @@
 
 	async function login() {
 		if (studentID == '') {
-			console.log('Email or password is empty');
-			toast.error('Email or Password is empty');
+			toast.error('Student ID is empty');
 			return; // Exit the function
 		}
 
