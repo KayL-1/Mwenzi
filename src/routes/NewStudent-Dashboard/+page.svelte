@@ -51,10 +51,12 @@
 				for (let day = 1; day <= 5; day++) {
 					const inputElement = document.getElementById(`day${day}input`);
 
-					const dayData = queriedData[`day${day}`];
-					if (dayData) {
-						if (dayData.Link !== null) {
-							inputElement.value = dayData.Link || '';
+					if (dayData.Share == 'Current Class') {
+						const dayData = queriedData[`day${day}`];
+						if (dayData) {
+							if (dayData.Link !== null) {
+								inputElement.value = dayData.Link || '';
+							}
 						}
 					}
 				}
@@ -430,6 +432,7 @@
 			document.getElementById('userName').textContent =
 				doc.data().firstName + ' ' + doc.data().lastName;
 		} else {
+			window.location.replace('../Student');
 			return 'Student not found';
 		}
 	}
@@ -439,9 +442,8 @@
 	onMount(() => {
 		const unsubscribe = userId.subscribe((value) => {
 			userUID = localStorage.getItem('userId');
-			console.log(userUID);
-			classCheck();
 			getuserName(userUID);
+			classCheck();
 			return () => {
 				unsubscribe();
 			};

@@ -295,6 +295,31 @@
 
 		console.log(studentClass);
 	}
+
+	async function getuserName(id) {
+		const queryRef1 = collection(firestore, 'users');
+		const queryRef2 = query(queryRef1, where('UID', '==', id), where('userRole', '==', 'admin'));
+		const querySnapshot = await getDocs(queryRef2);
+		if (querySnapshot.docs.length > 0) {
+			const doc = querySnapshot.docs[0];
+			console.log(doc.data().Name);
+		} else {
+			window.location.replace('../Admin');
+			return 'Admin not found';
+		}
+	}
+	let userUID;
+
+	onMount(() => {
+		const unsubscribe = userId.subscribe((value) => {
+			userUID = localStorage.getItem('userId');
+			getuserName(userUID);
+			classCheck();
+			return () => {
+				unsubscribe();
+			};
+		});
+	});
 </script>
 
 <body class=" bg-gray-50 h-screen w-full">

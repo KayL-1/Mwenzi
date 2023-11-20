@@ -21,6 +21,7 @@
 	import { onMount } from 'svelte';
 
 	let currentDatee;
+
 	function getDate() {
 		fetch('http://worldtimeapi.org/api/timezone/Asia/Manila')
 			.then((response) => response.json())
@@ -132,17 +133,17 @@
 			data: doc.data()
 		}));
 		teachers.sort((a, b) => {
-				const lastNameA = a.data.lastName.toLowerCase(); // Convert to lowercase for case-insensitive sorting
-				const lastNameB = b.data.lastName.toLowerCase();
+			const lastNameA = a.data.lastName.toLowerCase(); // Convert to lowercase for case-insensitive sorting
+			const lastNameB = b.data.lastName.toLowerCase();
 
-				if (lastNameA < lastNameB) {
-					return -1;
-				}
-				if (lastNameA > lastNameB) {
-					return 1;
-				}
-				return 0;
-			});
+			if (lastNameA < lastNameB) {
+				return -1;
+			}
+			if (lastNameA > lastNameB) {
+				return 1;
+			}
+			return 0;
+		});
 	}
 
 	async function getTeacherName(teacherID) {
@@ -162,6 +163,31 @@
 	classCheck();
 	studentCheck('Alphabetical');
 	teacherCheck();
+
+	async function getuserName(id) {
+		const queryRef1 = collection(firestore, 'users');
+		const queryRef2 = query(queryRef1, where('UID', '==', id), where('userRole', '==', 'admin'));
+		const querySnapshot = await getDocs(queryRef2);
+		if (querySnapshot.docs.length > 0) {
+			const doc = querySnapshot.docs[0];
+			console.log(doc.data().Name);
+		} else {
+			window.location.replace('../Admin');
+			return 'Admin not found';
+		}
+	}
+	let userUID;
+
+	onMount(() => {
+		const unsubscribe = userId.subscribe((value) => {
+			userUID = localStorage.getItem('userId');
+			getuserName(userUID);
+			classCheck();
+			return () => {
+				unsubscribe();
+			};
+		});
+	});
 </script>
 
 <body class=" bg-gray-50 h-screen">

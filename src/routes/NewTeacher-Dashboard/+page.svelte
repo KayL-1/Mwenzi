@@ -1059,7 +1059,7 @@
 
 	async function getuserName(id) {
 		const queryRef1 = collection(firestore, 'users');
-		const queryRef2 = query(queryRef1, where('UID', '==', id));
+		const queryRef2 = query(queryRef1, where('UID', '==', id), where("userRole", "==", "teacher"));
 		const querySnapshot = await getDocs(queryRef2);
 		if (querySnapshot.docs.length > 0) {
 			const doc = querySnapshot.docs[0];
@@ -1067,6 +1067,7 @@
 			document.getElementById('userName').textContent =
 				doc.data().firstName + ' ' + doc.data().lastName;
 		} else {
+			window.location.replace('../Teacher');
 			return 'Teacher not found';
 		}
 	}
@@ -1418,8 +1419,8 @@
 		const unsubscribe = userId.subscribe((value) => {
 			// Use the value of userId here
 			userUID = localStorage.getItem('userId');
-			console.log(userUID);
 			getuserName(userUID);
+			console.log(userUID);
 			classCheck();
 			attendanceCheck(1);
 			return () => {
