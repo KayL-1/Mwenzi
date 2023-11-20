@@ -1059,7 +1059,7 @@
 
 	async function getuserName(id) {
 		const queryRef1 = collection(firestore, 'users');
-		const queryRef2 = query(queryRef1, where('UID', '==', id), where("userRole", "==", "teacher"));
+		const queryRef2 = query(queryRef1, where('UID', '==', id), where('userRole', '==', 'teacher'));
 		const querySnapshot = await getDocs(queryRef2);
 		if (querySnapshot.docs.length > 0) {
 			const doc = querySnapshot.docs[0];
@@ -2543,7 +2543,6 @@
 											Edit</button
 										>
 										<button
-											on:click={toggleEditButton}
 											on:click={createWeeklyLesson}
 											id="saveButton1"
 											class="text-sm font-medium bg-green-500 hover:bg-green-600 text-white px-6 ml-1 py-1 rounded-3xl pointer-events-none"
