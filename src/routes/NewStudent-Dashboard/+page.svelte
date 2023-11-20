@@ -19,6 +19,7 @@
 	import { getDatabase, ref, onValue, get, child } from 'firebase/database';
 	import { userId } from '../../lib/userStorage';
 	import { onMount } from 'svelte';
+	import toast, { Toaster } from 'svelte-french-toast';
 
 	let userUID = '';
 	let currentDatee;
@@ -26,9 +27,79 @@
 	let subjects = [];
 	let recitation = [];
 	let notes = [];
+	let weekStatus;
 
 	let dateArray = {};
 	let dateArrayAsArray = [];
+
+	async function updateLessonText() {
+		if (selecTSub === 'Select Class') {
+			toast.error('Please select a class');
+			return;
+		}
+		const weekSelector = document.getElementById('weekSelector');
+		const selectedValue = weekSelector.value;
+		const collectionRef = collection(firestore, 'Subject', selecTSub, 'Lessons');
+		const week1DocRef = doc(collectionRef, selectedValue); // Use the selectedValue
+		try {
+			const docSnapshot = await getDoc(week1DocRef);
+
+			if (docSnapshot.exists()) {
+				const queriedData = docSnapshot.data();
+				console.log(queriedData);
+
+				for (let day = 1; day <= 5; day++) {
+					const inputElement = document.getElementById(`day${day}input`);
+
+					const dayData = queriedData[`day${day}`];
+					if (dayData) {
+						if (dayData.Link !== null) {
+							inputElement.value = dayData.Link || '';
+						}
+					}
+				}
+			} else {
+				console.log('Document does not exist.');
+				for (let day = 1; day <= 5; day++) {
+					const inputElement = document.getElementById(`day${day}input`);
+					inputElement.value = '';
+				}
+			}
+		} catch (error) {
+			console.error('Error getting document:', error);
+		}
+	}
+
+	function resetTotal() {}
+
+	function redirectToLink(id) {
+		if (selecTSub === 'Select Class') {
+			toast.error('Please select a class');
+			return;
+		}
+		const inputElement = document.getElementById(id);
+		const inputValue = inputElement.value.trim();
+		const link = 'https:' + inputValue;
+		if (inputValue) {
+			window.open(link, '_blank');
+		}
+	}
+
+	async function getSubjectTime() {
+		const docRef = doc(firestore, 'Subject', selecTSub);
+		const docSnapshot = await getDoc(docRef);
+
+		if (docSnapshot.exists()) {
+			console.log(docSnapshot.data().timeIn);
+			const timeIn = docSnapshot.data().timeIn || '';
+			const timeOut = docSnapshot.data().timeOut || '';
+
+			const timeText = document.getElementById('subjectTime');
+			timeText.textContent = timeIn + ' - ' + timeOut;
+		} else {
+			console.log('No documents found in the collection.');
+		}
+	}
 
 	function getDate() {
 		fetch('http://worldtimeapi.org/api/timezone/Asia/Manila')
@@ -49,6 +120,68 @@
 			.catch((error) => {
 				console.log('Error:', error);
 			});
+	}
+
+	async function sortRecitation() {
+		const selectOption = document.getElementById('SortRec').value;
+		const totalElements = document.getElementsByClassName('pointsDisplay1');
+		const weekElements = document.getElementsByClassName('pointsDisplay2');
+		const dayElements = document.getElementsByClassName('pointsDisplay3');
+
+		if (selectOption === 'Total Points') {
+			for (let i = 0; i < totalElements.length; i++) {
+				totalElements[i].hidden = false;
+			}
+			for (let i = 0; i < weekElements.length; i++) {
+				weekElements[i].hidden = true;
+			}
+			for (let i = 0; i < dayElements.length; i++) {
+				dayElements[i].hidden = true;
+			}
+
+			recitation.sort((a, b) => b.totalPoints - a.totalPoints);
+
+			recitation.forEach((item, index) => {
+				item.ranking = index + 1;
+			});
+		}
+
+		if (selectOption === 'Weekly') {
+			for (let i = 0; i < totalElements.length; i++) {
+				totalElements[i].hidden = true;
+			}
+			for (let i = 0; i < weekElements.length; i++) {
+				weekElements[i].hidden = true;
+			}
+			for (let i = 0; i < dayElements.length; i++) {
+				dayElements[i].hidden = false;
+			}
+
+			recitation.sort((a, b) => b.week - a.week);
+
+			recitation.forEach((item, index) => {
+				item.ranking = index + 1;
+			});
+		}
+
+		if (selectOption === 'Daily') {
+			for (let i = 0; i < totalElements.length; i++) {
+				totalElements[i].hidden = true;
+			}
+			for (let i = 0; i < weekElements.length; i++) {
+				weekElements[i].hidden = false;
+			}
+			for (let i = 0; i < dayElements.length; i++) {
+				dayElements[i].hidden = true;
+			}
+
+			recitation.sort((a, b) => b.day - a.day);
+
+			recitation.forEach((item, index) => {
+				item.ranking = index + 1;
+			});
+		}
+		recitationCheck();
 	}
 
 	async function classCheck() {
@@ -83,6 +216,8 @@
 	let presentCount = 0;
 	let absentCount = 0;
 	async function attendanceCheck() {
+		presentCount = 0;
+		absentCount = 0;
 		const attendanceCollectionRef = collection(firestore, 'Subject', `${selecTSub}`, 'Attendance');
 
 		// Use the getDocs function to retrieve all documents in the subcollection
@@ -121,6 +256,7 @@
 	}
 
 	async function recitationCheck() {
+		const selectOption = document.getElementById('SortRec').value;
 		const attendanceCollectionReflll = collection(
 			firestore,
 			'Subject',
@@ -134,23 +270,42 @@
 				const documentData = doc.data();
 				const documentName = doc.id;
 				const totalPoints = documentData.totalPoints;
+				const week = documentData.week || 0;
+				const day = documentData.day || 0;
 
 				const documentInfo = {
 					id: documentName,
-					totalPoints: totalPoints
+					totalPoints: totalPoints,
+					week: week,
+					day: day
 				};
 
 				recitation.push(documentInfo);
 			});
 
-			recitation.sort((a, b) => b.totalPoints - a.totalPoints);
+			if (selectOption == 'Total Points') {
+				recitation.sort((a, b) => b.totalPoints - a.totalPoints);
 
-			recitation.forEach((item, index) => {
-				item.ranking = index + 1;
-			});
+				recitation.forEach((item, index) => {
+					item.ranking = index + 1;
+				});
 
-			console.log('Updated recitation array with ranking:', recitation);
-			console.log('recitation array:', recitation);
+				console.log('Updated recitation array with ranking:', recitation);
+				console.log('recitation array:', recitation);
+			} else if (selectOption == 'Weekly') {
+				recitation.sort((a, b) => b.week - a.week);
+
+				recitation.forEach((item, index) => {
+					item.ranking = index + 1;
+				});
+			} else if (selectOption == 'Daily') {
+				recitation.sort((a, b) => b.day - a.day);
+
+				recitation.forEach((item, index) => {
+					item.ranking = index + 1;
+				});
+			}
+
 			fetchNamesTwo();
 		});
 	}
@@ -176,40 +331,82 @@
 		});
 		recitation = recitation;
 	}
-	async function fetchAndDisplayNotes() {
+	let noteArray = [];
+	function fetchAndDisplayNotes(type) {
 		const collectionRef = collection(firestore, 'Subject', selecTSub, 'Notes');
+		const queryRef2 = query(
+			collectionRef,
+			where('Archive', '==', 'false'),
+			where('Status', '==', 'Current Class')
+		);
 
-		try {
-			const querySnapshot = await getDocs(collectionRef);
+		const unsubscribe = onSnapshot(queryRef2, (snapshot) => {
+			// Clear the existing array when there's an update
+			noteArray = [];
 
-			querySnapshot.forEach((doc) => {
-				const title1 = doc.data().Title;
-				const status = doc.data().Status;
-				const date1 = doc.data().Date;
-				const id = doc.id;
-
-				// Check if the status is not "Only Me" before appending
-				if (status !== 'Only Me') {
-					const noteElement = document.createElement('div');
-					noteElement.className =
-						'mt-2 flex flex-row justify-between w-full items-center px-7 border-b pb-1';
-					noteElement.innerHTML = `
-        <div class="mt-2 flex flex-row justify-between w-full items-center px-7 pb-1">
-          <h1 class="font-medium text-sm">${title1}</h1>
-          <div class="flex items-center">
-            <label
-                class="border-gray-200 w-36 h-6 mr-1 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
-            >${date1}</label>
-          </div>
-        </div>`;
-
-					const notesContainer = document.getElementById('notes-container');
-					notesContainer.appendChild(noteElement);
-				}
+			// Iterate over each document in the snapshot
+			snapshot.forEach((doc) => {
+				// Get the data of each document
+				const noteData = doc.data();
+				noteData.id = doc.id;
+				// Push the data into the array
+				noteArray.push(noteData);
 			});
-		} catch (error) {
-			console.error('Error fetching documents: ', error);
-		}
+
+			if (type === 'Recent') {
+				noteArray = noteArray.sort((a, b) => {
+					console.log('Sorting Recent:', new Date(b.Date), new Date(a.Date));
+					return new Date(b.Date) - new Date(a.Date);
+				});
+			}
+			if (type === 'Old') {
+				noteArray = noteArray.sort((a, b) => {
+					console.log('Sorting Old:', new Date(a.Date), new Date(b.Date));
+					return new Date(a.Date) - new Date(b.Date);
+				});
+			}
+			// Now, noteArray contains the updated data of all documents in the query
+			console.log(noteArray);
+		});
+	}
+
+	let noteArchive = [];
+
+	function fetchAndDisplayNotes2(type) {
+		const collectionRef = collection(firestore, 'Subject', selecTSub, 'Notes');
+		const queryRef2 = query(
+			collectionRef,
+			where('Archive', '==', 'true'),
+			where('Status', '==', 'Current Class')
+		);
+
+		const unsubscribe = onSnapshot(queryRef2, (snapshot) => {
+			// Clear the existing array when there's an update
+			noteArchive = [];
+			// Iterate over each document in the snapshot
+			snapshot.forEach((doc) => {
+				// Get the data of each document
+				const noteData = doc.data();
+				noteData.id = doc.id;
+				// Push the data into the array
+				noteArchive.push(noteData);
+			});
+
+			if (type === 'Recent') {
+				noteArchive = noteArchive.sort((a, b) => {
+					console.log('Sorting Recent:', new Date(b.Date), new Date(a.Date));
+					return new Date(b.Date) - new Date(a.Date);
+				});
+			}
+			if (type === 'Old') {
+				noteArchive = noteArchive.sort((a, b) => {
+					console.log('Sorting Old:', new Date(a.Date), new Date(b.Date));
+					return new Date(a.Date) - new Date(b.Date);
+				});
+			}
+			// Now, noteArray contains the updated data of all documents in the query
+			console.log('testing: ', noteArchive);
+		});
 	}
 
 	async function change() {
@@ -218,6 +415,10 @@
 		recitationCheck();
 		getNotes();
 		fetchAndDisplayNotes();
+		getSubjectTime();
+		updateLessonText();
+		fetchAndDisplayNotes2('Recent');
+		fetchAndDisplayNotes('Recent');
 	}
 
 	async function getuserName(id) {
@@ -360,7 +561,7 @@
 						>
 						<!-- svelte-ignore a11y-missing-attribute -->
 						<a class="font-medium text-sm p-2"> Subject Time: </a>
-						<a id="subjectTime" class="font-semibold text-sm"> 8:00 AM - 10:00 AM</a>
+						<a id="subjectTime" class="font-semibold text-sm" />
 					</div>
 
 					<div
@@ -474,12 +675,13 @@
 				<h1 class="pl-1 pt-2 font-medium text-md text-gray-700">Points</h1>
 			</div>
 			<select
+				id="SortRec"
+				on:change={sortRecitation}
 				class="mt-2 border-gray-200 w-56 h-6 font-medium text-sm text-center mr-3 border border-gray focus:none rounded-3xl shadow-sm"
 			>
-				<option disabled selected hidden class="rounded-3xl">Sort by</option>
+				<option selected class="rounded-3xl">Total Points</option>
 				<option class="rounded-xl">Daily</option>
 				<option class="rounded-xl">Weekly</option>
-				<option class="rounded-xl">Monthly</option>
 			</select>
 			<div class="relative overflow-y-auto shadow-sm rounded-xl mx-5 my-4 max-h-4/5">
 				<table class="w-full text-sm text-gray-500 dark:text-gray-400">
@@ -506,9 +708,24 @@
 									{data.name}
 								</td>
 								<td
-									class="text-center text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap"
+									id="pointsDisplay1"
+									class="pointsDisplay1 text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap"
 								>
 									{data.totalPoints}
+								</td>
+								<td
+									hidden
+									id="pointsDisplay2"
+									class="pointsDisplay2 text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap"
+								>
+									{data.day}
+								</td>
+								<td
+									hidden
+									id="pointsDisplay3"
+									class="pointsDisplay3 text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap"
+								>
+									{data.week}
 								</td>
 							</tr>
 						{/each}
@@ -527,14 +744,13 @@
 							<img src="todo.png" class="h-7 pl-6 mt-2" alt="..." />
 							<h1 class="pl-1 pt-2 font-medium text-md text-gray-700">Notes</h1>
 						</div>
-						<!--NOTE ARCHIVES -->
-						<label for="NotesArchives" class="mr-8 mt-3 rounded-3xl cursor-pointer">
+						<label for="NotesArchives" class="mr-8 mt-2 rounded-3xl cursor-pointer">
 							<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="26"
 								><g id="SVGRepo_bgCarrier" stroke-width="0" /><g
 									id="SVGRepo_tracerCarrier"
 									stroke-linecap="round"
 									stroke-linejoin="round"
-								/><g id="SVGRepo_iconCarrier"
+								/><g id="SVGRepo_iconCarrier" ble-fi
 									><path
 										d="M8.707 6.707a1 1 0 0 0-1.414-1.414L4 8.586 2.707 7.293a1 1 0 0 0-1.414 1.414l2 2a1 1 0 0 0 1.414 0l4-4ZM12 7a1 1 0 1 0 0 2h10a1 1 0 1 0 0-2H12ZM8.707 13.293a1 1 0 0 1 0 1.414l-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 1 1 1.414-1.414L4 16.586l3.293-3.293a1 1 0 0 1 1.414 0ZM12 15a1 1 0 1 0 0 2h10a1 1 0 1 0 0-2H12Z"
 										fill="#currentColor"
@@ -543,6 +759,7 @@
 								></svg
 							>
 						</label>
+						<!--NOTE ARCHIVES -->
 					</div>
 					<input type="checkbox" id="NotesArchives" class="modal-toggle" />
 					<div class="modal">
@@ -553,61 +770,26 @@
 							<h3 class="text-xl font-bold text-center">Note Archives</h3>
 
 							<div class="mx-auto w-full mt-5">
-								<table
-									class="w-full text-sm text-gray-500 dark:text-gray-400 table-fixed overflow-x-auto"
-								>
+								<table class="text-sm text-gray-500 dark:text-gray-400 w-full rounded-lg shadow-sm">
 									<thead
 										class="text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 sticky top-0"
 									>
 										<tr>
-											<th scope="col" class="pl-6 py-4 text-left">Date </th>
-											<th scope="col" class="px-1 py-4 text-left">Note </th>
-											<th scope="col" class="px-6 py-4 text-left">Status </th>
-											<th scope="col" class="px-9 py-4 text-left"> Action </th>
+											<th scope="col" class="pr-5 pl-3 py-4 text-left">Note</th>
 										</tr>
 									</thead>
-									<tbody>
-										<!-- Table row for each recitation item -->
-										<tr class="border-b bg-white">
-											<!-- Display the data for each recitation item -->
-											<td class="text-sm text-gray-500 font-medium px-6 py-4"> 2023-10-16 </td>
-											<td class="text-md text-gray-900 font-medium px- py-3"> Study Lesson 1 </td>
-											<td class="text-sm text-gray-900 font-medium px-6 py-4">
-												<select
-													class=" border-gray-200 w-32 h-6 mr-1 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
-												>
-													<option disabled selected hidden class="rounded-xl">Subject Class</option>
-												</select>
-											</td>
-											<td class="text-sm text-gray-900 font-medium px-6 py-4">
-												<label
-													for=""
-													class="px-4 bg-yellow-500 border-transparent hover:bg-yellow-600 hover:border-none text-sm text-white rounded-3xl"
-													>Undo</label
-												>
-											</td>
-										</tr>
 
-										<!-- Table row for each recitation item -->
-										<tr class="border-b bg-white">
-											<!-- Display the data for each recitation item -->
-											<td class="text-sm text-gray-500 font-medium px-6 py-4"> 2023-10-16 </td>
-											<td class="text-md text-gray-900 font-medium px- py-3"> Study Lesson 1 </td>
-											<td class="text-sm text-gray-900 font-medium px-6 py-4">
-												<select
-													class=" border-gray-200 w-32 h-6 mr-1 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
-												>
-													<option disabled selected hidden class="rounded-xl">Only Me</option>
-												</select>
-											</td>
-											<td class="text-sm text-gray-900 font-medium px-6 py-4">
-												<label
-													for=""
-													class="px-4 bg-yellow-500 border-transparent hover:bg-yellow-600 hover:border-none text-sm text-white rounded-3xl"
-													>Undo</label
-												>
-											</td>
-										</tr>
+									<tbody>
+										{#each noteArchive as item1}
+											<tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+												<td class="px-2 pb-1 pt-1 w-36">
+													<h1 class="font-medium text-left text-sm">
+														<span class="text-xs font-normal">{item1.Date}</span><br />
+														{item1.Title}
+													</h1>
+												</td>
+											</tr>
+										{/each}
 									</tbody>
 								</table>
 							</div>
@@ -648,44 +830,28 @@
 					<div class="divider mb-1" />
 
 					<!--TO DO LIST-->
-					<div class="h-80 overflow-auto" id="notes-container">
-						<!--OVERFLOW-->
-						<!-- {#each notes as note}
-							<div
-								class="mt-2 flex flex-row justify-between w-full items-center px-7 border-b pb-1"
-							>
-								<h1 class="font-medium text-sm">· {note.data.Title}</h1>
+					<table class="text-sm text-gray-500 dark:text-gray-400 w-full rounded-lg shadow-sm">
+						<thead
+							class="text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 sticky top-0"
+						>
+							<tr>
+								<th scope="col" class="pr-5 pl-3 py-4 text-left">Note</th>
+							</tr>
+						</thead>
 
-								<div class="flex items-center">
-									<label
-										class="border-gray-200 w-36 h-6 mr-1 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
-										>{note.data.Date}
-									</label>
-								</div>
-							</div>
-						{/each} -->
-
-						<!-- <div class="mt-2 flex flex-row justify-between w-full items-center px-7 border-b pb-1">
-							<h1 class="font-medium text-sm">· Study Lesson 1</h1>
-
-							<div class="flex items-center">
-								<button>
-									<img
-										src="done.png"
-										class="h-7 transform transition-transform focus:scale-100 active:scale-90"
-										alt="..."
-									/>
-								</button>
-								<button>
-									<img
-										src="delete.png"
-										class="h-7 transform transition-transform focus:scale-100 active:scale-90"
-										alt="..."
-									/>
-								</button>
-							</div>
-						</div> -->
-					</div>
+						<tbody>
+							{#each noteArray as item1}
+								<tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+									<td class="px-2 pb-1 pt-1 w-36">
+										<h1 class="font-medium text-left text-sm">
+											<span class="text-xs font-normal">{item1.Date}</span><br />
+											{item1.Title}
+										</h1>
+									</td>
+								</tr>
+							{/each}
+						</tbody>
+					</table>
 					<!--OVERFLOW-->
 				</div>
 			</div>
@@ -700,17 +866,26 @@
 					<div class="divider my-0" />
 					<div class="flex flex-row justify-center mt-2">
 						<select
+							id="weekSelector"
+							bind:value={weekStatus}
+							on:change={updateLessonText}
 							class="w-40 border-gray-200 h-8 font-medium text-sm text-center mr-3 border border-gray focus:none rounded-3xl shadow-sm"
 						>
 							<option disabled selected class="rounded-3xl">Select Week</option>
 							<option class="rounded-3xl">Week 1</option>
 							<option class="rounded-3xl">Week 2</option>
+							<option class="rounded-3xl">Week 3</option>
+							<option class="rounded-3xl">Week 4</option>
+							<option class="rounded-3xl">Week 5</option>
+							<option class="rounded-3xl">Week 6</option>
+							<option class="rounded-3xl">Week 7</option>
+							<option class="rounded-3xl">Week 8</option>
 						</select>
 					</div>
 					<div class="divider my-0 mt-2" />
 					<div class="h-56 overflow-auto">
 						<h1 class="text-left mt-2 ml-5 text-sm">Day 1</h1>
-						<div class="flex items-center mt-1 pl-4">
+						<div class="flex items-center mt-1 pl-4" on:click={() => redirectToLink('day1input')}>
 							<input
 								id="day1input"
 								type="text"
@@ -768,4 +943,5 @@
 			</div>
 		</div>
 	</div>
+	<Toaster />
 </body>

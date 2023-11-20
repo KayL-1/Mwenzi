@@ -43,6 +43,7 @@ exports.createDailyAttendance = functions.pubsub
           studentFieldObject[student] = {
             time: '00:00',
             status: 'Absent',
+            late: "False",
             dataStatus: 'unchanged'
           };
         });

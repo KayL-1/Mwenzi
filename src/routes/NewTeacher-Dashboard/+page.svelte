@@ -20,6 +20,7 @@
 	import { subjectSelected1, userId, timeFrom, timeTo } from '../../lib/userStorage';
 	import { onMount } from 'svelte';
 	import { current_component } from 'svelte/internal';
+	import toast, { Toaster } from 'svelte-french-toast';
 
 	let userUID = '';
 	let selecTSub;
@@ -47,6 +48,147 @@
 		}
 	}
 
+	async function noteStatus(id) {
+		if (selecTSub === 'Select Class') {
+			toast.error('Please select a class');
+			return;
+		}
+		const optionValue = document.getElementById('selectOption').value;
+		const collectionRef = collection(firestore, 'Subject', selecTSub, 'Notes');
+		const docRef = doc(collectionRef, id);
+		console.log(id);
+
+		try {
+			const docSnapshot = await getDoc(docRef);
+
+			if (docSnapshot.exists()) {
+				// The document with the specified ID exists
+				const doc = docSnapshot.ref;
+
+				// Update the "Archive" field to "true"
+				await updateDoc(doc, { Status: optionValue });
+
+				// Optionally, retrieve and return the updated data
+				const updatedDocSnapshot = await getDoc(doc);
+				const updatedData = updatedDocSnapshot.data();
+				toast.success('Updated the status of a note');
+				return updatedData;
+			} else {
+				// Document does not exist
+				console.log('No such document!');
+				return null;
+			}
+		} catch (error) {
+			console.error('Error updating document:', error);
+			throw error;
+		}
+	}
+
+	async function noteCompletion(id) {
+		if (selecTSub === 'Select Class') {
+			toast.error('Please select a class');
+			return;
+		}
+		const collectionRef = collection(firestore, 'Subject', selecTSub, 'Notes');
+		const docRef = doc(collectionRef, id);
+		console.log(id);
+
+		try {
+			const docSnapshot = await getDoc(docRef);
+
+			if (docSnapshot.exists()) {
+				// The document with the specified ID exists
+				const doc = docSnapshot.ref;
+
+				await updateDoc(doc, { Archive: 'true' });
+
+				// Optionally, retrieve and return the updated data
+				const updatedDocSnapshot = await getDoc(doc);
+				const updatedData = updatedDocSnapshot.data();
+				toast.success('Archived a note');
+				return updatedData;
+			} else {
+				// Document does not exist
+				console.log('No such document!');
+				return null;
+			}
+		} catch (error) {
+			console.error('Error updating document:', error);
+			throw error;
+		}
+	}
+
+	async function noteUndo(id) {
+		if (selecTSub === 'Select Class') {
+			toast.error('Please select a class');
+			return;
+		}
+		const collectionRef = collection(firestore, 'Subject', selecTSub, 'Notes');
+		const docRef = doc(collectionRef, id);
+		console.log(id);
+
+		try {
+			const docSnapshot = await getDoc(docRef);
+
+			if (docSnapshot.exists()) {
+				// The document with the specified ID exists
+				const doc = docSnapshot.ref;
+
+				await updateDoc(doc, { Archive: 'false' });
+
+				// Optionally, retrieve and return the updated data
+				const updatedDocSnapshot = await getDoc(doc);
+				const updatedData = updatedDocSnapshot.data();
+				toast.success('Unarchived a note');
+				return updatedData;
+			} else {
+				// Document does not exist
+				console.log('No such document!');
+				return null;
+			}
+		} catch (error) {
+			console.error('Error updating document:', error);
+			throw error;
+		}
+	}
+	let noteArray = [];
+	let noteArchive = [];
+
+	async function noteDelete(id) {
+		if (selecTSub === 'Select Class') {
+			toast.error('Please select a class');
+			return;
+		}
+		const collectionRef = collection(firestore, 'Subject', selecTSub, 'Notes');
+		const docRef = doc(collectionRef, id);
+
+		try {
+			const docSnapshot = await getDoc(docRef);
+
+			if (docSnapshot.exists()) {
+				// The document with the specified ID exists
+				const doc = docSnapshot.ref;
+
+				// Delete the document
+				await deleteDoc(doc);
+
+				console.log('Document successfully deleted!');
+
+				// Optionally, you can return some information about the deleted document if needed
+				const deletedData = docSnapshot.data();
+				toast.success('Deleted a note');
+				return deletedData;
+			} else {
+				// Document does not exist
+				console.log('No such document!');
+				return null;
+			}
+		} catch (error) {
+			console.error('Error deleting document:', error);
+			throw error;
+		}
+	}
+
 	async function getDates() {
 		const attendanceCollectionRef = collection(firestore, 'Subject', `${selecTSub}`, 'Attendance');
 
@@ -71,7 +213,7 @@
 			return dateB - dateA;
 		});
 
-		// Remove the first element from the array
+		// Remove the first element from the arrayrecitation
 		attendanceDates.shift();
 
 		const dateInput = document.getElementById('dateSelector1');
@@ -97,6 +239,10 @@
 	}
 
 	async function resetRecitationPoints() {
+		if (selecTSub === 'Select Class') {
+			toast.error('Please select a class');
+			return;
+		}
 		const attendanceCollectionRef = collection(firestore, 'Subject', `${selecTSub}`, 'Recitation');
 
 		const querySnapshot = await getDocs(attendanceCollectionRef);
@@ -105,8 +251,8 @@
 			const docRef = doc.ref;
 			await updateDoc(docRef, {
 				totalPoints: 0, // Set to the desired value for totalPoints
-				day: null, // Set to the desired value for day
-				week: null // Set to the desired value for week
+				day: 0, // Set to the desired value for day
+				week: 0 // Set to the desired value for week
 			});
 		});
 
@@ -368,6 +514,11 @@
 			'Recitation'
 		);
 
+		if (selecTSub === 'Select Class') {
+			toast.error('Please select a class');
+			return;
+		}
+
 		if (action === 'minus') {
 			const recitationDocRef = doc(recitationCollectionReflllty, documentID);
 
@@ -484,6 +635,10 @@
 	const calledNames = [];
 	let recitationType;
 	async function getRandomName() {
+		if (selecTSub === 'Select Class') {
+			toast.error('Please select a class');
+			return;
+		}
 		if (isRolling) return; // Prevent multiple clicks while rolling
 		const collectionRef = collection(firestore, 'Subject', `${selecTSub}`, 'Attendance');
 		const queryRef = doc(collectionRef, currentDatee);
@@ -548,6 +703,10 @@
 	var isEditing = false;
 
 	function toggleEditButton() {
+		if (selecTSub === 'Select Class') {
+			toast.error('Please select a class');
+			return;
+		}
 		isEditing = !isEditing; // Toggle the editing state
 		var saveButton = document.getElementById('saveButton1'); // You need to define 'saveButton' if it's used elsewhere.
 
@@ -622,8 +781,20 @@
 	}
 	let groupType;
 	async function groupStudents() {
-		console.log(groupType);
+		if (selecTSub === 'Select Class') {
+			toast.error('Please select a class');
+			return;
+		}
+		if (groupType === 'Select') {
+			toast.error('Please select a students');
+			return;
+		}
 
+		const grpnum = document.getElementById('groupSize').value;
+		if (grpnum === 'Number of Members') {
+			toast.error('Please select a number of students');
+			return;
+		}
 		// Create a reference to the specific document within the 'Subject' collection
 
 		if (groupType === 'Present Only') {
@@ -779,6 +950,10 @@
 	let title = ''; // Declare a variable to hold the input value
 
 	function addNote() {
+		if (selecTSub === 'Select Class') {
+			toast.error('Please select a class');
+			return;
+		}
 		if (title.trim() !== '') {
 			const collectionRef = collection(firestore, 'Subject', selecTSub, 'Notes');
 
@@ -797,175 +972,75 @@
 
 			title = '';
 		} else {
-			alert('Please enter a title before adding notes.');
+			toast.error('Please enter a title before adding notes.');
 		}
 	}
 
-	async function fetchAndDisplayNotes2() {
-		const collectionRef = collection(firestore, 'Subject', selecTSub, 'Notes');
-		const queryRef2 = query(collectionRef, where('Archive', '==', 'true'));
-		try {
-			const querySnapshot = await getDocs(queryRef2);
-
-			const notesContainer = document.getElementById('note-archive');
-
-			// Clear the existing content of the table body
-			notesContainer.innerHTML = '';
-
-			// Iterate over query results and populate the table rows
-			querySnapshot.forEach((doc) => {
-				const title1 = doc.data().Title;
-				const date1 = doc.data().Date;
-				let status = doc.data().Status;
-				const id = doc.id;
-
-				// Create a table row
-				const tableRow = document.createElement('tr');
-				tableRow.className = 'border-b bg-white';
-
-				tableRow.innerHTML = `
-        <td class="text-xs text-gray-500 font-medium mx-3 py-3 text-center">${date1}</td>
-        <td class="text-md text-gray-900 font-medium pl-5 py-3">${title1}</td>
-        <td class="text-sm text-gray-900 font-medium pl-7 pr-4 py-4">
-          <select class="update-status-select1 border-gray-200 w-28 h-6 mr-1 font-medium text-xs text-center border border-gray focus:none rounded-3xl shadow-sm">
-            <option class="rounded-xl" ${status === 'Only Me' ? 'selected' : ''}>Only Me</option>
-            <option class="rounded-xl" ${
-							status === 'Current Class' ? 'selected' : ''
-						}>Current Class</option>
-          </select>
-        </td>
-        <td class="text-sm text-gray-900 font-medium justify-center py-4 flex">
-          <button class="update-status-button1 px-4 bg-yellow-500 border-transparent hover:bg-yellow-600 hover:border-none text-sm text-white rounded-3xl" on:click="clickTest()">
-            Undo
-          </button>
-        </td>
-      `;
-
-				// Append the table row to the table body
-				notesContainer.appendChild(tableRow);
-
-				// Handle select change for updating status
-				const selectElement = tableRow.querySelector('select');
-				selectElement.addEventListener('change', async () => {
-					const newStatus = selectElement.value;
-					console.log(newStatus);
-					try {
-						await updateDoc(doc.ref, { Status: newStatus });
-						status = newStatus;
-					} catch (error) {
-						console.error('Error updating document: ', error);
-					}
-				});
-
-				const undoButton = tableRow.querySelector('.update-status-button1');
-
-				undoButton.addEventListener('click', async () => {
-					console.log('Element clicked!');
-
-					try {
-						// Perform your desired actions here, e.g., updating data
-						await updateDoc(doc.ref, { Archive: 'false' });
-						location.reload();
-					} catch (error) {
-						console.error('Error updating document: ', error);
-					}
-				});
-			});
-		} catch (error) {
-			console.error('Error:', error);
-		}
-	}
-
-	async function fetchAndDisplayNotes() {
+	function fetchAndDisplayNotes(type) {
 		const collectionRef = collection(firestore, 'Subject', selecTSub, 'Notes');
 		const queryRef2 = query(collectionRef, where('Archive', '==', 'false'));
-		try {
-			const querySnapshot = await getDocs(queryRef2);
 
-			querySnapshot.forEach((doc) => {
-				const title1 = doc.data().Title;
-				let status = doc.data().Status;
-				const id = doc.id;
-				const noteElement = document.createElement('div');
-				noteElement.className =
-					'mt-2 flex flex-row justify-between w-full items-center px-7 border-b pb-1';
-				noteElement.innerHTML = `
-        <div class="mt-2 flex flex-row justify-between w-full items-center px-7 pb-1">
-          <h1 class="font-medium text-sm">${title1}</h1>
-  
-          <div class="flex items-center">
-            <select
-              class="update-status-select border-gray-200 w-32 h-6 mr-1 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
-            >
-              <option disabled hidden class="rounded-3xl">Share</option>
-              <option value="Only Me" ${status === 'Only Me' ? 'selected' : ''}>Only Me</option>
-              <option value="Current Class" ${
-								status === 'Current Class' ? 'selected' : ''
-							}>Current Class</option>
-            </select>
-            <button class="update-status-button">
-              <img
-                src="done.png"
-                class="h-7 transform transition-transform focus:scale-100 active:scale-90"
-                alt="..."
-              />
-            </button>
-            <button class="delete-button">
-              <img
-                src="delete.png"
-                class="h-7 transform transition-transform focus:scale-100 active:scale-90"
-                alt="..."
-              />
-            </button>
-          </div>
-        </div>`;
+		const unsubscribe = onSnapshot(queryRef2, (snapshot) => {
+			// Clear the existing array when there's an update
+			noteArray = [];
 
-				const notesContainer = document.getElementById('notes-container');
-				notesContainer.appendChild(noteElement);
-
-				// Add event listener to the update-status-button
-				noteElement.querySelector('.update-status-button').addEventListener('click', async () => {
-					const selectElement = noteElement.querySelector('select');
-					const newStatus = selectElement.value;
-
-					try {
-						await updateDoc(doc.ref, { Archive: 'true' });
-						location.reload();
-					} catch (error) {
-						console.error('Error updating document: ', error);
-					}
-				});
-
-				noteElement.querySelector('.update-status-select').addEventListener('change', async () => {
-					const selectElement = noteElement.querySelector('select');
-					const newStatus = selectElement.value;
-					try {
-						await updateDoc(doc.ref, { Status: newStatus });
-						status = newStatus;
-					} catch (error) {
-						console.error('Error updating document: ', error);
-					}
-				});
-
-				noteElement.querySelector('.delete-button').addEventListener('click', async () => {
-					try {
-						// Delete the document from Firestore
-						await deleteDoc(doc.ref);
-						// Remove the note element from the UI
-						noteElement.remove();
-					} catch (error) {
-						console.error('Error deleting document: ', error);
-					}
-				});
+			// Iterate over each document in the snapshot
+			snapshot.forEach((doc) => {
+				// Get the data of each document
+				const noteData = doc.data();
+				noteData.id = doc.id;
+				// Push the data into the array
+				noteArray.push(noteData);
 			});
-		} catch (error) {
-			console.error('Error fetching documents: ', error);
-		}
+
+			if (type === 'Recent') {
+				noteArray = noteArray.sort((a, b) => {
+					console.log('Sorting Recent:', new Date(b.Date), new Date(a.Date));
+					return new Date(b.Date) - new Date(a.Date);
+				});
+			}
+			if (type === 'Old') {
+				noteArray = noteArray.sort((a, b) => {
+					console.log('Sorting Old:', new Date(a.Date), new Date(b.Date));
+					return new Date(a.Date) - new Date(b.Date);
+				});
+			}
+			// Now, noteArray contains the updated data of all documents in the query
+			console.log(noteArray);
+		});
 	}
 
-	function resetChanges() {
-		const notesContainer = document.getElementById('notes-container');
-		notesContainer.innerHTML = ''; // Clear all dynamically added notes
+	function fetchAndDisplayNotes2(type) {
+		const collectionRef = collection(firestore, 'Subject', selecTSub, 'Notes');
+		const queryRef2 = query(collectionRef, where('Archive', '==', 'true'));
+
+		const unsubscribe = onSnapshot(queryRef2, (snapshot) => {
+			// Clear the existing array when there's an update
+			noteArchive = [];
+			// Iterate over each document in the snapshot
+			snapshot.forEach((doc) => {
+				// Get the data of each document
+				const noteData = doc.data();
+				noteData.id = doc.id;
+				// Push the data into the array
+				noteArchive.push(noteData);
+			});
+
+			if (type === 'Recent') {
+				noteArchive = noteArchive.sort((a, b) => {
+					console.log('Sorting Recent:', new Date(b.Date), new Date(a.Date));
+					return new Date(b.Date) - new Date(a.Date);
+				});
+			}
+			if (type === 'Old') {
+				noteArchive = noteArchive.sort((a, b) => {
+					console.log('Sorting Old:', new Date(a.Date), new Date(b.Date));
+					return new Date(a.Date) - new Date(b.Date);
+				});
+			}
+			// Now, noteArray contains the updated data of all documents in the query
+			console.log(noteArchive);
+		});
 	}
 
 	// Call the function to fetch and display notes
@@ -975,9 +1050,8 @@
 		await getDates();
 		attendanceCheck(1);
 		recitationCheck();
-		resetChanges();
-		fetchAndDisplayNotes();
-		fetchAndDisplayNotes2();
+		fetchAndDisplayNotes('Recent');
+		fetchAndDisplayNotes2('Recent');
 		updateLessonText();
 		sortRecitation();
 		getSubjectTime();
@@ -1017,7 +1091,10 @@
 	let weekStatus = '';
 
 	async function createWeeklyLesson() {
-		console.log('test');
+		if (selecTSub === 'Select Class') {
+			toast.error('Please select a class');
+			return;
+		}
 		const collectionRef = collection(firestore, 'Subject', selecTSub, 'Lessons');
 		const week1DocRef = doc(collectionRef, weekStatus); // Create a document reference with 'week1' as the ID
 		const data1 = {
@@ -1057,7 +1134,10 @@
 	}
 
 	async function resetWeeklyLesson() {
-		console.log('test');
+		if (selecTSub === 'Select Class') {
+			toast.error('Please select a class');
+			return;
+		}
 		const collectionRef = collection(firestore, 'Subject', selecTSub, 'Lessons');
 		const week1DocRef = doc(collectionRef, weekStatus); // Create a document reference with 'week1' as the ID
 		const data1 = {
@@ -1150,6 +1230,10 @@
 	let studentIDxx;
 
 	function redirectToLink(id) {
+		if (selecTSub === 'Select Class') {
+			toast.error('Please select a class');
+			return;
+		}
 		const inputElement = document.getElementById(id);
 		const inputValue = inputElement.value.trim();
 		const link = 'https:' + inputValue;
@@ -1241,7 +1325,6 @@
 	}
 
 	async function sortRecitation() {
-		console.log('haha');
 		const selectOption = document.getElementById('SortRec').value;
 		const totalElements = document.getElementsByClassName('pointsDisplay1');
 		const weekElements = document.getElementsByClassName('pointsDisplay2');
@@ -1307,13 +1390,17 @@
 	let timeTo1;
 
 	async function newPage() {
+		if (selecTSub === 'Select Class') {
+			toast.error('Please select a class');
+			return;
+		}
 		if (timeFrom1 === null || timeFrom1 === undefined) {
-			console.log('Please select a date');
+			toast.error('Please select a date');
 			return;
 		}
 
 		if (timeTo1 === null || timeTo1 === undefined) {
-			console.log('Please select a date');
+			toast.error('Please select a date');
 			return;
 		}
 
@@ -1910,18 +1997,59 @@
 								<div
 									class="relative overflow-y-auto shadow-sm rounded-xl mx-5 my-5 h-4/5 max-h-4/5"
 								>
-									<table class="w-full text-sm text-gray-500 dark:text-gray-400">
+									<table
+										class="text-sm text-gray-500 dark:text-gray-400 w-full rounded-lg shadow-sm"
+									>
 										<thead
 											class="text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 sticky top-0"
 										>
 											<tr>
-												<th scope="col" class="px-6 py-4 text-center">Date</th>
-												<th scope="col" class="px-6 py-4 text-left">Notes</th>
-												<th scope="col" class="py-4 text-center">Status</th>
-												<th scope="col" class="px-6 py-4 text-center">Action</th>
+												<th scope="col" class="pr-5 pl-3 py-4 text-left">Note</th>
+												<th scope="col" class="px-6 py-4 text-center">Status</th>
+												<th scope="col" class="px-6 py-4 text-right">Action</th>
 											</tr>
 										</thead>
-										<tbody id="note-archive" />
+
+										<tbody>
+											{#each noteArchive as item1}
+												<tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+													<td class="px-2 pb-1 pt-1 w-36">
+														<h1 class="font-medium text-left text-sm">
+															<span class="text-xs font-normal">{item1.Date}</span><br />
+															{item1.Title}
+														</h1>
+													</td>
+													<td class="text-center">
+														<select
+															on:change={(event) => {
+																noteStatus(item1.id);
+															}}
+															id="selectOption"
+															class="update-status-select border-gray-200 w-28 h-6 mr-1 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
+														>
+															{#if item1.Status == 'Only Me'}
+																<option selected value="Only Me">Only Me</option>
+																<option value="Current Class">Share to Class</option>
+															{/if}
+															{#if item1.Status == 'Current Class'}
+																<option value="Only Me">Only Me</option>
+																<option selected value="Current Class">Current Class</option>
+															{/if}
+														</select>
+													</td>
+													<td class="text-center">
+														<button
+															class="px-3 bg-yellow-500 border-transparent hover:bg-yellow-600 hover:border-none text-sm text-white rounded-3xl"
+															on:click={(event) => {
+																noteUndo(item1.id);
+															}}
+														>
+															Undo
+														</button>
+													</td>
+												</tr>
+											{/each}
+										</tbody>
 									</table>
 								</div>
 							</div>
@@ -1964,7 +2092,74 @@
 					<div class="divider mb-1" />
 
 					<!--TO DO LIST-->
-					<div id="notes-container" />
+					<table class="text-sm text-gray-500 dark:text-gray-400 w-full rounded-lg shadow-sm">
+						<thead
+							class="text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 sticky top-0"
+						>
+							<tr>
+								<th scope="col" class="pr-5 pl-3 py-4 text-left">Note</th>
+								<th scope="col" class="px-6 py-4 text-center">Status</th>
+								<th scope="col" class="px-6 py-4 text-right">Action</th>
+							</tr>
+						</thead>
+
+						<tbody>
+							{#each noteArray as item1}
+								<tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+									<td class="px-2 pb-1 pt-1 w-36">
+										<h1 class="font-medium text-left text-sm">
+											<span class="text-xs font-normal">{item1.Date}</span><br />
+											{item1.Title}
+										</h1>
+									</td>
+									<td class="text-right">
+										<select
+											on:change={(event) => {
+												noteStatus(item1.id);
+											}}
+											id="selectOption"
+											class="update-status-select border-gray-200 w-32 h-6 mr-1 font-medium text-sm text-center border border-gray focus:none rounded-3xl shadow-sm"
+										>
+											{#if item1.Status == 'Only Me'}
+												<option selected value="Only Me">Only Me</option>
+												<option value="Current Class">Share to Class</option>
+											{/if}
+											{#if item1.Status == 'Current Class'}
+												<option value="Only Me">Only Me</option>
+												<option selected value="Current Class">Current Class</option>
+											{/if}
+										</select>
+									</td>
+									<td>
+										<button
+											class="update-status-button pl-1"
+											on:click={(event) => {
+												noteCompletion(item1.id);
+											}}
+										>
+											<img
+												src="done.png"
+												class="h-7 transform transition-transform focus:scale-100 active:scale-90"
+												alt="..."
+											/>
+										</button>
+										<button
+											class="delete-button"
+											on:click={(event) => {
+												noteDelete(item1.id);
+											}}
+										>
+											<img
+												src="delete.png"
+												class="h-7 transform transition-transform focus:scale-100 active:scale-90"
+												alt="..."
+											/>
+										</button>
+									</td>
+								</tr>
+							{/each}
+						</tbody>
+					</table>
 				</div>
 			</div>
 
@@ -2220,7 +2415,7 @@
 											readonly
 										/>
 										<button
-											on:click={() => redirectToLink('day12nput')}
+											on:click={() => redirectToLink('day2input')}
 											class="text-sm text-blue-500 hover:text-blue-400 ml-1">Open Link</button
 										>
 										<input
@@ -2252,7 +2447,7 @@
 											readonly
 										/>
 										<button
-											on:click={() => redirectToLink('day13nput')}
+											on:click={() => redirectToLink('day3input')}
 											class="text-sm text-blue-500 hover:text-blue-400 ml-1">Open Link</button
 										>
 										<input
@@ -2284,7 +2479,7 @@
 											readonly
 										/>
 										<button
-											on:click={() => redirectToLink('day14nput')}
+											on:click={() => redirectToLink('day4input')}
 											class="text-sm text-blue-500 hover:text-blue-400 ml-1">Open Link</button
 										>
 										<input
@@ -2316,7 +2511,7 @@
 											readonly
 										/>
 										<button
-											on:click={() => redirectToLink('day15nput')}
+											on:click={() => redirectToLink('day5input')}
 											class="text-sm text-blue-500 hover:text-blue-400 ml-1">Open Link</button
 										>
 										<input
@@ -2366,6 +2561,7 @@
 
 	<!--ACTIONS-->
 	<div class="flex flex-row card mx-10 my-auto pt-3" />
+	<Toaster />
 </body>
 
 <style>
