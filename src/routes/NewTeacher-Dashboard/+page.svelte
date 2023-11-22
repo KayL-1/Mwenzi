@@ -965,6 +965,7 @@
 			})
 				.then((docRef) => {
 					console.log('Document written with ID: ', docRef.id);
+					toast.success('Added a note');
 				})
 				.catch((error) => {
 					console.error('Error writing document: ', error);
