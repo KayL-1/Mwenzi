@@ -321,7 +321,7 @@
 
 		snapshot.forEach((doc) => {
 			const id = doc.data().studentRFID;
-			const name = doc.data().Name;
+			const name = doc.data().firstName + " " + doc.data().lastName;
 
 			// Find the item in the recitation array with the matching ID
 			const item = recitation.find((el) => el.id === id);

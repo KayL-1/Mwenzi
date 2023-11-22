@@ -257,31 +257,29 @@
 	let passwordCon;
 
 	async function createTeacher() {
-		if (
-			firstName === null ||
-			firstName === undefined ||
-			lastName === null ||
-			lastName === undefined ||
-			email === null ||
-			email === undefined ||
-			password === null ||
-			password === undefined ||
-			passwordCon === null ||
-			passwordCon === undefined
-		) {
-			// At least one of the variables is null
-			toast.error('At least one of the variables is null.');
+		if (!firstName || !lastName || !email || !password || !passwordCon) {
+			// At least one of the variables is null or undefined
+			toast.error('Please fill in all required fields.');
 		} else {
 			if (password === passwordCon) {
-				const userID = generateAndCheckUID();
-				const docRef = await setDoc(doc(firestore, 'users', userID), {
-					UID: userID,
-					email: email,
-					userRole: 'teacher',
-					firstName: firstName,
-					lastName: lastName,
-					password: password
-				});
+				try {
+					const userID = await generateAndCheckUID();
+					const docRef = doc(firestore, 'users', userID);
+					await setDoc(docRef, {
+						UID: userID,
+						email: email,
+						userRole: 'teacher',
+						firstName: firstName,
+						lastName: lastName,
+						password: password
+					});
+					// Success message or any other logic after creating the teacher
+					toast.success('Teacher created successfully.');
+				} catch (error) {
+					console.error('Error creating teacher: ', error);
+					// Handle the error, display an error message, etc.
+					toast.error('An error occurred while creating the teacher.');
+				}
 			} else {
 				toast.error('Password does not match');
 			}
@@ -289,15 +287,11 @@
 	}
 
 	async function generateAndCheckUID() {
-		// Define a set of characters and numbers to choose from
 		const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-
-		// Set the desired length of your UID
 		const uidLength = 10;
 
 		let uid = '';
 
-		// Generate the UID by randomly selecting characters from the set
 		for (let i = 0; i < uidLength; i++) {
 			const randomIndex = Math.floor(Math.random() * characters.length);
 			uid += characters.charAt(randomIndex);
@@ -339,7 +333,6 @@
 		const unsubscribe = userId.subscribe((value) => {
 			userUID = localStorage.getItem('userId');
 			getuserName(userUID);
-			classCheck();
 			teacherCheck('Alphabetical');
 			return () => {
 				unsubscribe();
@@ -615,27 +608,28 @@
 						</tr>
 					</thead>
 					<tbody>
-						{#each teachers as item1 (item1.id)}
-							<tr
-								class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-							>
-								<td class="text-center"
-									><!--FOR MODAL--><label
-										for="StudentInformation"
-										class="cursor-pointer"
-										on:click={() => getStudentDetail(item1.data.UID)}
-										>{item1.data.firstName} {item1.data.lastName}</label
-									>
-								</td>
+						{#if teachers.length > 0}
+							{#each teachers as item1 (item1.id)}
+								<tr
+									class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+								>
+									<td class="text-center"
+										><!--FOR MODAL--><label
+											for="StudentInformation"
+											class="cursor-pointer"
+											on:click={() => getStudentDetail(item1.data.UID)}
+											>{item1.data.firstName} {item1.data.lastName}</label
+										>
+									</td>
 
-								<td class="px-6 py-2">{item1.data.email}</td>
+									<td class="px-6 py-2">{item1.data.email}</td>
 
-								{#await getSubjectName(item1.id) then subjectName}
-									<td class="px-6 py-2">{subjectName}</td>
-								{/await}
-							</tr>
-						{/each}
-
+									{#await getSubjectName(item1.id) then subjectName}
+										<td class="px-6 py-2">{subjectName}</td>
+									{/await}
+								</tr>
+							{/each}
+						{/if}
 						<!--MEDIC MODAL-->
 						<input type="checkbox" id="StudentInformation" class="modal-toggle" />
 						<div class="modal">

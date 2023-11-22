@@ -122,7 +122,8 @@
 		if (!querySnapshot.empty) {
 			// Assuming you have a 'name' field in your user document
 			const userData = querySnapshot.docs[0].data();
-			return userData.Name;
+			const teacherName = userData.firstName + " " + userData.lastName
+			return teacherName;
 		}
 
 		return 'Unknown'; // Return a default value if teacher is not found
@@ -655,7 +656,7 @@
 										>
 											<option disabled selected hidden>Add to Teacher</option>
 											{#each teacherData as item1 (item1.id)}
-												<option value={item1.data.UID}>{item1.data.Name}</option>
+												<option value={item1.data.UID}>{item1.data.firstName} {item1.data.lastName}</option>
 											{/each}
 										</select>
 									</h1>

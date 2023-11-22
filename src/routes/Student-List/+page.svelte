@@ -354,12 +354,14 @@
 				studentRFID: student.StudentRFID,
 				class: classSelect2,
 				gradeLevel: grade,
-				birthday: student.birthday
+				birthday: student.Birthday
 			});
 
 			await updateDoc(docRef2, {
 				students: arrayUnion(student.StudentRFID)
 			});
+
+			writeUserData3(student.StudentRFID);
 		}
 
 		toast.success('Students succesfully added');
@@ -564,6 +566,11 @@
 
 	function writeUserData2() {
 		set(ref(database, 'rfid/' + studentRFID), studentRFID);
+		console.error('Using Normal Way');
+	}
+
+	function writeUserData3(rfid1) {
+		set(ref(database, 'rfid/' + rfid1), rfid1);
 		console.error('Using Normal Way');
 	}
 
