@@ -22,6 +22,28 @@
 	import toast, { Toaster } from 'svelte-french-toast';
 
 	let deleteClass;
+	let currentDatee;
+	function getDate() {
+		fetch('https://worldtimeapi.org/api/timezone/Asia/Manila')
+			.then((response) => response.json())
+			.then((data) => {
+				// Extract the date components
+				var currentDate = new Date(data.datetime);
+				var year = currentDate.getFullYear();
+				var month = currentDate.getMonth() + 1;
+				var day = currentDate.getDate();
+
+				// Format the date as desired (e.g., YYYY-MM-DD)
+				currentDatee =
+					year + '-' + month.toString().padStart(2, '0') + '-' + day.toString().padStart(2, '0');
+
+				console.log(currentDatee); // Output: 2023-05-26
+			})
+			.catch((error) => {
+				console.log('Error:', error);
+			});
+	}
+	getDate();
 	async function removeClass() {
 		const collectionRef = collection(firestore, 'classes');
 		const docRef = doc(collectionRef, deleteClass);
@@ -122,7 +144,7 @@
 		if (!querySnapshot.empty) {
 			// Assuming you have a 'name' field in your user document
 			const userData = querySnapshot.docs[0].data();
-			const teacherName = userData.firstName + " " + userData.lastName
+			const teacherName = userData.firstName + ' ' + userData.lastName;
 			return teacherName;
 		}
 
@@ -351,7 +373,7 @@
 				<p class="font-medium text-md mr-5 mt-1">Hi, Mwenzi Admin</p>
 				<button class="dropdown dropdown-end">
 					<svg
-						xmlns="http://www.w3.org/2000/svg"
+						xmlns="https://www.w3.org/2000/svg"
 						width="28"
 						height="28"
 						fill="green"
@@ -384,7 +406,7 @@
 					>
 						<!-- svelte-ignore a11y-missing-attribute -->
 						<svg
-							xmlns="http://www.w3.org/2000/svg"
+							xmlns="https://www.w3.org/2000/svg"
 							width="20"
 							height="20"
 							viewBox="0 0 24 24"
@@ -421,7 +443,7 @@
 							></svg
 						>
 						<!-- svelte-ignore a11y-missing-content -->
-						<a class="font-medium text-sm p-2">09/29/23</a>
+						<a class="font-medium text-sm p-2">{currentDatee}</a>
 					</div>
 				</div>
 				<!--END DATE -->
@@ -656,7 +678,9 @@
 										>
 											<option disabled selected hidden>Add to Teacher</option>
 											{#each teacherData as item1 (item1.id)}
-												<option value={item1.data.UID}>{item1.data.firstName} {item1.data.lastName}</option>
+												<option value={item1.data.UID}
+													>{item1.data.firstName} {item1.data.lastName}</option
+												>
 											{/each}
 										</select>
 									</h1>

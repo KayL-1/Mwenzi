@@ -285,7 +285,7 @@
 
 	let currentDatee;
 	function getDate() {
-		fetch('http://worldtimeapi.org/api/timezone/Asia/Manila')
+		fetch('https://worldtimeapi.org/api/timezone/Asia/Manila')
 			.then((response) => response.json())
 			.then((data) => {
 				// Extract the date components
@@ -695,7 +695,7 @@
 				<p class="font-medium text-md mr-5 mt-1">Hi, Mwenzi Admin</p>
 				<button class="dropdown dropdown-end">
 					<svg
-						xmlns="http://www.w3.org/2000/svg"
+						xmlns="https://www.w3.org/2000/svg"
 						width="28"
 						height="28"
 						fill="green"
@@ -958,7 +958,7 @@
 					>
 						<!-- svelte-ignore a11y-missing-attribute -->
 						<svg
-							xmlns="http://www.w3.org/2000/svg"
+							xmlns="https://www.w3.org/2000/svg"
 							width="20"
 							height="20"
 							viewBox="0 0 24 24"

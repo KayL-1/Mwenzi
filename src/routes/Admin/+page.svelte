@@ -14,41 +14,50 @@
 	let userUID = '';
 
 	function login() {
-		if (email === '' || password === '') {
-			console.log('Email or password is empty');
-			toast.error('Email or Password is empty');
-			return; // Exit the function
-		}
-		signInWithEmailAndPassword(auth, email, password)
-			.then(async (userCredential) => {
-				const userID = userCredential.user.uid;
-				const docSnap = await getDoc(doc(firestore, 'users', userID));
-				console.log(userID);
-				if (docSnap.exists()) {
-					const userData = docSnap.data();
-					console.log('Document data:', userData);
+		try {
+			if (email === '' || password === '') {
+				console.log('Email or password is empty');
+				toast.error('Email or Password is empty');
+				return; // Exit the function
+			}
 
-					if (userData.userRole === 'admin') {
-						console.log('User is a Student');
-						userId.set(userID);
-						userUID = localStorage.getItem('userId');
-						toast.success('Log In Successful');
-						window.location.replace('../NewAdmin-Dashboard');
+			signInWithEmailAndPassword(auth, email, password)
+				.then(async (userCredential) => {
+					const userID = userCredential.user.uid;
+					const docSnap = await getDoc(doc(firestore, 'users', userID));
+					console.log(userID);
+
+					if (docSnap.exists()) {
+						const userData = docSnap.data();
+						console.log('Document data:', userData);
+
+						if (userData.userRole === 'admin') {
+							console.log('User is an Admin');
+							userId.set(userID);
+							const userUID = localStorage.getItem('userId');
+							toast.success('Log In Successful');
+							window.location.replace('../NewAdmin-Dashboard');
+						} else {
+							console.log('User is not an admin');
+							toast.error('User is not an admin');
+							// Handle case when user is not an admin
+						}
 					} else {
-						console.log('User is not an admin');
-						toast.error('User is not an admin');
-						// Handle case when user is not an admin
+						console.log('User not found');
+						toast.error('User not found. Please check your credentials.');
+						// Handle case when user is not found
 					}
-				} else {
-					console.log('No such document!');
-					toast.error('No such document!');
-				}
-			})
-			.catch((error) => {
-				const errorCode = error.code;
-				const errorMessage = error.message;
-				toast.error('Wrong User Credentials');
-			});
+				})
+				.catch((error) => {
+					console.error('Error during login:', error);
+					const errorCode = error.code;
+					const errorMessage = error.message;
+					toast.error('Wrong User Credentials');
+				});
+		} catch (error) {
+			console.error('Unexpected error during login:', error);
+			toast.error('An unexpected error occurred during login');
+		}
 	}
 
 	onMount(() => {

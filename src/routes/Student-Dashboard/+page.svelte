@@ -187,7 +187,7 @@
 			<div class="inline-flex items-center h-full lg:w-2/5 lg:justify-end lg:ml-0">
 				<button class="dropdown dropdown-end">
 					<svg
-						xmlns="http://www.w3.org/2000/svg"
+						xmlns="https://www.w3.org/2000/svg"
 						width="28"
 						height="28"
 						fill="green"

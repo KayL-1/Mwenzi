@@ -22,67 +22,44 @@
 	let password = '';
 	let userUID = '';
 
-
 	async function login() {
-		if (email === '' || password === '') {
-			console.log('Email or password is empty');
-			toast.error('Email or Password is empty');
-			return; // Exit the function
-		}
+		try {
+			if (email === '' || password === '') {
+				toast.error('Email or Password is empty');
+				return;
+			}
 
-		const q = query(collection(firestore, 'users'), where('email', '==', email));
-		const querySnapshot = await getDocs(q);
+			const q = query(collection(firestore, 'users'), where('email', '==', email));
+			const querySnapshot = await getDocs(q);
 
-		querySnapshot.forEach((doc) => {
-			if (doc.exists()) {
-				console.log(doc.data());
-				const userData = doc.data();
-				console.log('Document data:', userData);
+			if (querySnapshot.empty) {
+				console.log('User not found');
+				toast.error('User not found');
+				return;
+			}
 
-				if (userData.userRole === 'teacher') {
-					if (userData.password === password) {
-						console.log('User is a Teacher');
-						toast.success('Log In Successful');
-						const userUID = userData.UID;
-						userId.set(userUID);
-						const userUID1 = localStorage.getItem('userId');
-						window.location.replace('../NewTeacher-Dashboard');
-					} else {
-						console.log('Wrong Password');
-						toast.error('Wrong Password');
-						// Handle case when user is not a teacher
-					}
+			const userData = querySnapshot.docs[0].data();
+
+			if (userData.userRole === 'teacher') {
+				if (userData.password === password) {
+					console.log('User is a Teacher');
+					toast.success('Log In Successful');
+					const userUID = userData.UID;
+					userId.set(userUID);
+					const userUID1 = localStorage.getItem('userId');
+					window.location.replace('../NewTeacher-Dashboard');
 				} else {
-					console.log('User is not a Student');
-					toast.error('User is not a Student');
-					// Handle case when user is not a teacher
+					console.log('Wrong Password');
+					toast.error('Wrong Password');
 				}
 			} else {
-				console.log('User not found');
-				toast.log('User not found');
+				console.log('User is not a Student');
+				toast.error('User is not a Student');
 			}
-		});
-
-		// if (querySnapshot.exists()) {
-		// 	const userData = docSnap.data();
-		// 	console.log('Document data:', userData);
-
-		// 	if (userData.userRole === 'student') {
-		// 		console.log('User is a Student');
-		// 		toast.success('Log In Successful');
-		// 		userId.set(userID);
-		// 		userUID = localStorage.getItem('userId');
-		// 		console.log(userUID);
-		// 		window.location.replace('../Student-Dashboard');
-		// 	} else {
-		// 		console.log('User is not a Student');
-		// 		toast.error('User is not a Student');
-		// 		// Handle case when user is not a teacher
-		// 	}
-		// } else {
-		// 	console.log('No such document!');
-		// 	toast.error('No such document!');
-		// }
+		} catch (error) {
+			console.error('Error during login:', error);
+			toast.error('An error occurred during login');
+		}
 	}
 
 	onMount(() => {

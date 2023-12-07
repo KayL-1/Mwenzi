@@ -23,57 +23,39 @@
 	let studentID = '';
 
 	async function login() {
-		if (studentID == '') {
-			toast.error('Student ID is empty');
-			return; // Exit the function
-		}
-
-		const q = query(collection(firestore, 'users'), where('studentID', '==', studentID));
-		const querySnapshot = await getDocs(q);
-
-		querySnapshot.forEach((doc) => {
-			if (doc.exists()) {
-				console.log(doc.data());
-				const userData = doc.data();
-				console.log('Document data:', userData);
-
-				if (userData.userRole === 'student') {
-					console.log('User is a Student');
-					toast.success('Log In Successful');
-					const userUID = userData.studentRFID;
-					userId.set(userUID);
-					const userUID1 = localStorage.getItem('userId');
-					window.location.replace('../NewStudent-Dashboard');
-				} else {
-					console.log('User is not a Student');
-					toast.error('User is not a Student');
-					// Handle case when user is not a teacher
-				}
-			} else {
-				console.log('Document not found');
+		try {
+			if (studentID === '') {
+				toast.error('Student ID is empty');
+				return;
 			}
-		});
 
-		// if (querySnapshot.exists()) {
-		// 	const userData = docSnap.data();
-		// 	console.log('Document data:', userData);
+			const q = query(collection(firestore, 'users'), where('studentID', '==', studentID));
+			const querySnapshot = await getDocs(q);
 
-		// 	if (userData.userRole === 'student') {
-		// 		console.log('User is a Student');
-		// 		toast.success('Log In Successful');
-		// 		userId.set(userID);
-		// 		userUID = localStorage.getItem('userId');
-		// 		console.log(userUID);
-		// 		window.location.replace('../Student-Dashboard');
-		// 	} else {
-		// 		console.log('User is not a Student');
-		// 		toast.error('User is not a Student');
-		// 		// Handle case when user is not a teacher
-		// 	}
-		// } else {
-		// 	console.log('No such document!');
-		// 	toast.error('No such document!');
-		// }
+			if (querySnapshot.empty) {
+				console.log('User not found');
+				toast.error('User not found');
+				return;
+			}
+
+			const userData = querySnapshot.docs[0].data();
+
+			if (userData.userRole === 'student') {
+				console.log('User is a Student');
+				toast.success('Log In Successful');
+				const userUID = userData.studentRFID;
+				userId.set(userUID);
+				const userUID1 = localStorage.getItem('userId');
+				window.location.replace('../NewStudent-Dashboard');
+			} else {
+				console.log('User is not a Student');
+				toast.error('User is not a Student');
+				// Handle case when user is not a student
+			}
+		} catch (error) {
+			console.error('Error during login:', error);
+			toast.error('An error occurred during login');
+		}
 	}
 
 	onMount(() => {

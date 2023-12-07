@@ -23,7 +23,7 @@
 	let currentDatee;
 
 	function getDate() {
-		fetch('http://worldtimeapi.org/api/timezone/Asia/Manila')
+		fetch('https://worldtimeapi.org/api/timezone/Asia/Manila')
 			.then((response) => response.json())
 			.then((data) => {
 				// Extract the date components
